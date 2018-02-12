@@ -1,6 +1,9 @@
 package com.depex.okeyclick.user.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.model.Service;
 import com.depex.okeyclick.user.R;
 import com.google.gson.Gson;
@@ -54,20 +61,27 @@ public class SubServiceFragment2 extends Fragment {
         Service[]arr=gson.fromJson(json, Service[].class);
         List<Service> services=new ArrayList<>(Arrays.asList(arr));
         for(Service service : services){
-            TabLayout.Tab tab=tabLayout.newTab();
+            final TabLayout.Tab tab=tabLayout.newTab();
             tab.setText(service.getServiceName());
+            String icon=service.getIcon();
+            GlideApp
+                    .with(context)
+                    .asBitmap()
+                    .load(icon)
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                tab.setIcon(new BitmapDrawable(getResources(), resource));
+                        }
+                    });
             tabLayout.addTab(tab);
             service.getServiceName();
         }
         Log.i("responseDataPosition", position+"");
 
-
-
-
         MyAdpater adpater=new MyAdpater(getChildFragmentManager(), services);
         viewPager.setAdapter(adpater);
         tabLayout.getTabAt(position).select();
-
         return view;
     }
 

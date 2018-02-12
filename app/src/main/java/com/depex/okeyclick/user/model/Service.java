@@ -5,9 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by we on 1/17/2018.
- */
 
 public class Service implements Serializable{
 
@@ -21,6 +18,18 @@ public class Service implements Serializable{
     String updateDate;
     @SerializedName("description")
     String description;
+
+    @SerializedName("icon")
+    String icon;
+
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
 
     @SerializedName("subcategory")
     List<SubService> subServices;
