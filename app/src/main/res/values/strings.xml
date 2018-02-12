@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">OkeyClickUser</string>
+    <string name="username">Email or Mobile Number</string>
+    <string name="password">Password</string>
+    <string name="spanish_lang">Español</string>
+    <string name="login">Login</string>
+    <string name="skip">Skip</string>
+    <string name="signup_txt">Sign up as user</string>
+    <string name="apikey">fbb36f24d9b3985aa86fa37fd51c29eb</string>
+    <string name="v_code">1.0</string>
+
+    <string name="invite_and_earn">"Invite &amp; Earn"</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <string name="term_and_condition"><u>Terms and conditions</u></string>
+    <string name="data_protection_low"><u>Data Protection Low</u></string>
+    <string name="site_url"><a href="http://www.okayclick.com">www.okayclick.com</a></string>
+    <string name="title_activity_sub_service_pager">SubServicePagerActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="book_now">Book Now</string>
+    <string name="book_later">Book Later</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="google_map_api_key">AIzaSyB3Vt-OiiNP9zsGYd7Lip-gI85Okejq0eU</string>
+
+    <string name="or_txt_login">--------OR--------</string>
+    <string name="home_menu_nav">Home</string>
+    <string name="account_menu_nav">Account</string>
+    <string name="service_history_menu_nav">Service History</string>
+    <string name="payment_history_menu_nav">Payment History</string>
+    <string name="report_issues_menu_nav">Report Issues</string>
+    <string name="contact_us_menu_nav">Contact Us</string>
+    <string name="logout_menu_nav">Logout</string>
+    <string name="string_content_inavail_fragment">This package is good package for the uer !</string>
+    <string name="pending_customer_request">Request sent to 5 nearest provider...</string>
+    <string name="notification_activity_text">There is no notification</string>
+    <string name="schedule_visit_txt">Schedule a Visit</string>
+
+    <string name="server_key">AIzaSyCD42eqt4BAMw-9y4sqLF0Ac6xV_ZxzOo4</string>
+
+    <string name="view_profile_txt">View Profile</string>
+    <string name="call_txt">Call</string>
+    <string name="reviews_txt">Reviews</string>
+    <string name="details_txt">Details</string>
+    <string name="connecting_text">Connecting....</string>
+
+</resources>

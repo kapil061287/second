@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="input_margin_top">5dp</dimen>
+    <dimen name="input_layout_height">50dp</dimen>
+    <dimen name="margin_right">20dp</dimen>
+    <dimen name="margin_left">20dp</dimen>
+    <dimen name="left_with_margin">56dp</dimen>
+    <dimen name="margin_left_recycler">30dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="input_padding_left">10dp</dimen>
+    <dimen name="input_margin_top_contact">50dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
+    <dimen name="margint_sub_top">20dp</dimen>
+
+    <dimen name="radio_left_margin">20dp</dimen>
+    <dimen name="radio_top_margin">20dp</dimen>
+    <dimen name="radio_right_margin">0dp</dimen>
+    <dimen name="radio_bottom_margin">0dp</dimen>
+    
+    <dimen name="animate_from_value">0dp</dimen>
+
+    <dimen name="linear_avail_package_height">220dp</dimen>
+    <dimen name="animate_to_value">170dp</dimen>
+    <dimen name="margin_top_provider_profile">20dp</dimen>
+    <dimen name="spb_stroke_width">4dp</dimen>
+
+
+</resources>

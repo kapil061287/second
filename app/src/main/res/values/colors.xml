@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ff1fcbff</color>
+    <color name="colorPrimaryDark">#ff009acc</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="spleshColor">#ff1fcbff</color>
+
+    <color name="tab_color">@color/colorPrimaryDark</color>
+
+    <color name="spanish_language_btn_color">#fffac60a</color>
+    <color name="eng_language_btn_color">#ff99438c</color>
+
+    <color name="login_btn">@color/eng_language_btn_color</color>
+
+    <color name="skip_btn">#001486c4</color>
+    <color name="signup_box_color">#ff2186c4</color>
+
+    <color name="tab_background">#FFEEEEEE</color>
+
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:clickable="true"
+    android:clipToPadding="true"
+    android:clipChildren="true"
+    android:translationZ="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/recycler_view_service"
+
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+    <include
+
+        layout="@layout/content_subcategory_view_pager_fragment" />
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="username">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="skip" >Omitir</string>
+
+    <string name="signup_txt">Regístrate como usuario</string>
+
+<!--
+
+    <string name="invite_and_earn">"Invitación &amp; Ganar"</string>
+
+
+
+
+    <string name="home_menu_nav">Casa</string>
+    <string name="account_menu_nav">Cuenta</string>
+    <string name="service_history_menu_nav">Servicio Historia</string>
+    <string name="payment_history_menu_nav">Pago Historia</string>
+    <string name="report_issues_menu_nav">Informe Cuestiones</string>
+    <string name="contact_us_menu_nav">Contacto Nos</string>
+    <string name="logout_menu_nav">Cerrar sesión</string>
+
+
+
+
+
+    <string name="term_and_condition"><u>Condiciones &amp; Condiciones</u></string>
+    <string name="data_protection_low"><u>Datos Proteccion Bajo</u></string>
+
+
+
+    <string name="book_now">Book Now</string>
+    <string name="book_later">Book Later</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+-->
+</resources>

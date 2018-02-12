@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <!--<group android:checkableBehavior="single">
+      <group android:id="@+id/group0" >
+  -->        <item android:id="@+id/home_menu"
+              android:title="@string/home_menu_nav"
+              android:icon="@drawable/home_icon"
+              />
+      <!--</group>
+      <group android:id="@+id/group1" >-->
+ <!-- <item android:id="@+id/profile_menu"
+      android:title="Profile"
+
+      />-->
+<!--
+</group>
+    <group android:id="@+id/group2" >
+-->
+    <item android:id="@+id/account_menu"
+        android:icon="@drawable/account"
+        android:title="@string/account_menu_nav"/>
+<!--
+    </group>
+    <group android:id="@+id/group3" >
+-->
+    <item android:id="@+id/service_history_menu"
+        android:icon="@drawable/service_history_icon"
+        android:title="@string/service_history_menu_nav"/>
+<!--
+    </group>
+    <group android:id="@+id/group4" >
+-->
+    <item android:id="@+id/payment_history_menu"
+        android:icon="@drawable/payment_history_icon"
+        android:title="@string/payment_history_menu_nav"
+        />
+<!--
+    </group>
+    <group android:id="@+id/group5" >
+-->
+    <item android:id="@+id/invite_earn"
+        android:icon="@drawable/invite_and_earn_icon"
+        android:title="@string/invite_and_earn"
+        />
+<!--
+    </group>
+    <group android:id="@+id/group6" >
+-->
+ <!--   <item android:id="@+id/notification_menu"
+        android:title="Notification"/>-->
+<!--
+    </group>
+    <group android:id="@+id/group7" >
+-->
+    <item android:id="@+id/report_issues_menu"
+        android:icon="@drawable/report_and_issue"
+        android:title="@string/report_issues_menu_nav"/>
+<!--
+    </group>
+    <group android:id="@+id/group8" >
+-->
+    <item android:id="@+id/contact_us_menu"
+        android:icon="@drawable/contact"
+        android:title="@string/contact_us_menu_nav"/>
+  <item android:id="@+id/logout"
+      android:title="@string/logout_menu_nav"
+      android:icon="@drawable/logout"
+      />
+<!--
+    </group>
+  </group>
+-->
+</menu>

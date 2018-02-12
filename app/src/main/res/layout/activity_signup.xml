@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.depex.okeyclick.user.screens.SignupActivity">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Create your account"
+                android:textAllCaps="true"
+                android:textSize="18dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/round_imge_signup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="36dp"
+                android:src="@drawable/ic_person_black_24dp"
+                app:riv_border_color="#ff0000ff"
+                app:riv_border_width="1dp"
+                app:riv_corner_radius="50dp"
+                app:riv_mutate_background="true"
+                app:riv_oval="true"
+                app:riv_tile_mode="repeat" />
+
+            <EditText
+                android:id="@+id/name_signup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Name"
+                android:paddingLeft="@dimen/input_padding_left" />
+
+            <EditText
+                android:id="@+id/last_name_signup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Last Name"
+                android:paddingLeft="@dimen/input_padding_left" />
+
+            <EditText
+                android:id="@+id/email_signup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:padding="@dimen/input_padding_left" />
+
+            <EditText
+                android:id="@+id/password_signup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/input_padding_left" />
+
+            <EditText
+                android:id="@+id/confim_password_signup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/input_padding_left" />
+
+            <EditText
+                android:id="@+id/referral_code_signup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Referral Code"
+                android:paddingLeft="@dimen/input_padding_left" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/mobile_num"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.2"
+                    android:background="@drawable/input_box_draw_signup"
+                    android:hint="Enter your mobile no."
+                    android:paddingLeft="@dimen/input_padding_left" />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:id="@+id/request_otp"
+                    android:background="@color/colorPrimaryDark"
+                    android:text="Request OTP"
+                    android:textColor="#ffffffff" />
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:id="@+id/otp_signup"
+                android:background="@drawable/input_box_draw_signup"
+                android:hint="Enter Otp"
+                android:paddingLeft="@dimen/input_padding_left" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_layout_height"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="@dimen/margin_left"
+                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginTop="@dimen/input_margin_top"
+                android:background="@color/colorPrimaryDark"
+                android:text="Register"
+                android:id="@+id/register_signup"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

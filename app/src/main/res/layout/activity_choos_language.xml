@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cont_layout_language_btn"
+    android:background="@color/spleshColor"
+    tools:context="com.depex.okeyclick.user.screens.ChoosLanguageActivity">
+
+
+    <Button
+        android:layout_width="243dp"
+        android:layout_height="91dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="#ffffffff"
+        android:text="English"
+        android:id="@+id/eng_lng_button"
+        android:textSize="23dp"
+        android:background="@color/eng_language_btn_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.603" />
+
+    <Button
+        android:layout_width="243dp"
+        android:layout_height="91dp"
+        android:text="@string/spanish_lang"
+        android:id="@+id/spanish_lang_btn"
+        android:textSize="23dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/spanish_language_btn_color"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.324" />
+
+</android.support.constraint.ConstraintLayout>

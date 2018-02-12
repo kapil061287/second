@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "108388742386",
+    "firebase_url": "https://mythic-lattice-192609.firebaseio.com",
+    "project_id": "mythic-lattice-192609",
+    "storage_bucket": "mythic-lattice-192609.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108388742386:android:f3d0db8778a780e6",
+        "android_client_info": {
+          "package_name": "com.depex.okeyclick.sp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108388742386-4v534rtg7vvkdu0ils388cthh8f7ed0a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.depex.okeyclick.sp",
+            "certificate_hash": "622f6459bbbbad25efa7ebde55c1bdb05b483f20"
+          }
+        },
+        {
+          "client_id": "108388742386-qk8kv47lmg97kb7fchu1urjtusri5gm9.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "108388742386-dt39jbp7g2rsmhv075e4j56o6q4vo3go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZmE2184TUZ-DDklcSd9hDQBiQbzQiCP4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108388742386-qk8kv47lmg97kb7fchu1urjtusri5gm9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108388742386:android:230a115edf825f94",
+        "android_client_info": {
+          "package_name": "com.depex.okeyclick.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108388742386-gda93om067kfks7h6fgijguf6hm1nvhk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.depex.okeyclick.user",
+            "certificate_hash": "622f6459bbbbad25efa7ebde55c1bdb05b483f20"
+          }
+        },
+        {
+          "client_id": "108388742386-qk8kv47lmg97kb7fchu1urjtusri5gm9.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "108388742386-dt39jbp7g2rsmhv075e4j56o6q4vo3go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZmE2184TUZ-DDklcSd9hDQBiQbzQiCP4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108388742386-qk8kv47lmg97kb7fchu1urjtusri5gm9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
