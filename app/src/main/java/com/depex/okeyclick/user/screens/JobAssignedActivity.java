@@ -81,7 +81,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_job_assigned);
         preferences = getSharedPreferences("service_pref_user", MODE_PRIVATE);
         task_id = preferences.getString("task_id", "0");
-        textView = findViewById(R.id.pending_request_txt);
+        //textView = findViewById(R.id.pending_request_txt);
         spNameText = findViewById(R.id.sp_name);
         myTask = new MyTask();
 
@@ -93,7 +93,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         backImage = findViewById(R.id.back_image);
         myTask.execute();
         parentLayout = findViewById(R.id.parent_constraint_layout);
-        progressBar=findViewById(R.id.circle_progress_bar);
+        //progressBar=findViewById(R.id.circle_progress_bar);
 
         getSupportActionBar().setTitle("Wating for Response...");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -117,12 +117,11 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
     private void veiwProfile(String spId) {
 
-       /* Bundle bundle=new Bundle();
+        Bundle bundle=new Bundle();
         bundle.putString("sp_id", spId);
         Intent intent=new Intent(this, ServiceProviderProfileActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
-*/
     }
 
     public class MyTask extends AsyncTask<Void, Integer, String> {
@@ -149,7 +148,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             progress += (100.0f / 100f);
-            progressBar.setProgress(progress);
+            //progressBar.setProgress(progress);
 
 
         }
@@ -157,7 +156,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            textView.setVisibility(View.GONE);
+            //textView.setVisibility(View.GONE);
         }
     }
 
@@ -200,8 +199,8 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                             JSONObject res = new JSONObject(responseString);
                             boolean success = res.getBoolean("successBool");
                             if (success) {
-                                progressBar.setVisibility(View.GONE);
-                                textView.setVisibility(View.GONE);
+                                //progressBar.setVisibility(View.GONE);
+                                //textView.setVisibility(View.GONE);
                                 findViewById(R.id.back_image).setVisibility(View.GONE);
                                 profileLinearLayout.setVisibility(View.VISIBLE);
                                 getSupportActionBar().setTitle("Job ID : " + task_id);

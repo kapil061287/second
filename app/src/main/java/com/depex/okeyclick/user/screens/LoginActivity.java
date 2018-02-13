@@ -116,6 +116,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             .putString("fullname", responseData.getString("fullname"))
                                     .putBoolean("isLogin", true).apply();
                                     if(preferences.getBoolean("createRequest", false)){
+                                        String requestjson=preferences.getString("from_book_screen", "0");
+                                        JSONObject jsonObject=new JSONObject(requestjson);
+                                        jsonObject.put("userToken", preferences.getString("userToken", "0"));
+                                        jsonObject.put("created_by", preferences.getString("user_id", "0"));
+                                        JSONObject jsonObject1=new JSONObject();
+                                        jsonObject1.put("RequestData", jsonObject);
+                                        sendHttpRequest(jsonObject1);
                                        Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
                                        startActivity(intent);
                                     }else{
@@ -151,4 +158,41 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
     }
+
+    public void sendHttpRequest(JSONObject  jsonObject){
+
+        final Retrofit.Builder builder=new Retrofit.Builder();
+        ProjectAPI projectAPI=builder.baseUrl(Utils.SITE_URL)
+                .addConverterFactory(new StringConvertFactory())
+                .build().create(ProjectAPI.class);
+        projectAPI.createRequest(jsonObject.toString()).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String responseString=response.body();
+                Log.i("responseData", responseString);
+                try {
+                    JSONObject res= new JSONObject(responseString);
+                    boolean success=res.getBoolean("successBool");
+                    if(success){
+                        JSONObject responseObj=res.getJSONObject("response");
+                        String task_id=responseObj.getString("task_id");
+                        Bundle bundle=new Bundle();
+                        bundle.putString("task_id", task_id);
+
+                        Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
+                        preferences.edit().putString("task_id", task_id).apply();
+                        startActivity(intent);
+                    }
+                } catch (JSONException e) {
+                    Log.e("responseDataError", e.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e("responseError", t.toString());
+            }
+        });
+    }
+
 }

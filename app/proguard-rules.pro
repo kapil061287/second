@@ -27,3 +27,6 @@
 
 -dontwarn okio.**
 -dontwarn javax.annotation.**
+
+-keep class com.wang.avi.** { *; }
+-keep class com.wang.avi.indicators.** { *; }

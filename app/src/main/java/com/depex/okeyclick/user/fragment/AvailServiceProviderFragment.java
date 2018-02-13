@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -109,6 +110,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     UserPackage userPackage;
     Button bookNowBtn;
     Button bookLaterBtn;
+    ConstraintLayout constraintLayout;
     ArrayList<Marker> markers = new ArrayList<>();
     String json;
 
@@ -126,6 +128,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         linearLayout.findViewById(R.id.done_btn_availfragment).setOnClickListener(this);
         menuItem.setIcon(R.drawable.ic_location_on_black_24dp);
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        constraintLayout=view.findViewById(R.id.parent_constraint_layout);
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -320,7 +323,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     }
 
 
-    public void startDownAnimation(View v){
+   /* public void startDownAnimation(View v){
 
         v.setVisibility(View.GONE);
         linearLayout.findViewById(R.id.description_content_txt_avail_fragment).setVisibility(View.GONE);
@@ -341,10 +344,10 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 //isAnimate=false;
             }
         });
-    }
+    }*/
 
 
-    public void startUpAnimation(){
+  /*  public void startUpAnimation(){
         final ViewGroup.LayoutParams layoutParams=linearLayout.getLayoutParams();
         final int height=layoutParams.height;
         final ValueAnimator animator=ValueAnimator.ofInt(getResources().getDimensionPixelSize(R.dimen.animate_from_value), getResources().getDimensionPixelSize(R.dimen.animate_to_value));
@@ -395,7 +398,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             }
         });
     }
-
+*/
 
 
     @Override
@@ -579,6 +582,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 }
             }
 
+
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.i("responseError", t.toString());
@@ -610,6 +615,17 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                         Intent intent=new Intent(context, JobAssignedActivity.class);
                         preferences.edit().putString("task_id", task_id).apply();
                         startActivity(intent);
+                    }else{
+                        progressBar.setVisibility(View.GONE);
+
+                        JSONObject errorObj=res.getJSONObject("ErrorObj");
+                        String code=errorObj.getString("ErrorCode");
+                        if(code.equals("103")){
+                            String msg=errorObj.getString("ErrorMsg");
+                            Snackbar.make(constraintLayout, msg, Snackbar.LENGTH_INDEFINITE).setAction("OK", null).show();
+                        }
+
+
                     }
                 } catch (JSONException e) {
                     Log.e("responseDataError", e.toString());
@@ -619,6 +635,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e("responseError", t.toString());
+                progressBar.setVisibility(View.GONE);
             }
         });
     }

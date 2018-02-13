@@ -1,4 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/parent_constraint_layout"
+    android:layout_height="match_parent"
+    tools:context="com.depex.okeyclick.user.screens.JobAssignedActivity">
+
+    <ImageView
+        android:background="#ff000000"
+        android:elevation="10dp"
+        android:id="@+id/back_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:visibility="visible"
+        android:layout_marginTop="8dp"
+        android:elevation="15dp"
+        android:id="@+id/avl_loader"
+        app:indicatorColor="#ffffffff"
+        app:indicatorName="BallScaleRippleMultipleIndicator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+    <!--app:cpb_progressbar_color="#e18080"-->
+
+    <fragment
+        android:id="@+id/map_fragment_job_assigned_activity"
+        android:layout_width="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="gone"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:id="@+id/service_provider_profilelayout"
+        android:background="#ffffffff"
+        android:layout_marginStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:src="@drawable/logo"
+            app:riv_corner_radius="100dp"
+            android:id="@+id/profile_pic_activity_job_assigned"
+            android:layout_width="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="50dp" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/sp_name"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:text="@string/call_txt"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:id="@+id/call_btn_to_sp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/login_btn"
+                android:layout_width="0dp"
+                android:textColor="#ffffffff"
+                android:layout_height="match_parent" />
+            <Button
+                android:background="@color/colorPrimaryDark"
+                android:textColor="#ffffffff"
+                android:text="@string/view_profile_txt"
+                android:id="@+id/view_profile_btn"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+
+
+<!--
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -68,7 +180,7 @@
 
 
 
-    <!--app:cpb_progressbar_color="#e18080"-->
+    &lt;!&ndash;app:cpb_progressbar_color="#e18080"&ndash;&gt;
 
     <fragment
         android:id="@+id/map_fragment_job_assigned_activity"
@@ -132,5 +244,27 @@
                 android:layout_height="match_parent" />
         </LinearLayout>
 
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>-->
+
+    <LinearLayout
+        android:layout_width="308dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="#ffffffff"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginLeft="35dp"
+            android:text="Connecting Nearest 5 provider..."
+            android:textColor="#ff000000"
+            android:textSize="16dp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
