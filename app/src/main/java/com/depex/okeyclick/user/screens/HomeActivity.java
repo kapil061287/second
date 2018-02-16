@@ -52,6 +52,9 @@ public class HomeActivity extends AppCompatActivity
         String token= FirebaseInstanceId.getInstance().getToken();
         Log.i("tokenR", token);
 
+        Intent intent=new Intent(this, CustomerTimerActivity.class);
+        startActivity(intent);
+
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

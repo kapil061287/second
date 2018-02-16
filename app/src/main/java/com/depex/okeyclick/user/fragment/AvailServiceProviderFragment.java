@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.autofill.AutofillValue;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -145,6 +146,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             }
         });
 
+
+
+
         bookNowBtn = view.findViewById(R.id.book_now_btn_avail_fragment);
         bookLaterBtn = view.findViewById(R.id.book_later_btn_avail_fragment);
         bookLaterBtn.setOnClickListener(this);
@@ -158,7 +162,15 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         /// manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,0,this);
 
         client = LocationServices.getFusedLocationProviderClient(getActivity());
-        client = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                changeLocation(location);
+            }
+        });
+
+        //client = LocationServices.getFusedLocationProviderClient(getActivity());
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(1000);
@@ -226,7 +238,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
             return;
         }
-        client.requestLocationUpdates(locationRequest, mLocationCallback, null);
+       // client.requestLocationUpdates(locationRequest, mLocationCallback, null);
     }
 
 
@@ -593,7 +605,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
 
     public void sendHttpRequest(JSONObject  jsonObject){
-
         final Retrofit.Builder builder=new Retrofit.Builder();
         ProjectAPI projectAPI=builder.baseUrl(Utils.SITE_URL)
                 .addConverterFactory(new StringConvertFactory())
@@ -612,7 +623,13 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                         Bundle bundle=new Bundle();
                         bundle.putString("task_id", task_id);
                         progressBar.setVisibility(View.GONE);
+
+                        Bundle bundle1=new Bundle();
+                        bundle1.putDouble("lat", AvailServiceProviderFragment.this.location.getLatitude());
+                        bundle1.putDouble("lng", AvailServiceProviderFragment.this.location.getLongitude());
+
                         Intent intent=new Intent(context, JobAssignedActivity.class);
+                        intent.putExtras(bundle1);
                         preferences.edit().putString("task_id", task_id).apply();
                         startActivity(intent);
                     }else{
@@ -645,7 +662,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.book_now_btn_avail_fragment:
-
                 if(location==null){
                     final Snackbar snackbar=Snackbar.make(view, "We are unable to pick your location please Select your location!", Snackbar.LENGTH_INDEFINITE);
                     snackbar.show();
@@ -686,7 +702,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             jsonObject.put("created_by", preferences.getString("user_id", "0"));
                             JSONObject requestData=new JSONObject();
                             requestData.put("RequestData", jsonObject);
-                            Log.i("requestData", jsonObject.toString());
+                            Log.i("requestDataCreate", jsonObject.toString());
                             sendHttpRequest(requestData);
                             preferences.edit()
                                     .putString("from_book_screen", jsonObject.toString())
@@ -736,8 +752,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             MarkerOptions markerOptions=new MarkerOptions();
             markerOptions.visible(true)
                     .title(preferences.getString("fullname", "You"))
-                    .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.if_blue_pin_68011));
+                    .position(latLng);
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.if_blue_pin_68011));
             marker = googleMap.addMarker(markerOptions);
             CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLngZoom(latLng, 13);
             googleMap.moveCamera(cameraUpdate);
@@ -749,6 +765,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             this.location=location;
         }
     }
+
+
 
     public boolean isLogin() {
         return isLogin;

@@ -45,7 +45,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(NotificationActivity.this, ScheduleVisitActivity.class);
-                startActivity(intent);
+                //startActivity(intent);
             }
         });
 

@@ -9,7 +9,7 @@
     tools:context="com.depex.okeyclick.user.screens.JobAssignedActivity">
 
     <ImageView
-        android:background="#ff000000"
+        android:background="#55000000"
         android:elevation="10dp"
         android:id="@+id/back_image"
         android:layout_width="match_parent"
@@ -253,6 +253,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="#ffffffff"
+        android:id="@+id/connecting_nearest"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

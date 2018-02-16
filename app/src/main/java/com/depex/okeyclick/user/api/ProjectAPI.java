@@ -53,4 +53,7 @@ public interface ProjectAPI {
     @POST("okey-click/api/update_DeviceToken.php")
     Call<String> updateFcmToken(@Body  String body);
 
+    @POST("okey-click/api/check_task_status.php")
+    Call<String> checkSpStatus(@Body String body);
+
 }

@@ -73,11 +73,10 @@
             android:icon="@drawable/logo"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".screens.ServiceProviderProfileActivity"
+        <activity
+            android:name=".screens.ServiceProviderProfileActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            ></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".service.OkeyMessagingService">
             <intent-filter>
@@ -89,6 +88,12 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".screens.CustomerTimerActivity"
+            ></activity>
     </application>
 
 </manifest>
