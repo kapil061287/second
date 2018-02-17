@@ -557,7 +557,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                 String latStr=resObj.getString("user_latitude");
                                 String lngStr=resObj.getString("user_longitude");
                                 String address=resObj.getString("user_address");
-                                Toast.makeText(JobAssignedActivity.this, address, Toast.LENGTH_LONG).show();
+                                //Toast.makeText(JobAssignedActivity.this, address, Toast.LENGTH_LONG).show();
                                 double lat=Double.parseDouble(latStr);
                                 double lng=Double.parseDouble(lngStr);
                                 if(Spmarker!=null){

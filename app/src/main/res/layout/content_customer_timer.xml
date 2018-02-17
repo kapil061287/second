@@ -37,7 +37,7 @@
                 android:textSize="40dp" />
         </FrameLayout>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,6 +66,6 @@
                 android:text="Address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
+        </LinearLayout>-->
 
 </android.support.constraint.ConstraintLayout>

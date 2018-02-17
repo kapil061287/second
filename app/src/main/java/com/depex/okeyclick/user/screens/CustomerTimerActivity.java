@@ -39,9 +39,12 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    private boolean isTimerStart=true;
+    private boolean isTimerStart=false;
 
+    Mytask mytask;
     private boolean isStartJob;
+
+    boolean isInProgress=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +58,9 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         setSupportActionBar(toolbar);
 
-        Mytask mytask=new Mytask();
-        mytask.execute();
 
+        mytask=new Mytask();
+        mytask.execute();
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,6 +158,8 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                                         break;
                                     case 5:
                                         isTimerStart=true;
+                                        //startTimer(1);
+
                                         //Start Job
                                         break;
                                     case 6:
@@ -162,6 +167,8 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                                         break;
                                     case 7:
                                             isFinishJob=true;
+                                            isTimerStart=false;
+
                                         //Finish the job
                                         break;
                                 }
@@ -172,32 +179,55 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
 
                         //TODO for recursion
                        if(!isFinishJob)
-                            checkServiceProviderRunningStatus();
+                           isResponse=true;
+                           // checkServiceProviderRunningStatus();
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                            Log.i("responseDataError", t.toString());
                     }
                 });
     }
 
+    private void startTimer(int i) {
+       /* int i=1;
+        while (isTimerStart)
+        {*/
+       //int i=1;
+                if(isTimerStart) {
+                    try {
+                        String timerText = updateTimer(i);
+                        timer_text.setText(timerText);
+                        Log.i("progressLog", "Task is in progress.... : " + timer_text.getText().toString());
+                        Thread.sleep(1000);
+                        //i++;
+                        startTimer(++i);
+                    }catch (InterruptedException e){
+                        Log.e("responseDataError", e.toString());
+                    }
+                }
+       // }
+    }
+
+    private boolean isResponse=true;
 
 
     class Mytask extends AsyncTask<Integer , Integer, Integer>{
-
         @Override
         protected Integer doInBackground(Integer... integers) {
-            checkServiceProviderRunningStatus();
             int i=1;
-            while (isTimerStart)
-            {
-                try {
-                    publishProgress(i);
-                    Thread.sleep(1000);
-                    i++;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            while (isInProgress){
+                if(isTimerStart) {
+                    try {
+                        publishProgress(i);
+                        Thread.sleep(1000);
+                        i++;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    publishProgress();
                 }
             }
             return null;
@@ -205,8 +235,17 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-                String timerText=updateTimer(values[0]);
+            if(isTimerStart && values.length>0){
+                String timerText = updateTimer(values[0]);
                 timer_text.setText(timerText);
+                Log.i("progressLog", "Task is in progress.... : " + timer_text.getText().toString());
+                //checkServiceProviderRunningStatus();
+            }
+
+            if(isResponse) {
+                isResponse=false;
+                checkServiceProviderRunningStatus();
+            }
         }
 
 
@@ -215,5 +254,15 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
 
         }
     }
-    boolean isFinishJob;
+        boolean isFinishJob;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isResponse=false;
+        isInProgress=false;
+        isTimerStart=false;
+        isFinishJob=true;
+        mytask.cancel(true);
+    }
 }

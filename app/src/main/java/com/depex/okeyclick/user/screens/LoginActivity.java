@@ -125,9 +125,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         sendHttpRequest(jsonObject1);
                                        Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
                                        startActivity(intent);
+                                       finish();
                                     }else{
                                         Intent intent=new Intent(LoginActivity.this, HomeActivity.class);
                                         startActivity(intent);
+                                        finish();
                                     }
 
                                 }else{
@@ -182,6 +184,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
                         preferences.edit().putString("task_id", task_id).apply();
                         startActivity(intent);
+                        finish();
                     }
                 } catch (JSONException e) {
                     Log.e("responseDataError", e.toString());

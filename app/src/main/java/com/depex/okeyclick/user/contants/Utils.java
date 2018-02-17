@@ -5,6 +5,6 @@ package com.depex.okeyclick.user.contants;
  */
 
 public class Utils {
-    public static final String SITE_URL="http://depextechnologies.org/";
+    public static final String SITE_URL="http://depextechnologies.org/okey-click/api/";
     public static final String IMAGE_URL="http://depextechnologies.org/okey-click/admin/images/services/";
 }
