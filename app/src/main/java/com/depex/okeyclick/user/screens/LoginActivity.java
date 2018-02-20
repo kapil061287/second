@@ -124,6 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         jsonObject1.put("RequestData", jsonObject);
                                         sendHttpRequest(jsonObject1);
                                        Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
+                                       intent.putExtras(getIntent().getExtras());
                                        startActivity(intent);
                                        finish();
                                     }else{

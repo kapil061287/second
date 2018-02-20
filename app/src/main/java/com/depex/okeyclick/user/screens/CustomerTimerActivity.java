@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
@@ -132,7 +133,10 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String responseString =response.body();
-                        Log.i("responseDataRunning", responseString );
+                        if(responseString==null){
+                            return;
+                        }
+                        Log.i("responseDataRunning", responseString+"" );
                         try {
                             JSONObject res=new JSONObject(responseString);
                             boolean success=res.getBoolean("successBool");

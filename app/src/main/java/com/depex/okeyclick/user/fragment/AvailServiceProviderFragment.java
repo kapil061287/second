@@ -166,6 +166,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
+                if(location==null) return;
                 changeLocation(location);
             }
         });
@@ -249,6 +250,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
 
     public void changeLocation(Location location) {
+        if(location==null)return;
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         this.location = location;
@@ -722,7 +724,12 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             jsonObject.put("longitude", location.getLongitude());
                             jsonObject.put("task_title", "");
                             jsonObject.put("applied_coupen", "");
+                            Bundle bundle=new Bundle();
+                            bundle.putDouble("lat",location.getLatitude() );
+                            bundle.putDouble("lng", location.getLongitude());
+
                             Intent intent=new Intent(context, LoginActivity.class);
+                            intent.putExtras(bundle);
                             startActivity(intent);
                             preferences.edit()
                                     .putString("from_book_screen", jsonObject.toString())
