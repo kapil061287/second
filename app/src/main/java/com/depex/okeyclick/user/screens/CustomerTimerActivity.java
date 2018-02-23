@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.braintreepayments.api.models.BraintreeApiConfiguration;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
@@ -58,6 +59,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         Typeface typeface= ResourcesCompat.getFont(this, R.font.digital);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         setSupportActionBar(toolbar);
+
 
 
         mytask=new Mytask();
@@ -105,7 +107,11 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         return hoursString+":"+minutString+":"+seconds2String;
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        preferences.edit().putBoolean("inCustomerTimeActivity", true).apply();
+    }
 
     private void checkServiceProviderRunningStatus() {
 
@@ -121,6 +127,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
 
         new Retrofit.Builder()
@@ -267,6 +274,8 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         isInProgress=false;
         isTimerStart=false;
         isFinishJob=true;
+        preferences.edit().putBoolean("inCustomerTimeActivity", false).apply();
         mytask.cancel(true);
     }
+
 }

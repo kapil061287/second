@@ -90,10 +90,24 @@
         </service>
 
         <activity
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
             android:name=".screens.CustomerTimerActivity"
-            ></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screens.InvoiceActivity"
+            android:label="@string/title_activity_invoice"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${applicationId}.braintree" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

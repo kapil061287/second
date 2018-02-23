@@ -15,14 +15,14 @@ import com.depex.okeyclick.user.screens.SignupActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
-    ProgressBar progressBar;
+    //ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_splash);
-        progressBar = findViewById(R.id.progressBar);
+        //progressBar = findViewById(R.id.progressBar);
         getSharedPreferences("service_pref_user", MODE_PRIVATE).edit().remove("from_book_screen").remove("createRequest").apply();
         new Thread(new Runnable() {
             @Override

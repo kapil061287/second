@@ -16,5 +16,8 @@
     <color name="signup_box_color">#ff2186c4</color>
 
     <color name="tab_background">#FFEEEEEE</color>
+    <color name="skip_back_color">#99438c</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="success_color">#22BB33</color>
 
 </resources>

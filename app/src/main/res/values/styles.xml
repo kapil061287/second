@@ -68,4 +68,9 @@
     <style name="AppTheme.AlertDialog" parent="AlertDialog.AppCompat.Light">
         <item name="android:background">#00ffffff</item>
     </style>
+
+    <style name="AppTheme.TextViewFont">
+        <item name="fontFamily">@font/nexa</item>
+        <item name="android:textColor">#FF000000</item>
+    </style>
 </resources>

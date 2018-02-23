@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="318dp"
+        android:orientation="vertical"
+        android:layout_height="436dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
+            android:text="@string/report_and_issue"
+            android:id="@+id/report_issue_btn"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/radio_button_report_complaint_unchecked"
+            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content" />
+
+            <Button
+                android:text="@string/service_feedback"
+                android:layout_weight="1"
+
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/radio_button_report_complaint_unchecked"
+                android:id="@+id/service_feedback_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+        <Button
+            android:layout_marginTop="10dp"
+            android:text="@string/other"
+            android:id="@+id/other_btn"
+            android:background="@drawable/radio_button_report_complaint_unchecked"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_marginTop="10dp"
+            android:hint="Message..."
+            android:paddingTop="10dp"
+            android:id="@+id/message_report_issue"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/report_and_issue_msg_box"
+            android:gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+        <Button
+            android:layout_marginTop="10dp"
+            android:background="@color/skip_back_color"
+            android:text="@string/submit"
+            android:textColor="#ffffffff"
+            android:id="@+id/report_issue_submit_btn"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/feedback_revert"
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

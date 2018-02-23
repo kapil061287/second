@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.depex.okeyclick.user.screens.InvoiceActivity"
+    tools:showIn="@layout/activity_invoice">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:background="@drawable/texture_img_invoice"
+                android:layout_height="100dp">
+                <TextView
+                    android:text="Invoice"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:textColor="#ffffffff"
+                    android:textSize="18dp"
+                    android:layout_marginTop="10dp"
+                    android:textAllCaps="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+
+                            android:id="@+id/job_id_txt"
+                            android:theme="@style/AppTheme.TextViewFont"
+                            android:textColor="#ffffffff"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:theme="@style/AppTheme.TextViewFont"
+                            android:id="@+id/customer_name_txt"
+                            android:textColor="#ffffffff"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:id="@+id/date_txt"
+                            android:theme="@style/AppTheme.TextViewFont"
+                            android:textColor="#ffffffff"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_marginRight="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:gravity="center_horizontal"
+                            android:id="@+id/total_amount_txt"
+                            android:textColor="#ffffffff"
+                            android:theme="@style/AppTheme.TextViewFont"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:text="Service hours"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/service_hours_txt"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:gravity="center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_marginRight="10dp"
+                    android:text="Basic Fare"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/basic_fare_txt"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:gravity="center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_marginRight="10dp"
+                    android:text="Sub Total"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/sub_total_txt"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <!--<LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_marginRight="10dp"
+                    android:text="Payment Processing Fee"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/payment_processing_fee_txt"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>-->
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_marginRight="10dp"
+                    android:text="Service Tex"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:id="@+id/service_tex_txt"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:text="City Tex"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/city_tex_txt"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:id="@+id/apply_coupon_minus_linear_layout"
+                android:visibility="gone"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:text="Coupen Discount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/apply_coupon_minus"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:textColor="#175417"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/right_margin_in_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:text="Total Amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/total_amount_txt2"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:id="@+id/apply_coupon_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_weight="1"
+                    android:hint="@string/apply_coupen"
+                    android:paddingLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:id="@+id/apply_coupen"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/coupen_box_invoice"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp" />
+                <Button
+                    android:background="@color/colorPrimaryDark"
+                    android:id="@+id/apply_btn"
+                    android:layout_marginRight="20dp"
+                    android:text="@string/apply"
+                    android:textColor="#ffffffff"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                android:id="@+id/cancel_coupon_linear_layout"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_weight="1"
+                    android:hint="@string/apply_coupen"
+                    android:id="@+id/coupen_text"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp" />
+                <Button
+                    android:background="#00ffffff"
+                    android:id="@+id/cancel_coupen"
+                    android:layout_marginRight="20dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.TextViewFont"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp" />
+            </LinearLayout>
+
+
+
+
+            <Button
+                android:layout_marginTop="20dp"
+                android:text="Payment"
+                android:theme="@style/AppTheme.TextViewFont"
+                android:id="@+id/payment_btn"
+                android:background="@color/skip_back_color"
+                android:textColor="#ffffffff"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp" />
+            <TextView
+                android:text="Paid"
+                android:textSize="18dp"
+                android:id="@+id/paid_txt"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/success_color"
+                android:theme="@style/AppTheme.TextViewFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

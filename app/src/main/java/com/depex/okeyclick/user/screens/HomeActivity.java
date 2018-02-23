@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.fragment.ContactUsFragment;
 import com.depex.okeyclick.user.fragment.HomeFragment;
+import com.depex.okeyclick.user.fragment.ReportAndIssue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -111,6 +112,7 @@ public class HomeActivity extends AppCompatActivity
             startActivity(intent);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -132,6 +134,16 @@ public class HomeActivity extends AppCompatActivity
             fragmentTransaction=fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.nav_container, new HomeFragment(), "Home").addToBackStack("Home");
             fragmentTransaction.commit();
+            break;
+        case R.id.report_issues_menu:
+            fragmentTransaction=fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.nav_container, new ReportAndIssue(), "ReporAndIssue").addToBackStack(null);
+            fragmentTransaction.commit();
+            break;
+        case R.id.logout:
+            preferences.edit().clear().apply();
+            Intent intent=new Intent(this, LoginActivity.class);
+            startActivity(intent);
             break;
     }
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);

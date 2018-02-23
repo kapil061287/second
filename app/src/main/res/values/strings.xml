@@ -51,5 +51,16 @@
     <string name="reviews_txt">Reviews</string>
     <string name="details_txt">Details</string>
     <string name="connecting_text">Connecting....</string>
+    <string name="title_activity_invoice">InvoiceActivity</string>
 
+    <string name="notification_channel_id">channel_1</string>
+    <string name="apply_coupen">Apply Coupen</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="report_and_issue"><![CDATA[Report & Issue]]></string>
+    <string name="service_feedback">Service Feedback</string>
+    <string name="other">Other</string>
+    <string name="submit">Submit</string>
+    <string name="feedback_revert">\"Our Customer Service Team will responde to you in less than 48 hours\"</string>
+    <string name="customer_care_number">Customer Care Number</string>
 </resources>

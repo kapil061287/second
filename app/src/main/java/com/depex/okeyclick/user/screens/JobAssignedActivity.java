@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.maps.android.PolyUtil;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -85,6 +86,9 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_assigned);
         preferences = getSharedPreferences("service_pref_user", MODE_PRIVATE);
+        String token= FirebaseInstanceId.getInstance().getToken();
+        Log.i("tokenR", token);
+        sendTokenToserver(token);
         task_id = preferences.getString("task_id", "0");
         //textView = findViewById(R.id.pending_request_txt);
         spNameText = findViewById(R.id.sp_name);
@@ -312,6 +316,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String responseString =response.body();
+                        if(responseString==null)return;
                         Log.i("responseDataRunning", responseString );
                         try {
                             JSONObject res=new JSONObject(responseString);
@@ -585,4 +590,48 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                     }
                 });
     }
+
+
+    public void sendTokenToserver(String token){
+
+        if(!preferences.getBoolean("isLogin", false)){
+            return;
+        }
+
+        JSONObject requestData=new JSONObject();
+        try {
+            String userToken=preferences.getString("userToken", "0");
+            JSONObject data=new JSONObject();
+            data.put("v_code", getString(R.string.v_code));
+            data.put("apikey", getString(R.string.apikey));
+            data.put("deviceType", "android");
+            data.put("userToken", userToken);
+            data.put("user_id", preferences.getString("user_id", "0"));
+            data.put("DeviceToken", token);
+            requestData.put("RequestData" , data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Retrofit.Builder builder=new Retrofit.Builder();
+        builder.baseUrl(Utils.SITE_URL);
+        builder.addConverterFactory(new StringConvertFactory());
+        Retrofit retrofit=builder.build();
+        ProjectAPI projectAPI=retrofit.create(ProjectAPI.class);
+
+
+        Call<String> updateCall=projectAPI.updateFcmToken(requestData.toString());
+        updateCall.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.i("responseData", response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
+
 }

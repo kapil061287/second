@@ -19,6 +19,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -125,7 +126,10 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         Menu menu = toolbar.getMenu();
         progressBar=view.findViewById(R.id.progress_bar_avail);
         linearLayout=view.findViewById(R.id.bottom_panel_avail_fragment);
+
+
         MenuItem menuItem = menu.add(/*groupid*/1,/*Itemid*/1,/*Order*/1,/*Title*/"Pick a Location");
+
         linearLayout.findViewById(R.id.done_btn_availfragment).setOnClickListener(this);
         menuItem.setIcon(R.drawable.ic_location_on_black_24dp);
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -145,6 +149,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 return true;
             }
         });
+
 
 
 
@@ -297,7 +302,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onStop() {
         super.onStop();
-
+        client.removeLocationUpdates(mLocationCallback);
+        Toolbar toolbar=getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
+        toolbar.getMenu().removeItem(1);
     }
 
     /*@Override
@@ -688,7 +695,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
                     if(isLogin()){
                         progressBar.setVisibility(View.VISIBLE);
-                        Toast.makeText(context, "start booking ", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context, "start booking ", Toast.LENGTH_LONG).show();
                         JSONObject jsonObject=new JSONObject();
                         try {
                             jsonObject.put("v_code", getString(R.string.v_code));
@@ -699,7 +706,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             jsonObject.put("latitude", location.getLatitude());
                             jsonObject.put("longitude", location.getLongitude());
                             jsonObject.put("task_title", "");
-                            jsonObject.put("applied_coupen", "dWHhmJ");
+                            jsonObject.put("applied_coupen", "");
                             jsonObject.put("userToken", preferences.getString("userToken", "0"));
                             jsonObject.put("created_by", preferences.getString("user_id", "0"));
                             JSONObject requestData=new JSONObject();
@@ -786,8 +793,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onDetach() {
         super.onDetach();
-        client.removeLocationUpdates(mLocationCallback);
-        Toolbar toolbar=getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
-        toolbar.getMenu().removeItem(1);
+
     }
+
+
 }

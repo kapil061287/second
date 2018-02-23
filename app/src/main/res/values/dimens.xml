@@ -21,13 +21,15 @@
     <dimen name="radio_top_margin">20dp</dimen>
     <dimen name="radio_right_margin">0dp</dimen>
     <dimen name="radio_bottom_margin">0dp</dimen>
-    
+
     <dimen name="animate_from_value">0dp</dimen>
 
     <dimen name="linear_avail_package_height">220dp</dimen>
     <dimen name="animate_to_value">170dp</dimen>
     <dimen name="margin_top_provider_profile">20dp</dimen>
     <dimen name="spb_stroke_width">4dp</dimen>
+    <dimen name="left_margin_in_invoice">30dp</dimen>
+    <dimen name="right_margin_in_invoice">30dp</dimen>
 
 
 </resources>

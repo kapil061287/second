@@ -1,6 +1,7 @@
 package com.depex.okeyclick.user.screens;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -28,6 +29,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +43,9 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
     @BindView(R.id.eng_lng_button)
     Button eng_button;
     SharedPreferences preferences;
-    AlertDialog dialog;
+
+
+    SpotsDialog dialog;
 
 
     @Override
@@ -54,9 +58,13 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
         //set onClick listener
         onClickListener(spanish_btn, eng_button);
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
-        AlertDialog.Builder builder=new AlertDialog.Builder(this, R.style.AppTheme_AlertDialog);
+        /*AlertDialog.Builder builder=new AlertDialog.Builder(this, R.style.AppTheme_AlertDialog);
         builder.setView(LayoutInflater.from(this).inflate(R.layout.progressbar_layout, null, false));
-        dialog=builder.create();
+        dialog=builder.create();*/
+        dialog=new SpotsDialog(this);
+
+        dialog.setTitle("Please Wait...");
+
     }
 
 
@@ -83,6 +91,7 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()){
 
             case R.id.spanish_lang_btn:
+
                 isLogin=preferences.getBoolean("isLogin", false);
                 preferences.edit().putString("locale", "es_us").apply();
 
@@ -155,6 +164,7 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
                                 startActivity(intent);
 
                             }else{
+                                dialog.dismiss();
                                 preferences.edit()
                                         .remove("isLogin")
                                         .remove("fullname")
@@ -182,6 +192,7 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         Log.e("responseDataError", t.toString());
+                        dialog.dismiss();
                     }
                 });
     }
