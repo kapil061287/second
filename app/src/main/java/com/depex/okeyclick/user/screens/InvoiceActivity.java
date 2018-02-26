@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.braintreepayments.api.BraintreeFragment;
 import com.braintreepayments.api.Json;
 import com.braintreepayments.api.PayPal;
+import com.braintreepayments.api.dropin.DropInActivity;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.dropin.utils.PaymentMethodType;
@@ -122,6 +123,9 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     String taskKeyStr;
     String updateTotal;
     String updateSubTotal;
+    private String subCategoryPriceStr;
+    private String packagePriceStr;
+    private String spPriceStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +154,10 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         customerNameStr=bundle.getString("cs_name");
         createdDateStr=bundle.getString("created_date");
         taskKeyStr=bundle.getString("task_key");
+        subCategoryPriceStr=bundle.getString("subcategory_price");
+        packagePriceStr=bundle.getString("package_price");
+        spPriceStr=bundle.getString("sp_price");
+
 
 
 
@@ -179,7 +187,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.cancel_coupen:
-
+                cancelCoupon(coupenText.getText().toString());
                 break;
             case R.id.apply_btn:
                 applyCoupen(applyCouponEdit.getText().toString());
@@ -194,7 +202,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     private void onBrainTreeSubmit() {
         DropInRequest dropInRequest=new DropInRequest().clientToken("eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiI4YmUyZTcyODFmZDEyZTAzYWRmMWVmNTRlN2E2Mjg1YzgwNTI1ZDBiNzBmMmE5MjdmNjMyMGVjMGJlNTc1MWIwfGNyZWF0ZWRfYXQ9MjAxOC0wMi0yMlQwNTo1MTo0Mi40NzQyMDgyMjUrMDAwMFx1MDAyNm1lcmNoYW50X2lkPXFneWJobmdxd3R5bndibWtcdTAwMjZwdWJsaWNfa2V5PWdtaHltd3g2NnN4YjJ2ZGYiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvcWd5YmhuZ3F3dHlud2Jtay9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzL3FneWJobmdxd3R5bndibWsvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tL3FneWJobmdxd3R5bndibWsifSwidGhyZWVEU2VjdXJlRW5hYmxlZCI6dHJ1ZSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiRGVwZXggVGVjaG5vbG9naWVzIiwiY2xpZW50SWQiOm51bGwsInByaXZhY3lVcmwiOiJodHRwOi8vZXhhbXBsZS5jb20vcHAiLCJ1c2VyQWdyZWVtZW50VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3RvcyIsImJhc2VVcmwiOiJodHRwczovL2Fzc2V0cy5icmFpbnRyZWVnYXRld2F5LmNvbSIsImFzc2V0c1VybCI6Imh0dHBzOi8vY2hlY2tvdXQucGF5cGFsLmNvbSIsImRpcmVjdEJhc2VVcmwiOm51bGwsImFsbG93SHR0cCI6dHJ1ZSwiZW52aXJvbm1lbnROb05ldHdvcmsiOnRydWUsImVudmlyb25tZW50Ijoib2ZmbGluZSIsInVudmV0dGVkTWVyY2hhbnQiOmZhbHNlLCJicmFpbnRyZWVDbGllbnRJZCI6Im1hc3RlcmNsaWVudDMiLCJiaWxsaW5nQWdyZWVtZW50c0VuYWJsZWQiOnRydWUsIm1lcmNoYW50QWNjb3VudElkIjoiZGVwZXh0ZWNobm9sb2dpZXMiLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwibWVyY2hhbnRJZCI6InFneWJobmdxd3R5bndibWsiLCJ2ZW5tbyI6Im9mZiJ9")
                 .amount(totalAmount2.getText().toString());
-        dropInRequest.requestThreeDSecureVerification(true)
+        dropInRequest
                 .collectDeviceData(true)
                 .googlePaymentRequest(getGooglePaymentRequest())
                 .paypalAdditionalScopes(Collections.singletonList(PayPal.SCOPE_ADDRESS))
@@ -204,7 +212,10 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                 .androidPayAllowedCountriesForShipping("US");
         Intent dropInIntent=dropInRequest.getIntent(this);
         startActivityForResult(dropInIntent, 1);
+
+
     }
+
 
     public void applyCoupen(final String coupen){
         JSONObject requestData=new JSONObject();
@@ -303,8 +314,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -323,8 +334,10 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
                 Log.i("responseData", "Nonce : "+nonce);
 
+            }else {
+                Exception error=(Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
+                Log.e("dropInError", error.toString());
             }
-
         }
     }
 
@@ -332,7 +345,67 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
             setVisiblity(View.GONE, applyCouponLinearLayout, paymentBtn, cancelBtn);
             setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
             BottomSheetDialog dialog=new BottomSheetDialog(this);
+            sendConfirmationToSp("success");
+    }
 
+    private void sendConfirmationToSp(String success) {
+
+        JSONObject requestData=new JSONObject();
+        JSONObject data=new JSONObject();
+        try {
+            data.put("v_code", getString(R.string.v_code));
+            data.put("userToken", preferences.getString("userToken", "0"));
+            data.put("user_id", preferences.getString("user_id", "0"));
+            data.put("task_id", preferences.getString("task_id", "0"));
+            data.put("subcategory_price", subCategoryPriceStr);
+            data.put("package_price", packagePriceStr);
+            data.put("sp_price", spPriceStr);
+            data.put("city_tax", cityTaxStr);
+            data.put("service_tax", serviceTaxStr);
+            data.put("base_fare", baseFareStr);
+            data.put("subtotal", subtotalStr);
+            data.put("total", totalStr);
+            data.put("payment_method", "COD");
+            data.put("payment_status", success);
+            data.put("applied_coupon", applyCouponEdit.getText().toString());
+            data.put("task_WDuration", taskDurationStr);
+            requestData.put("RequestData", data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new Retrofit.Builder()
+                .addConverterFactory(new StringConvertFactory())
+                .baseUrl(Utils.SITE_URL)
+                .build()
+                .create(ProjectAPI.class)
+                .paymentProcess(requestData.toString())
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        String responseString=response.body();
+                        Log.i("responseData", responseString+"");
+                        if(responseString==null)return;
+                        try {
+                            JSONObject res=new JSONObject(responseString);
+                            boolean success=res.getBoolean("successBool");
+                            if(success){
+                                startReviewBottomSheet();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
+    }
+
+    private void startReviewBottomSheet() {
 
     }
 

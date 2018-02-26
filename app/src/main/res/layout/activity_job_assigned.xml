@@ -252,7 +252,7 @@
         android:layout_height="60dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="#ffffffff"
+        android:background="@drawable/connecting_back"
         android:id="@+id/connecting_nearest"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -264,7 +264,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_horizontal"
             android:layout_marginLeft="35dp"
-            android:text="Connecting Nearest 5 provider..."
+
+            android:drawableLeft="@drawable/user_icon"
+            android:gravity="center_vertical"
+            android:text="@string/connecting_nearest_5_provider"
             android:textColor="#ff000000"
             android:textSize="16dp" />
     </LinearLayout>

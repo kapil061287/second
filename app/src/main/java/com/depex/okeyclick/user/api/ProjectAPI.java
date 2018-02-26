@@ -65,4 +65,7 @@ public interface ProjectAPI {
     @POST("report_issue.php")
     Call<String> reportIssue(@Body String body);
 
+    @POST("payment_process.php")
+    Call<String> paymentProcess(@Body String body);
+
 }

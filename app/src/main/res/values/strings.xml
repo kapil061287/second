@@ -63,4 +63,5 @@
     <string name="submit">Submit</string>
     <string name="feedback_revert">\"Our Customer Service Team will responde to you in less than 48 hours\"</string>
     <string name="customer_care_number">Customer Care Number</string>
+    <string name="connecting_nearest_5_provider">Connecting Nearest 5 provider...</string>
 </resources>

@@ -12,11 +12,16 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.depex.okeyclick.user.R;
+import com.depex.okeyclick.user.database.NotificationHelperDatabase;
 import com.depex.okeyclick.user.screens.InvoiceActivity;
 import com.depex.okeyclick.user.screens.NotificationActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
 import java.util.Map;
 
 
@@ -24,14 +29,15 @@ public class OkeyMessagingService extends FirebaseMessagingService {
 
     SharedPreferences preferences;
 
+    NotificationHelperDatabase database;
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String address=remoteMessage.getFrom();
         Log.i("remoteMessage","From : " +address);
         Log.i("remoteMessage", "Message Data Payload : "+remoteMessage.getData());
-
+        if(remoteMessage.getData().get("notification_type")==null)return;
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
-
+        database=new NotificationHelperDatabase(this);
         boolean inCustomerTimeActivity=preferences.getBoolean("inCustomerTimeActivity", false);
         Map<String, String > map=remoteMessage.getData();
 
@@ -41,16 +47,34 @@ public class OkeyMessagingService extends FirebaseMessagingService {
                 Intent intent=createIntentForInvoice(bundle);
                 startActivity(intent);
             }
-
-
-
         }else{
             if("invoice".equalsIgnoreCase(map.get("notification_type"))){
                 sendNotification(map, map.get("msg"), "Invoice");
             }
-
         }
 
+        if("invoice".equalsIgnoreCase(map.get("notification_type"))){
+            Date date=new Date();
+            String msg=remoteMessage.getData().get("msg");
+            String notifyData=jsonFromMap(map).toString();
+            long id=database.insert("invoice", msg, notifyData, date);
+            Log.i("responseData", id+"");
+        }
+
+    }
+
+    JSONObject jsonFromMap(Map<String, String> map){
+        JSONObject jsonObject=new JSONObject();
+        try {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+
+                jsonObject.put(entry.getKey(), entry.getValue());
+
+            }
+        }catch (Exception e){
+                Log.e("responseDataError", e.toString());
+        }
+        return jsonObject;
     }
 
 

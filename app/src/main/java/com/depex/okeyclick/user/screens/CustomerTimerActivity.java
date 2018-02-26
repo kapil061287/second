@@ -23,6 +23,8 @@ import com.depex.okeyclick.user.factory.StringConvertFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -47,6 +49,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
     private boolean isStartJob;
 
     boolean isInProgress=true;
+    boolean imageChange=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +63,8 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         setSupportActionBar(toolbar);
 
-
-
         mytask=new Mytask();
-        mytask.execute();
+        mytask.execute(1);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +180,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                                     case 7:
                                             isFinishJob=true;
                                             isTimerStart=false;
-
+                                            imageChange=true;
                                         //Finish the job
                                         break;
                                 }
@@ -217,17 +218,20 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                     }catch (InterruptedException e){
                         Log.e("responseDataError", e.toString());
                     }
+                }else {
+                    if(imageChange){
+                        timer_image.setBackgroundResource(R.drawable.progress_icon_2);
+                    }
                 }
        // }
     }
 
     private boolean isResponse=true;
 
-
     class Mytask extends AsyncTask<Integer , Integer, Integer>{
         @Override
         protected Integer doInBackground(Integer... integers) {
-            int i=1;
+            int i=integers[0];
             while (isInProgress){
                 if(isTimerStart) {
                     try {
@@ -268,14 +272,31 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         boolean isFinishJob;
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
+        stopAllService();
+    }
+
+    public void stopAllService(){
         isResponse=false;
         isInProgress=false;
         isTimerStart=false;
         isFinishJob=true;
         preferences.edit().putBoolean("inCustomerTimeActivity", false).apply();
+        SharedPreferences preferences1=getSharedPreferences("timer_job_pref", MODE_PRIVATE);
+        preferences1.edit().putString("timeAtStopJob", timer_text.getText().toString()).apply();
+        preferences1.edit().putLong("currentTimeMillis", new Date().getTime()).apply();
         mytask.cancel(true);
+    }
+
+
+    public void  startService(){
+        SharedPreferences preferences=getSharedPreferences("timer_job_pref", MODE_PRIVATE);
+        String time_Start=preferences.getString("timeAtStopJob", null);
+
+        if(time_Start!=null){
+            isResponse=true;
+        }
     }
 
 }
