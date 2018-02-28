@@ -1,5 +1,6 @@
 package com.depex.okeyclick.user.screens;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -43,6 +44,16 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.sp_name_customer_timer)
+    TextView spName;
+
+    @BindView(R.id.service_name_timer)
+    TextView serviceNameTimer;
+
+    @BindView(R.id.sp_address_timer)
+    TextView addressTimer;
+
     private boolean isTimerStart=false;
 
     Mytask mytask;
@@ -73,6 +84,18 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         });
         timer_text.setTypeface(typeface);
     }
+
+
+    private void veiwProfile(String spId) {
+        Bundle bundle=new Bundle();
+        bundle.putString("sp_id", spId);
+        Intent intent=new Intent(this, ServiceProviderProfileActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+
+
 
     @Override
     public void onClick(View view) {
@@ -114,6 +137,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         preferences.edit().putBoolean("inCustomerTimeActivity", true).apply();
     }
 
+
     private void checkServiceProviderRunningStatus() {
 
         JSONObject requestData=new JSONObject();
@@ -151,6 +175,13 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                             if(success){
                                 JSONObject resObj=res.getJSONObject("response");
                                 int task_status=resObj.getInt("task_status");
+
+                                JSONObject spData=resObj.getJSONObject("sp_Data");
+                                String firstName=spData.getString("first_name");
+                                spName.setText("Mr. "+firstName);
+                                //String serviceName
+
+
                                 switch (task_status){
                                     case 1:
 
@@ -161,7 +192,6 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                                         //Accepted
                                         break;
                                     case 3:
-
                                         //Start Journey
                                         break;
                                     case 4:
@@ -202,10 +232,12 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                 });
     }
 
+
+/*
     private void startTimer(int i) {
-       /* int i=1;
+       *//* int i=1;
         while (isTimerStart)
-        {*/
+        {*//*
        //int i=1;
                 if(isTimerStart) {
                     try {
@@ -219,12 +251,10 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                         Log.e("responseDataError", e.toString());
                     }
                 }else {
-                    if(imageChange){
-                        timer_image.setBackgroundResource(R.drawable.progress_icon_2);
-                    }
+
                 }
        // }
-    }
+    }*/
 
     private boolean isResponse=true;
 
@@ -243,6 +273,9 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                     }
                 }else {
                     publishProgress();
+                    if(imageChange){
+                        timer_image.setBackgroundResource(R.drawable.progress_icon_2);
+                    }
                 }
             }
             return null;
@@ -298,5 +331,4 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
             isResponse=true;
         }
     }
-
 }

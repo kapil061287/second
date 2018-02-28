@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
@@ -39,6 +40,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.maps.android.PolyUtil;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 
@@ -69,8 +71,6 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     String spId;
     String spLatitude;
     String spLngtitud;
-
-
     Marker customerMarker;
     String spName;
     Marker Spmarker;
@@ -80,6 +80,8 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     ConstraintLayout parentLayout;
 
     SharedPreferences preferences;
+    String profilePicUrl;
+    RoundedImageView profilePicImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         task_id = preferences.getString("task_id", "0");
         //textView = findViewById(R.id.pending_request_txt);
         spNameText = findViewById(R.id.sp_name);
+        profilePicImageView=findViewById(R.id.profile_pic_activity_job_assigned);
         myTask = new MyTask();
         connetingNearst = findViewById(R.id.connecting_nearest);
         viewProfile = findViewById(R.id.view_profile_btn);
@@ -173,19 +176,16 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         this.googleMap = googleMap;
         Bundle bundle=getIntent().getExtras();
         double lat=bundle.getDouble("lat");
         double lng=bundle.getDouble("lng");
-
         JobAssignedActivity.this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15f));
-
     }
 
 
 
-
+//check is accept request
 
     public void check() {
 
@@ -226,7 +226,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                 profileLinearLayout.setVisibility(View.VISIBLE);
                                 getSupportActionBar().setTitle("Job ID : " + task_id);
                                 preferences.edit().putString("task_id", task_id).apply();
-
+                                preferences.edit().putBoolean("taskAccepted", true).apply();
 
                                 //Setter gettter for service provider information !
 
@@ -236,6 +236,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                 setSpLngtitud(resData.getString("sp_longitude"));
                                 setSpName(resData.getString("sp_name"));
                                 setSpId(resData.getString("sp_id"));
+                                setProfilePicUrl(resData.getString("sp_profile"));
 
                                 if(Spmarker!=null){
                                     Spmarker.remove();
@@ -281,7 +282,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                            Log.e("responseDataError", t.toString());
                     }
                 });
     }
@@ -337,6 +338,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                     case 4:
                                         //Reached ..
                                         isArrived=true;
+                                        isTracking=false;
                                         startTimer();
                                         break;
                                 }
@@ -479,6 +481,16 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         return spName;
     }
 
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
+        GlideApp.with(this).load(profilePicUrl).into(profilePicImageView);
+    }
+
+
     public void setSpName(String spName) {
         spNameText.setText(spName);
         this.spName = spName;
@@ -507,31 +519,6 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     public void setSpId(String spId) {
         this.spId = spId;
     }
-
-
-
-/*
-    public class TrackSp extends AsyncTask<Integer, Integer, Integer>{
-
-        boolean isTracking=true;
-
-        @Override
-        protected Integer doInBackground(Integer... integers) {
-
-            //trackSp();
-            Log.i("responseData", "Tracking Service Provider");
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            isTracking=false;
-        }
-
-
-    }*/
-
-
 
 
     public void setVisible(int visible, View... view){
@@ -624,14 +611,13 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         updateCall.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.i("responseData", response.body());
+                Log.i("responseData","Send Token To Server : "+response.body());
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                    Log.e("responseDataError", "Send Token To Server : "+t.toString());
             }
         });
     }
-
 }

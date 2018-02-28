@@ -6,16 +6,21 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.adpater.NotificationAdapter;
 import com.depex.okeyclick.user.adpater.NotificationItemClickListenter;
-import com.depex.okeyclick.user.database.NotificationHelperDatabase;
+import com.depex.okeyclick.user.database.OkeyClickDatabaseHelper;
 import com.depex.okeyclick.user.model.Notification;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,14 +38,14 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
 
     Toolbar toolbar;
 
-    NotificationHelperDatabase notificationHelperDatabase;
+    OkeyClickDatabaseHelper okeyClickDatabaseHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
         ButterKnife.bind(this);
         toolbar=findViewById(R.id.toolbar);
-        notificationHelperDatabase=new NotificationHelperDatabase(this);
+        okeyClickDatabaseHelper =new OkeyClickDatabaseHelper(this);
 
 
 
@@ -67,12 +72,13 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
     }
 
     private void initNotification() {
-        Cursor cursor=notificationHelperDatabase.getNotifications();
+        Cursor cursor= okeyClickDatabaseHelper.getNotifications();
         List<Notification> notifications= new ArrayList<>();
         if(cursor.moveToFirst()) {
 
             notificationAlarmImage.setVisibility(View.GONE);
             notificationText.setVisibility(View.GONE);
+
             do {
                     String id=cursor.getString(0);
                     String notifyType=cursor.getString(1);
@@ -98,6 +104,32 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
 
     @Override
     public void onNotificationItemClick(Notification notification) {
+        Log.i("responseData", "NotifyData : "+notification.getNotifyData());
+        String notifyData=notification.getNotifyData();
+        try {
+            JSONObject notifyDataJson=new JSONObject(notifyData);
+            Bundle bundle=createBundleFromJson(notifyDataJson);
+            startInvoiceActivity(bundle);
+        } catch (JSONException e) {
+            Log.e("responseDataError", e.toString());
+        }
+    }
 
+
+    Bundle createBundleFromJson(JSONObject jsonObject) throws JSONException {
+        Iterator<String> iterator=jsonObject.keys();
+            Bundle bundle = new Bundle();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                bundle.putString(key, jsonObject.getString(key));
+            }
+            return bundle;
+    }
+
+
+    public void startInvoiceActivity(Bundle bundle){
+        Intent invoiceIntent=new Intent(this, InvoiceActivity.class);
+        invoiceIntent.putExtras(bundle);
+        startActivity(invoiceIntent);
     }
 }

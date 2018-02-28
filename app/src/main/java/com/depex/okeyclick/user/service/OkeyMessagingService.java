@@ -12,13 +12,11 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.depex.okeyclick.user.R;
-import com.depex.okeyclick.user.database.NotificationHelperDatabase;
+import com.depex.okeyclick.user.database.OkeyClickDatabaseHelper;
 import com.depex.okeyclick.user.screens.InvoiceActivity;
-import com.depex.okeyclick.user.screens.NotificationActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -29,7 +27,7 @@ public class OkeyMessagingService extends FirebaseMessagingService {
 
     SharedPreferences preferences;
 
-    NotificationHelperDatabase database;
+    OkeyClickDatabaseHelper database;
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String address=remoteMessage.getFrom();
@@ -37,7 +35,7 @@ public class OkeyMessagingService extends FirebaseMessagingService {
         Log.i("remoteMessage", "Message Data Payload : "+remoteMessage.getData());
         if(remoteMessage.getData().get("notification_type")==null)return;
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
-        database=new NotificationHelperDatabase(this);
+        database=new OkeyClickDatabaseHelper(this);
         boolean inCustomerTimeActivity=preferences.getBoolean("inCustomerTimeActivity", false);
         Map<String, String > map=remoteMessage.getData();
 

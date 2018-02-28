@@ -145,10 +145,18 @@ public class HomeActivity extends AppCompatActivity
             Intent intent=new Intent(this, LoginActivity.class);
             startActivity(intent);
             break;
+        case R.id.service_history_menu:
+            startServiceHistoryActivity();
+            break;
     }
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startServiceHistoryActivity() {
+        Intent intent=new Intent(this, ServiceHistoryActivity.class);
+        startActivity(intent);
     }
 
     @Override

@@ -109,7 +109,13 @@
                 <data android:scheme="${applicationId}.braintree" />
             </intent-filter>
         </activity>
-        <activity android:name=".screens.JobAssignByNotification"></activity>
+        <activity
+            android:name=".screens.JobAssignByNotification"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.ServiceHistoryActivity"
+            android:label="@string/title_activity_service_history"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

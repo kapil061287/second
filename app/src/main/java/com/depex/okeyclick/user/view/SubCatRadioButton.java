@@ -4,9 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.RadioButton;
 
-/**
- * Created by we on 2/10/2018.
- */
+
 
 public class SubCatRadioButton extends ViewRender<String> {
 

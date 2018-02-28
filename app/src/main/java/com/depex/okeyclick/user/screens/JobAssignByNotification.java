@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.maps.android.PolyUtil;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,6 +78,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     ConstraintLayout parentLayout;
     SharedPreferences preferences;
 
+    RoundedImageView profilePic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +86,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         preferences = getSharedPreferences("service_pref_user", MODE_PRIVATE);
         String token= FirebaseInstanceId.getInstance().getToken();
         Log.i("tokenR", token);
+        profilePic=findViewById(R.id.profile_pic_activity_job_assigned);
         sendTokenToserver(token);
         task_id = preferences.getString("task_id", "0");
         //textView = findViewById(R.id.pending_request_txt);

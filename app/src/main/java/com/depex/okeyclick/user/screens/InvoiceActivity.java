@@ -132,6 +132,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invoice);
         Toolbar toolbar =  findViewById(R.id.toolbar);
+        toolbar.setTitle("Invoice");
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
@@ -385,7 +386,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String responseString=response.body();
-                        Log.i("responseData", responseString+"");
+                        Log.i("responseData", "Confirm Sp Payment : "+responseString+"");
                         if(responseString==null)return;
                         try {
                             JSONObject res=new JSONObject(responseString);

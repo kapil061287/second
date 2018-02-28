@@ -1,9 +1,14 @@
 package com.depex.okeyclick.user.api;
 import com.google.gson.JsonObject;
+
+import java.io.File;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ProjectAPI {
@@ -68,4 +73,6 @@ public interface ProjectAPI {
     @POST("payment_process.php")
     Call<String> paymentProcess(@Body String body);
 
+    @POST("get_all_taskCS.php")
+    Call<String> getServiceHistory(@Body String body);
 }

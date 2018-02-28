@@ -1,7 +1,6 @@
 package com.depex.okeyclick.user.fragment;
 
 import android.Manifest;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,7 +17,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,14 +26,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.autofill.AutofillValue;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.depex.okeyclick.user.database.OkeyClickDatabaseHelper;
 import com.depex.okeyclick.user.model.UserPackage;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.adpater.PackageRecyclerAdapter;
@@ -65,7 +61,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -86,6 +81,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -112,9 +108,12 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     UserPackage userPackage;
     Button bookNowBtn;
     Button bookLaterBtn;
+    Menu menu;
+    MenuItem menuItem;
     ConstraintLayout constraintLayout;
     ArrayList<Marker> markers = new ArrayList<>();
-    String json;
+    OkeyClickDatabaseHelper databaseHelper;
+    SpotsDialog spotsDialog;
 
     @Nullable
     @Override
@@ -123,33 +122,15 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapfragment);
         mapFragment.getMapAsync(this);
         Toolbar toolbar = getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
-        Menu menu = toolbar.getMenu();
-        progressBar=view.findViewById(R.id.progress_bar_avail);
+        menu = toolbar.getMenu();
+        //progressBar=view.findViewById(R.id.progress_bar_avail);
         linearLayout=view.findViewById(R.id.bottom_panel_avail_fragment);
-
-
-        MenuItem menuItem = menu.add(/*groupid*/1,/*Itemid*/1,/*Order*/1,/*Title*/"Pick a Location");
-
+        databaseHelper=new OkeyClickDatabaseHelper(context);
         linearLayout.findViewById(R.id.done_btn_availfragment).setOnClickListener(this);
-        menuItem.setIcon(R.drawable.ic_location_on_black_24dp);
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         constraintLayout=view.findViewById(R.id.parent_constraint_layout);
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                PlaceAutocomplete.IntentBuilder intentBuilder = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY);
-                try {
-                    Intent intent = intentBuilder.build(getActivity());
-                    startActivityForResult(intent, 1);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-        });
 
+
+        spotsDialog=new SpotsDialog(context);
 
 
 
@@ -196,16 +177,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         };
 
 
-      /*  PlaceAutocomplete.IntentBuilder intentBuilder=new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY);
-        try {
-            Intent intent=intentBuilder.build(getActivity());
-            startActivityForResult(intent, 1);
 
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }*/
 
 
         recyclerView = view.findViewById(R.id.recycler_view_package);
@@ -240,10 +212,36 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onResume() {
         super.onResume();
+
+        if(menuItem==null) {
+            menuItem = menu.add(/*groupid*/1,/*Itemid*/1,/*Order*/1,/*Title*/"Pick a Location");
+
+
+            menuItem.setIcon(R.drawable.ic_location_on_black_24dp);
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    PlaceAutocomplete.IntentBuilder intentBuilder = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY);
+                    try {
+                        Intent intent = intentBuilder.build(getActivity());
+                        startActivityForResult(intent, 1);
+                    } catch (GooglePlayServicesRepairableException e) {
+                        e.printStackTrace();
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+            });
+        }
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
+
        // client.requestLocationUpdates(locationRequest, mLocationCallback, null);
     }
 
@@ -252,7 +250,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
     }
-
 
     public void changeLocation(Location location) {
         if(location==null)return;
@@ -302,31 +299,19 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onStop() {
         super.onStop();
+        menuItem=null;
         client.removeLocationUpdates(mLocationCallback);
         Toolbar toolbar=getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
         toolbar.getMenu().removeItem(1);
-    }
-
-    /*@Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
 
     }
 
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }*/
 
     @Override
     public void success(Call<JsonObject> call, Response<JsonObject> response, Object... objects) {
         if (response == null)
             return;
-        Log.i("responseData", response.body().toString());
+        Log.i("responseData","From Avail Fragment Line 328"+ response.body().toString());
         JsonObject res = response.body();
         boolean success = res.get("successBool").getAsBoolean();
         if (success) {
@@ -343,97 +328,12 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         }
     }
 
-
-   /* public void startDownAnimation(View v){
-
-        v.setVisibility(View.GONE);
-        linearLayout.findViewById(R.id.description_content_txt_avail_fragment).setVisibility(View.GONE);
-        linearLayout.findViewById(R.id.description_text_avail_fragment).setVisibility(View.GONE);
-        linearLayout.findViewById(R.id.book_btn_book_later_btn_avail_fram_layout).setVisibility(View.VISIBLE);
-
-        final ValueAnimator animator=ValueAnimator.ofInt(currentHeight, getResources().getDimensionPixelSize(R.dimen.linear_avail_package_height));
-        animator.setDuration(1000);
-        animator.start();
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int value= (int) valueAnimator.getAnimatedValue();
-                Log.i("valueAnimator", String.valueOf(value));
-                //ViewGroup.LayoutParams params=linearLayout.getLayoutParams();
-                //params.height=value;
-                //linearLayout.setLayoutParams(params);
-                //isAnimate=false;
-            }
-        });
-    }*/
-
-
-  /*  public void startUpAnimation(){
-        final ViewGroup.LayoutParams layoutParams=linearLayout.getLayoutParams();
-        final int height=layoutParams.height;
-        final ValueAnimator animator=ValueAnimator.ofInt(getResources().getDimensionPixelSize(R.dimen.animate_from_value), getResources().getDimensionPixelSize(R.dimen.animate_to_value));
-        //ValueAnimator animator=ValueAnimator.ofInt(0,50);
-        animator.setDuration(1000);
-        animator.start();
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int value= (int) valueAnimator.getAnimatedValue();
-                layoutParams.height=height+value;
-                linearLayout.setLayoutParams(layoutParams);
-                FrameLayout frameLayout=linearLayout.findViewById(R.id.book_btn_book_later_btn_avail_fram_layout);
-                frameLayout.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                final TextView description =linearLayout.findViewById(R.id.description_text_avail_fragment);
-                TextView description_content=linearLayout.findViewById(R.id.description_content_txt_avail_fragment);
-                description.measure(description.getLayoutParams().width, description.getLayoutParams().height);
-                description_content.measure(description_content.getLayoutParams().width, description_content.getLayoutParams().height);
-                Button doneButton=linearLayout.findViewById(R.id.done_btn_availfragment);
-                doneButton.measure(doneButton.getLayoutParams().width, doneButton.getLayoutParams().height);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    description.getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
-                        @Override
-                        public void onDraw() {
-                            Log.i("valueAnimator", "View is ready !");
-                            Log.i("valueAnimator", "View Height : "+description.getHeight());
-                        }
-                    });
-                }
-                int measureFramelayoutHeight=frameLayout.getMeasuredHeight();
-                int measureDescriptionTextViewHeight=description.getMeasuredHeight();
-                int measureDescriptionContentTextViewHeight=description_content.getMeasuredHeight();
-                int measureDoneBtn=doneButton.getMeasuredHeight();
-                
-
-
-                int totalHeight=measureDescriptionTextViewHeight+measureDescriptionContentTextViewHeight+measureDoneBtn;
-
-                if(value>=totalHeight){
-                    Log.i("valueAnimator", "Total Height : "+totalHeight+" Value : "+value+" Des H : "+measureDescriptionTextViewHeight+" des cont H : "+measureDescriptionContentTextViewHeight+" done Btn H : "+measureDoneBtn);
-                    doneButton.setVisibility(View.VISIBLE);
-                    description.setVisibility(View.VISIBLE);
-                    description_content.setVisibility(View.VISIBLE);
-                    isAnimate=true;
-                    currentHeight=linearLayout.getLayoutParams().height;
-                    animator.cancel();
-                }
-            }
-        });
-    }
-*/
-
-
     @Override
     public void onPackageClick(final UserPackage userPackage) {
 
 
 
         this.userPackage = userPackage;
-
-        /*AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setMessage(userPackage.getPackageDescription());
-        builder.setTitle("Package Description");
-        builder.setPositiveButton("Done", null);
-        builder.create().show();*/
 
 
         final BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(context);
@@ -453,17 +353,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         bottomSheetDialog.show();
 
 
-        /*if(!isAnimate) {
-            startUpAnimation();
-        }else {
-            boolean isFrameLayoutVisible=linearLayout.findViewById(R.id.book_btn_book_later_btn_avail_fram_layout).getVisibility()==View.VISIBLE;
-            if(isFrameLayoutVisible){
-                linearLayout.findViewById(R.id.book_btn_book_later_btn_avail_fram_layout).setVisibility(View.GONE);
-                linearLayout.findViewById(R.id.description_text_avail_fragment).setVisibility(View.VISIBLE);
-                linearLayout.findViewById(R.id.description_content_txt_avail_fragment).setVisibility(View.VISIBLE);
-                linearLayout.findViewById(R.id.done_btn_availfragment).setVisibility(View.VISIBLE);
-            }
-        }*/
 
         if(location!=null){
             getAvailableServiceProvider(location,userPackage);
@@ -473,33 +362,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
 
 
-        /*linearLayout.animate()
-                .setDuration(500)
-                .translationY(0f)
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animator) {
-                            ViewGroup.LayoutParams params=linearLayout.getLayoutParams();
-                            params.height=params.height+200;
-                            linearLayout.setLayoutParams(params);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animator) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animator) {
-
-                    }
-                });
-*/
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -596,7 +458,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             markers.add(marker);
                         }
                     }else {
-                        Toast.makeText(context, "Sorry! No Service Provider available on this location", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Sorry! No Service Provider ", Toast.LENGTH_LONG).show();
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -622,7 +485,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String responseString=response.body();
-                Log.i("responseData", responseString);
+                Log.i("responseData", "Create Request API : "+responseString);
                 try {
                     JSONObject res= new JSONObject(responseString);
                     boolean success=res.getBoolean("successBool");
@@ -631,18 +494,17 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                         String task_id=responseObj.getString("task_id");
                         Bundle bundle=new Bundle();
                         bundle.putString("task_id", task_id);
-                        progressBar.setVisibility(View.GONE);
-
                         Bundle bundle1=new Bundle();
+                        preferences.edit().putString("task_id", task_id).apply();
+                        databaseHelper.taskInsert("created", task_id, null, null, preferences.getString("user_id", "0"));
                         bundle1.putDouble("lat", AvailServiceProviderFragment.this.location.getLatitude());
                         bundle1.putDouble("lng", AvailServiceProviderFragment.this.location.getLongitude());
-
                         Intent intent=new Intent(context, JobAssignedActivity.class);
                         intent.putExtras(bundle1);
-                        preferences.edit().putString("task_id", task_id).apply();
+                        spotsDialog.dismiss();
                         startActivity(intent);
                     }else{
-                        progressBar.setVisibility(View.GONE);
+                        spotsDialog.dismiss();
 
                         JSONObject errorObj=res.getJSONObject("ErrorObj");
                         String code=errorObj.getString("ErrorCode");
@@ -654,6 +516,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
                     }
                 } catch (JSONException e) {
+                    spotsDialog.dismiss();
                     Log.e("responseDataError", e.toString());
                 }
             }
@@ -661,7 +524,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e("responseError", t.toString());
-                progressBar.setVisibility(View.GONE);
+                spotsDialog.dismiss();
             }
         });
     }
@@ -672,6 +535,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         switch (view.getId()){
             case R.id.book_now_btn_avail_fragment:
                 if(location==null){
+                    spotsDialog.dismiss();
                     final Snackbar snackbar=Snackbar.make(view, "We are unable to pick your location please Select your location!", Snackbar.LENGTH_INDEFINITE);
                     snackbar.show();
                     snackbar.setAction("cancel", new View.OnClickListener() {
@@ -683,6 +547,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                     return;
                 }
                 if(userPackage==null){
+                    spotsDialog.dismiss();
                     final Snackbar snackbar=Snackbar.make(view, "Please Select your package!", Snackbar.LENGTH_INDEFINITE);
                     snackbar.show();
                     snackbar.setAction("cancel", new View.OnClickListener() {
@@ -694,7 +559,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 }
 
                     if(isLogin()){
-                        progressBar.setVisibility(View.VISIBLE);
+                       // progressBar.setVisibility(View.VISIBLE);
                         //Toast.makeText(context, "start booking ", Toast.LENGTH_LONG).show();
                         JSONObject jsonObject=new JSONObject();
                         try {
@@ -749,7 +614,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             case R.id.book_later_btn_avail_fragment:
                 break;
             case R.id.done_btn_availfragment:
-                //startDownAnimation(view);
+
                 break;
         }
     }
@@ -793,8 +658,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onDetach() {
         super.onDetach();
-
     }
-
 
 }
