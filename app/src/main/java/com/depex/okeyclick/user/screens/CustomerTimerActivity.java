@@ -273,9 +273,6 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                     }
                 }else {
                     publishProgress();
-                    if(imageChange){
-                        timer_image.setBackgroundResource(R.drawable.progress_icon_2);
-                    }
                 }
             }
             return null;
@@ -288,8 +285,11 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                 timer_text.setText(timerText);
                 Log.i("progressLog", "Task is in progress.... : " + timer_text.getText().toString());
                 //checkServiceProviderRunningStatus();
+            }if(!isTimerStart) {
+                if (imageChange) {
+                    timer_image.setBackgroundResource(R.drawable.progress_icon_2);
+                }
             }
-
             if(isResponse) {
                 isResponse=false;
                 checkServiceProviderRunningStatus();

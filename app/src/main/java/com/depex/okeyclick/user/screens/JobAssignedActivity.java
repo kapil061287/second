@@ -215,7 +215,9 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String responseString = response.body();
+
                         Log.i("responseDataIsAccept", "is accept request : " + responseString);
+                        if(responseString==null)return;
                         try {
                             JSONObject res = new JSONObject(responseString);
                             boolean success = res.getBoolean("successBool");

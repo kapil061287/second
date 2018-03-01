@@ -154,6 +154,7 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String responseString=response.body();
+                        if(responseString==null)return;
                         try {
                             JSONObject res=new JSONObject(responseString);
                             boolean success=res.getBoolean("successBool");

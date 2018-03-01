@@ -309,7 +309,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
     @Override
     public void success(Call<JsonObject> call, Response<JsonObject> response, Object... objects) {
-        if (response == null)
+        if (response.body() == null)
             return;
         Log.i("responseData","From Avail Fragment Line 328"+ response.body().toString());
         JsonObject res = response.body();
