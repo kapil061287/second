@@ -23,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_splash);
         //progressBar = findViewById(R.id.progressBar);
-        getSharedPreferences("service_pref_user", MODE_PRIVATE).edit().remove("from_book_screen").remove("createRequest").apply();
+        getSharedPreferences("service_pref_user", MODE_PRIVATE).edit().remove("from_book_screen").remove("createRequest").remove("requestTime").apply();
         new Thread(new Runnable() {
             @Override
             public void run() {

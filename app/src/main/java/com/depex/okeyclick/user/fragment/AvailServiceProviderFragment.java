@@ -351,12 +351,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         textView.setText(userPackage.getPackageDescription());
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
-
-
-
         if(location!=null){
             getAvailableServiceProvider(location,userPackage);
-
             return;
         }
 
@@ -430,6 +426,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                     }
                     markers.clear();
                 }
+
                 try {
                     JSONObject res=new JSONObject(responseString);
                     boolean success=res.getBoolean("successBool");
@@ -459,14 +456,11 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                         }
                     }else {
                         Toast.makeText(context, "Sorry! No Service Provider ", Toast.LENGTH_LONG).show();
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
-
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -492,13 +486,18 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                     if(success){
                         JSONObject responseObj=res.getJSONObject("response");
                         String task_id=responseObj.getString("task_id");
+                        String task_key=responseObj.getString("task_key");
                         Bundle bundle=new Bundle();
                         bundle.putString("task_id", task_id);
                         Bundle bundle1=new Bundle();
                         preferences.edit().putString("task_id", task_id).apply();
+                        preferences.edit().putString("task_key", task_key).apply();
                         databaseHelper.taskInsert("created", task_id, null, null, preferences.getString("user_id", "0"));
                         bundle1.putDouble("lat", AvailServiceProviderFragment.this.location.getLatitude());
                         bundle1.putDouble("lng", AvailServiceProviderFragment.this.location.getLongitude());
+                        bundle1.putString("category", data.getString("category"));
+                        bundle1.putString("subcategory", data.getString("subcategory"));
+                        bundle1.putString("package", userPackage.getId());
                         Intent intent=new Intent(context, JobAssignedActivity.class);
                         intent.putExtras(bundle1);
                         spotsDialog.dismiss();
@@ -512,8 +511,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             String msg=errorObj.getString("ErrorMsg");
                             Snackbar.make(constraintLayout, msg, Snackbar.LENGTH_INDEFINITE).setAction("OK", null).show();
                         }
-
-
                     }
                 } catch (JSONException e) {
                     spotsDialog.dismiss();
@@ -528,6 +525,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             }
         });
     }
+
 
 
     @Override
@@ -558,6 +556,12 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                     });
                 }
 
+                /*if(preferences.getInt("requestTime", 0)==1){
+                    //resendHitTohttp();
+                    return;
+                }*/
+
+
                     if(isLogin()){
                        // progressBar.setVisibility(View.VISIBLE);
                         //Toast.makeText(context, "start booking ", Toast.LENGTH_LONG).show();
@@ -576,11 +580,12 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             jsonObject.put("created_by", preferences.getString("user_id", "0"));
                             JSONObject requestData=new JSONObject();
                             requestData.put("RequestData", jsonObject);
-                            Log.i("requestDataCreate", jsonObject.toString());
+                            Log.i("requestDataCreate", "Create Request : "+jsonObject.toString());
                             sendHttpRequest(requestData);
                             preferences.edit()
                                     .putString("from_book_screen", jsonObject.toString())
-                                    .putBoolean("createRequest", true).apply();
+                                    .putBoolean("createRequest", true)
+                                    .apply();
                         }catch (Exception e){
                             Log.e("responseDataError", "Error brom Booking : "+e);
                         }
@@ -605,7 +610,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             startActivity(intent);
                             preferences.edit()
                                     .putString("from_book_screen", jsonObject.toString())
-                                    .putBoolean("createRequest", true).apply();
+                                    .putBoolean("createRequest", true)
+                                    .apply();
+
                         } catch (JSONException e) {
                             Log.e("responseDataError", "Error brom Booking : "+e);
                         }
@@ -618,6 +625,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 break;
         }
     }
+//TODO Resend api hit
+
 
 
     @Override
@@ -659,5 +668,4 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     public void onDetach() {
         super.onDetach();
     }
-
 }

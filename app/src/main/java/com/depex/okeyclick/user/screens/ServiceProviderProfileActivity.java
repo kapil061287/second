@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,12 +31,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class ServiceProviderProfileActivity extends AppCompatActivity {
+public class ServiceProviderProfileActivity extends AppCompatActivity implements View.OnClickListener {
     ViewPager viewPager;
     TabLayout tabLayout;
     String spId;
@@ -46,6 +50,9 @@ public class ServiceProviderProfileActivity extends AppCompatActivity {
     TextView perHourPrice;
     RatingBar ratingBar;
 
+    @BindView(R.id.cancel_btn)
+    Button cancelBtn;
+
     Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service_provider_profile);
         viewPager=findViewById(R.id.view_pager_profile);
         tabLayout=findViewById(R.id.tabs);
+        ButterKnife.bind(this);
         serviceProviderName=findViewById(R.id.service_provider_name);
         perHourPrice=findViewById(R.id.per_hour_price);
         ratingBar=findViewById(R.id.star_view_profile);
@@ -67,6 +75,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity {
         });
         roundedImageView=findViewById(R.id.user_image_provider_profile);
         Bundle bundle=getIntent().getExtras();
+        cancelBtn.setOnClickListener(this);
         if(bundle!=null){
             spId=bundle.getString("sp_id");
         }
@@ -145,6 +154,20 @@ public class ServiceProviderProfileActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.cancel_btn:
+                    startReasonActivity();
+                break;
+        }
+    }
+
+    private void startReasonActivity() {
+            Intent intent=new Intent(this, CancelTaskActivity.class);
+            startActivity(intent);
     }
 
     private class SectionPagerAdapter  extends FragmentPagerAdapter{

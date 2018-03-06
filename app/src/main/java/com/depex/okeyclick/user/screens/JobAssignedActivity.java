@@ -88,6 +88,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_assigned);
         preferences = getSharedPreferences("service_pref_user", MODE_PRIVATE);
+        preferences.edit().putInt("requestTime", 1).apply();
         String token= FirebaseInstanceId.getInstance().getToken();
         Log.i("tokenR", token);
         sendTokenToserver(token);
@@ -222,6 +223,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                             JSONObject res = new JSONObject(responseString);
                             boolean success = res.getBoolean("successBool");
                             if (success) {
+
                                 //progressBar.setVisibility(View.GONE);
                                 //textView.setVisibility(View.GONE);
                                 setVisible(View.GONE, findViewById(R.id.back_image), connetingNearst, findViewById(R.id.avl_loader));
@@ -270,8 +272,10 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                     snackbar.setAction("Resend", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
+                                            myTask.cancel(true);
+                                            resendHitTohttp();
                                             snackbar.dismiss();
-                                            finish();
+                                           //finish();
                                         }
                                     });
                                 }
@@ -284,10 +288,12 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        check();
                             Log.e("responseDataError", t.toString());
                     }
                 });
     }
+
 
     boolean isArrived;
 
@@ -354,7 +360,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                            checkServiceProviderRunningStatus();
                     }
                 });
     }
@@ -451,7 +457,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
                                     @Override
                                     public void onFailure(Call<String> call, Throwable t) {
-
+                                            createPolyline();
                                     }
                                 });
             //}
@@ -568,6 +574,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
                             }
                         } catch (Exception e) {
+
                             Log.e("responseDataError", e.toString());
                             Toast.makeText(JobAssignedActivity.this, e.toString(), Toast.LENGTH_LONG).show();
                         }
@@ -575,6 +582,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        trackSp();
                                 Log.e("responseDataError", t.toString());
                     }
                 });
@@ -621,5 +629,58 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                     Log.e("responseDataError", "Send Token To Server : "+t.toString());
             }
         });
+    }
+
+    private void resendHitTohttp() {
+        double lat=getIntent().getExtras().getDouble("lat");
+        double lng=getIntent().getExtras().getDouble("lng");
+        String category=getIntent().getExtras().getString("category");
+        String subCategory=getIntent().getExtras().getString("subcategory");
+        String packageId=getIntent().getExtras().getString("package");
+
+        JSONObject data=new JSONObject();
+        JSONObject requestData=new JSONObject();
+        try {
+            data.put("v_code", getString(R.string.v_code))
+                    .put("apikey", getString(R.string.apikey))
+                    .put("category", category )
+                    .put("subcategory", subCategory)
+                    .put("package", packageId)
+                    .put("latitude", lat)
+                    .put("longitude", lng)
+                    .put("userToken", preferences.getString("userToken", "0"))
+                    .put("created_by", preferences.getString("user_id", "0"))
+                    .put("task_id", preferences.getString("task_id", "0"))
+                    .put("task_key", preferences.getString("task_key", "0"));
+
+            requestData.put("RequestData", data);
+            Log.i("requestData", "Resend Request : "+requestData.toString());
+
+        } catch (JSONException e) {
+            Log.e("responseDataError", e.toString());
+        }
+
+
+        new Retrofit.Builder()
+                .addConverterFactory(new StringConvertFactory())
+                .baseUrl(Utils.SITE_URL)
+                .build()
+                .create(ProjectAPI.class)
+                .resendRequest(requestData.toString())
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        breakJob=false;
+                        myTask=new MyTask();
+                        myTask.execute();
+                        Log.d("responseData", "Resend Request : "+response.body());
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.e("responseDataError","Resend Request Error : "+t.toString());
+                    }
+                });
     }
 }

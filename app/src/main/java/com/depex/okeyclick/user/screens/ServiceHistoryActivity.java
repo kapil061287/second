@@ -65,12 +65,11 @@ public class ServiceHistoryActivity extends AppCompatActivity  implements Servic
         });
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
         initTaskHistory();
-
-
     }
 
-    private void initTaskHistory() {
 
+
+    private void initTaskHistory() {
         JSONObject requestData=new JSONObject();
         JSONObject data=new JSONObject();
         try {

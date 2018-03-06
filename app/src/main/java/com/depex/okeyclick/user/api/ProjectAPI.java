@@ -75,4 +75,13 @@ public interface ProjectAPI {
 
     @POST("get_all_taskCS.php")
     Call<String> getServiceHistory(@Body String body);
+
+    @POST("resend_request.php")
+    Call<String> resendRequest(@Body String body);
+
+    @POST("task_cancel_question_list.php")
+    Call<String> cancelTaskReasons(@Body String body);
+
+    @POST("task_cancel.php")
+    Call<String> cancelTask(@Body String body);
 }

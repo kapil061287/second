@@ -115,7 +115,8 @@
         <activity
             android:name=".screens.ServiceHistoryActivity"
             android:label="@string/title_activity_service_history"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".screens.CancelTaskActivity"></activity>
     </application>
 
 </manifest>
