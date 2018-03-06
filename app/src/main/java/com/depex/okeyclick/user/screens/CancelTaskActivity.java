@@ -1,5 +1,6 @@
 package com.depex.okeyclick.user.screens;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -90,6 +91,7 @@ public class CancelTaskActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                             Log.e("responseDataError", t.toString());
+                            intitRadioBtn();
                     }
                 });
 
@@ -107,7 +109,7 @@ public class CancelTaskActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void cancelTask(String reason) {
+    private void cancelTask(final String reason) {
         JSONObject requestData=new JSONObject();
         JSONObject data=new JSONObject();
         try {
@@ -118,7 +120,7 @@ public class CancelTaskActivity extends AppCompatActivity implements View.OnClic
             data.put("task_id", preferences.getString("task_id", "0"));
             data.put("question_id", "");
             data.put("answer", reason);
-            requestData.put("RequestData", requestData);
+            requestData.put("RequestData", data);
 
             new Retrofit.Builder()
                     .addConverterFactory(new StringConvertFactory())
@@ -131,10 +133,21 @@ public class CancelTaskActivity extends AppCompatActivity implements View.OnClic
                         public void onResponse(Call<String> call, Response<String> response) {
                             String responseString=response.body();
                             Log.i("responseData","Cancel Task : "+ responseString);
+                            try {
+                                JSONObject res=new JSONObject(responseString);
+                                boolean success=res.getBoolean("successBool");
+                                if(success){
+                                    startHomeActivity();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                         }
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
+                            cancelTask(reason);
                             Log.e("responseDataError", "Cancel Task Error : "+t.toString());
                         }
                     });
@@ -142,5 +155,12 @@ public class CancelTaskActivity extends AppCompatActivity implements View.OnClic
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void startHomeActivity() {
+        Intent intent=new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 }

@@ -168,7 +168,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                         if(responseString==null){
                             return;
                         }
-                        Log.i("responseDataRunning", responseString+"" );
+                        Log.i("responseDataRunning", "Customer Timer Activity : "+responseString+"" );
                         try {
                             JSONObject res=new JSONObject(responseString);
                             boolean success=res.getBoolean("successBool");
@@ -228,6 +228,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                             Log.i("responseDataError", t.toString());
+                            checkServiceProviderRunningStatus();
                     }
                 });
     }
@@ -307,7 +308,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onStop() {
         super.onStop();
-        stopAllService();
+
     }
 
     public void stopAllService(){
@@ -330,5 +331,11 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
         if(time_Start!=null){
             isResponse=true;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopAllService();
     }
 }

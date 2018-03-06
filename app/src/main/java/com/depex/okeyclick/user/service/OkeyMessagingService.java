@@ -43,6 +43,7 @@ public class OkeyMessagingService extends FirebaseMessagingService {
             if(map.get("notification_type").equalsIgnoreCase("invoice")) {
                 Bundle bundle = createBundleForInvoiceFromMap(map);
                 Intent intent=createIntentForInvoice(bundle);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         }else{

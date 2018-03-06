@@ -194,7 +194,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                 applyCoupen(applyCouponEdit.getText().toString());
                 break;
             case R.id.payment_btn:
-                onBrainTreeSubmit();
+               // onBrainTreeSubmit();
+                onPaid("Success");
                 break;
         }
     }
@@ -315,6 +316,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
+                            applyCoupen(coupen);
                                 Log.e("responseDataError", t.toString());
                         }
                     });
@@ -356,7 +358,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
             sendConfirmationToSp("success");
     }
 
-    private void sendConfirmationToSp(String success) {
+    private void sendConfirmationToSp(final String success) {
         JSONObject requestData=new JSONObject();
         JSONObject data=new JSONObject();
         try {
@@ -409,6 +411,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        sendConfirmationToSp(success);
                             Log.i("responseDataError", "Send Confirmation TO SP : "+t.toString());
                     }
                 });
@@ -448,7 +451,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                 .build();
     }
 
- public void  cancelCoupon(String coupon){
+ public void  cancelCoupon(final String coupon){
         JSONObject requestData=new JSONObject();
          JSONObject data=new JSONObject();
      try {
@@ -492,6 +495,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
                      @Override
                      public void onFailure(Call<String> call, Throwable t) {
+                         cancelCoupon(coupon);
                             Log.e("responseDataError","Cancel Coupon : "+t.toString());
                      }
                  });

@@ -202,7 +202,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
             requestData.put("RequestData", data);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("responseData","is Task Accept Error : "+ e.toString());
         }
 
         new Retrofit
@@ -223,7 +223,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                             JSONObject res = new JSONObject(responseString);
                             boolean success = res.getBoolean("successBool");
                             if (success) {
-
+                                preferences.edit().putBoolean("isAccept", true).apply();
                                 //progressBar.setVisibility(View.GONE);
                                 //textView.setVisibility(View.GONE);
                                 setVisible(View.GONE, findViewById(R.id.back_image), connetingNearst, findViewById(R.id.avl_loader));

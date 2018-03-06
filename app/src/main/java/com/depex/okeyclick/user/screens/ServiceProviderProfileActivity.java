@@ -87,7 +87,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
     }
 
 
-    private void getProfile(String spId) {
+    private void getProfile(final String spId) {
         new Retrofit.Builder()
                 .baseUrl(Utils.SITE_URL)
                 .addConverterFactory(new StringConvertFactory())
@@ -151,7 +151,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                            getProfile(spId);
                     }
                 });
     }
