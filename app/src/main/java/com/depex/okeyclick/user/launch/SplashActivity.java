@@ -13,6 +13,7 @@ import com.depex.okeyclick.user.screens.ChoosLanguageActivity;
 import com.depex.okeyclick.user.screens.JobAssignedActivity;
 import com.depex.okeyclick.user.screens.LoginActivity;
 import com.depex.okeyclick.user.screens.SignupActivity;
+import com.depex.okeyclick.user.screens.TestActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -22,6 +23,11 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent=new Intent(this, TestActivity.class);
+        startActivity(intent);
+        if(1==1)return;
+
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_splash);
         //progressBar = findViewById(R.id.progressBar);
@@ -46,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startJobAssignActivity() {
-        Intent intent=new Intent(this, JobAssignedActivity.class);
-        startActivity(intent);
+        //Intent intent=new Intent(this, JobAssignedActivity.class);
+        //startActivity(intent);
     }
 }

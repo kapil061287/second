@@ -45,15 +45,15 @@ public class ServicesRecyclerAdapter  extends RecyclerView.Adapter<ServicesRecyc
         holder.itemView.setTag(service);
         String name=service.getServiceName();
         String url=service.getImageUrl();
-       if(holder.serviceName==null){
-           Toast.makeText(context, "Null is ", Toast.LENGTH_LONG).show();
-           return;
-       }
+        if(holder.serviceName==null){
+            Toast.makeText(context, "Null is ", Toast.LENGTH_LONG).show();
+            return;
+        }
         holder.serviceName.setText(name.toUpperCase());
 
-       if(holder.serviceImg==null){
-           return;
-       }
+        if(holder.serviceImg==null){
+            return;
+        }
         GlideApp.with(context)
                 .load(Utils.IMAGE_URL+url)
                 .fitCenter()
