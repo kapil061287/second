@@ -73,4 +73,9 @@
         <item name="fontFamily">@font/nexa</item>
         <item name="android:textColor">#FF000000</item>
     </style>
+
+    <style name="AppTheme.TabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12dp</item>
+        <item name="android:textColor">#ffaaaaaa</item>
+    </style>
 </resources>

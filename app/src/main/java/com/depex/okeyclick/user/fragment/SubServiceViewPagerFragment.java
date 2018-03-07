@@ -44,8 +44,6 @@ public class SubServiceViewPagerFragment extends Fragment implements View.OnClic
         String json=bundle.getString("json", "");
         Log.i("responseJsonBundle", json);
 
-
-
         /*if(true)
         return view;*/
         try {

@@ -84,4 +84,7 @@ public interface ProjectAPI {
 
     @POST("task_cancel.php")
     Call<String> cancelTask(@Body String body);
+
+    @POST("get_all_sp.php")
+    Call<String> getAllSp(@Body String body);
 }
