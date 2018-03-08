@@ -15,6 +15,7 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
 
         Fragment fragment=new LaterBookingFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.test_container, fragment).commitNow();
+        getSupportFragmentManager().beginTransaction().replace(R.id.test_container, fragment).commit();
+        getSupportActionBar().setTitle("Book Later");
     }
 }

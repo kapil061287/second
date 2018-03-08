@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="80dp">
+
+    <FrameLayout
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/user_dp_place_holder"
+            android:layout_width="50dp"
+            android:id="@+id/inner_view_pager_image"
+            android:layout_height="50dp" />
+    </FrameLayout>
+<LinearLayout
+    android:layout_weight="1"
+    android:layout_marginLeft="20dp"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:text="Mr. Handy"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:id="@+id/name_text_view_inner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <com.hedgehog.ratingbar.RatingBar
+        android:layout_width="wrap_content"
+        android:clickable="false"
+        android:isIndicator="true"
+        android:id="@+id/rating_bar_inner"
+        app:starEmpty="@mipmap/star_empty"
+        app:starFill="@mipmap/ic_star_fill"
+
+        android:gravity="center_vertical"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:layout_height="30dp">
+    </com.hedgehog.ratingbar.RatingBar>
+   <!-- <RatingBar
+        android:isIndicator="true"
+        android:id="@+id/rating_bar_inner"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />-->
+    <TextView
+        android:text="2 miter away"
+        android:id="@+id/distance_text_view_inner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="25$"
+            android:textSize="18dp"
+            android:layout_gravity="right"
+            android:id="@+id/price_per_hour_inner"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="per hour"
+            android:layout_gravity="left"
+            android:fontFamily="@font/nexa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>

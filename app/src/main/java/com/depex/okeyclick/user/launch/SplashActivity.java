@@ -24,9 +24,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent=new Intent(this, TestActivity.class);
+        /*Intent intent=new Intent(this, TestActivity.class);
         startActivity(intent);
-        if(1==1)return;
+        if(1==1)return;*/
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_splash);

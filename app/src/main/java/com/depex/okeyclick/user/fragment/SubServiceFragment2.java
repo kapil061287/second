@@ -29,9 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by we on 2/9/2018.
- */
+
 
 public class SubServiceFragment2 extends Fragment {
 
@@ -68,10 +66,16 @@ public class SubServiceFragment2 extends Fragment {
                     .with(context)
                     .asBitmap()
                     .load(icon)
+                    .placeholder(R.drawable.service_history_icon)
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 tab.setIcon(new BitmapDrawable(getResources(), resource));
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            tab.setIcon(errorDrawable);
                         }
                     });
             tabLayout.addTab(tab);

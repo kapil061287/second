@@ -320,8 +320,6 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                 .create(ProjectAPI.class)
                 .checkSpStatus(requestData.toString())
                 .enqueue(new Callback<String>() {
-
-
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         String responseString =response.body();
