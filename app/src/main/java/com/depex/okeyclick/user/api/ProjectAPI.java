@@ -87,4 +87,14 @@ public interface ProjectAPI {
 
     @POST("get_all_sp.php")
     Call<String> getAllSp(@Body String body);
+
+    @POST("get_coupon_list.php")
+    Call<String> getCouponList(@Body String body);
+
+    @POST("generate_task_invoice.php")
+    Call<String> generateInvoice(@Body String body);
+
+    @POST("book_latter.php")
+    Call<String> bookLetarReq(@Body String body);
+
 }

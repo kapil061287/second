@@ -1,10 +1,7 @@
 package com.depex.okeyclick.user.view;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.RadioButton;
-
-
 
 public class SubCatRadioButton extends ViewRender<String> {
 

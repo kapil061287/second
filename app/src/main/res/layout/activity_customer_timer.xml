@@ -27,6 +27,7 @@
                 <TextView
                     android:text="START THE JOB"
                     android:textColor="#ffffffff"
+                    android:fontFamily="@font/nexa"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

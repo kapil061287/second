@@ -21,8 +21,13 @@ import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
+import com.depex.okeyclick.user.fragment.DetailsServiceProviderFragment;
 import com.depex.okeyclick.user.fragment.DetailsSpProfileFragment;
+import com.depex.okeyclick.user.fragment.ReviewsServiceProviderFragment;
 import com.depex.okeyclick.user.fragment.ReviewsSpProfileFragment;
+import com.depex.okeyclick.user.model.BookLaterServiceProvider;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hedgehog.ratingbar.RatingBar;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -66,7 +71,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
         ratingBar=findViewById(R.id.star_view_profile);
         toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,9 +114,9 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
                                 Bundle bundle=new Bundle();
                                 bundle.putString("resObj", resObj.toString());
 
-                                JSONArray resList=resObj.getJSONArray("List");
+                                //JSONArray resList=resObj.getJSONArray("List");
 
-                                JSONObject resObjDetails=resList.getJSONObject(0);
+                                JSONObject resObjDetails=resObj.getJSONObject("List");
 
                                 String user_image_url=resObjDetails.getString("user_images");
                                 String providerFirstName=resObjDetails.getString("first_name");
@@ -127,19 +132,29 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
 
                                 Log.i("responseData", "User Image : "+user_image_url);
 
-                                serviceProviderName.setText("Mr. "+name);
+                                serviceProviderName.setText(name);
 
                                 GlideApp.with(ServiceProviderProfileActivity.this).load(user_image_url).into(roundedImageView);
 
+                                /*
                                 DetailsSpProfileFragment detailsSpProfileFragment=new DetailsSpProfileFragment();
-                                detailsSpProfileFragment.setArguments(bundle);
+                                detailsSpProfileFragment.setArguments(bundle);*/
 
-                                ReviewsSpProfileFragment reviewsSpProfileFragment=new ReviewsSpProfileFragment();
-                                reviewsSpProfileFragment.setArguments(bundle);
+                              /*  ReviewsSpProfileFragment reviewsSpProfileFragment=new ReviewsSpProfileFragment();
+                                reviewsSpProfileFragment.setArguments(bundle);*/
+
+
+                                Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-d H:m:s").create();
+                                BookLaterServiceProvider serviceProvider=gson.fromJson(resObjDetails.toString(), BookLaterServiceProvider.class);
+
+
+                                DetailsServiceProviderFragment fragment=DetailsServiceProviderFragment.getInstance(serviceProvider);
+                                ReviewsServiceProviderFragment fragment2=ReviewsServiceProviderFragment.getInstance(serviceProvider);
+
 
                                 List<Fragment> list=new ArrayList<>();
-                                list.add(reviewsSpProfileFragment);
-                                list.add(detailsSpProfileFragment);
+                                list.add(fragment2);
+                                list.add(fragment);
 
                                 pagerAdapter =new SectionPagerAdapter(getSupportFragmentManager(), list);
                                 viewPager.setAdapter(pagerAdapter);
@@ -151,6 +166,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        //TODO Check internet connectivity
                             getProfile(spId);
                     }
                 });
@@ -160,7 +176,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.cancel_btn:
-                    startReasonActivity();
+                    //startReasonActivity();
                 break;
         }
     }

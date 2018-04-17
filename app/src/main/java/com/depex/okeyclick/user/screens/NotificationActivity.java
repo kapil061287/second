@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -47,9 +48,7 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         toolbar=findViewById(R.id.toolbar);
         okeyClickDatabaseHelper =new OkeyClickDatabaseHelper(this);
 
-
-
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,7 +63,7 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         notificationAlarmImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(NotificationActivity.this, ScheduleVisitActivity.class);
+               // Intent intent=new Intent(NotificationActivity.this, ScheduleVisitActivity.class);
                 //startActivity(intent);
             }
         });
@@ -89,6 +88,8 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
                         Notification notification=new Notification();
                         notification.setNotifyDate(notifyDate);
                         notification.setNotifyData(notifyData);
+                        notification.setNotifyId(id);
+
                         notification.setNotifyTitle("Invoice");
                         notification.setNotifyMsg(notifyMsg);
 
@@ -97,8 +98,13 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
             } while (cursor.moveToNext());
 
             NotificationAdapter adapter=new NotificationAdapter(this, notifications, this);
-            notificationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            LinearLayoutManager manager=new LinearLayoutManager(this);
+            notificationRecyclerView.setLayoutManager(manager);
+            DividerItemDecoration dividerItemDecoration=new DividerItemDecoration(this, manager.getOrientation());
+            notificationRecyclerView.addItemDecoration(dividerItemDecoration);
             notificationRecyclerView.setAdapter(adapter);
+
         }
     }
 
@@ -109,6 +115,7 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         try {
             JSONObject notifyDataJson=new JSONObject(notifyData);
             Bundle bundle=createBundleFromJson(notifyDataJson);
+
             startInvoiceActivity(bundle);
         } catch (JSONException e) {
             Log.e("responseDataError", e.toString());

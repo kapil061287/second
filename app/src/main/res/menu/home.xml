@@ -8,4 +8,12 @@
         android:icon="@drawable/ic_alarm"
         app:showAsAction="ifRoom"
         />
+    <item
+        android:id="@+id/grid_list_menu"
+        android:title="Grid"
+        android:visible="true"
+        android:icon="@drawable/ic_format_list_bulleted_black_24dp"
+        app:showAsAction="always"
+        />
+
 </menu>

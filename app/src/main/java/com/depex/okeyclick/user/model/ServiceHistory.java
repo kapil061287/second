@@ -2,9 +2,7 @@ package com.depex.okeyclick.user.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by we on 2/27/2018.
- */
+
 
 public class ServiceHistory  {
 

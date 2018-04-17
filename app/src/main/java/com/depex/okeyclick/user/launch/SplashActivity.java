@@ -12,19 +12,17 @@ import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.screens.ChoosLanguageActivity;
 import com.depex.okeyclick.user.screens.JobAssignedActivity;
 import com.depex.okeyclick.user.screens.LoginActivity;
+import com.depex.okeyclick.user.screens.PaymentActivity;
 import com.depex.okeyclick.user.screens.SignupActivity;
 import com.depex.okeyclick.user.screens.TestActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
-    //ProgressBar progressBar;
-
     SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*Intent intent=new Intent(this, TestActivity.class);
+        /*Intent intent=new Intent(this, PaymentActivity.class);
         startActivity(intent);
         if(1==1)return;*/
 
@@ -41,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 try {
                     Thread.sleep(5000);
-                    Intent choolLanguageIntent = new Intent(SplashActivity.this, SecondSplashActivity.class);
+                    Intent choolLanguageIntent = new Intent(SplashActivity.this, ChoosLanguageActivity.class);
                     startActivity(choolLanguageIntent);
                     finish();
                 } catch (Exception e) {
@@ -50,6 +48,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }).start();
     }
+
 
     private void startJobAssignActivity() {
         //Intent intent=new Intent(this, JobAssignedActivity.class);

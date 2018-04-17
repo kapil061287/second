@@ -10,12 +10,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.braintreepayments.api.models.BraintreeApiConfiguration;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
@@ -71,7 +68,7 @@ public class CustomerTimerActivity extends AppCompatActivity implements View.OnC
 
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
         Typeface typeface= ResourcesCompat.getFont(this, R.font.digital);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
 
         mytask=new Mytask();

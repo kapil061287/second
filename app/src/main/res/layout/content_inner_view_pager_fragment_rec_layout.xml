@@ -36,7 +36,7 @@
         android:id="@+id/name_text_view_inner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <com.hedgehog.ratingbar.RatingBar
+   <!-- <com.hedgehog.ratingbar.RatingBar
         android:layout_width="wrap_content"
         android:clickable="false"
         android:isIndicator="true"
@@ -48,7 +48,14 @@
         android:focusableInTouchMode="false"
         android:focusable="false"
         android:layout_height="30dp">
-    </com.hedgehog.ratingbar.RatingBar>
+    </com.hedgehog.ratingbar.RatingBar>-->
+
+    <android.support.v7.widget.AppCompatRatingBar
+        android:layout_width="wrap_content"
+        android:id="@+id/rating_bar_inner"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_height="wrap_content" />
+
    <!-- <RatingBar
         android:isIndicator="true"
         android:id="@+id/rating_bar_inner"

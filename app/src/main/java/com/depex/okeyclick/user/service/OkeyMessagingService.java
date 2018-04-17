@@ -9,9 +9,11 @@ import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.depex.okeyclick.user.R;
+import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.database.OkeyClickDatabaseHelper;
 import com.depex.okeyclick.user.screens.InvoiceActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -33,6 +35,9 @@ public class OkeyMessagingService extends FirebaseMessagingService {
         String address=remoteMessage.getFrom();
         Log.i("remoteMessage","From : " +address);
         Log.i("remoteMessage", "Message Data Payload : "+remoteMessage.getData());
+
+
+
         if(remoteMessage.getData().get("notification_type")==null)return;
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
         database=new OkeyClickDatabaseHelper(this);
@@ -41,11 +46,12 @@ public class OkeyMessagingService extends FirebaseMessagingService {
 
         if(inCustomerTimeActivity){
             if(map.get("notification_type").equalsIgnoreCase("invoice")) {
-                Bundle bundle = createBundleForInvoiceFromMap(map);
-                Intent intent=createIntentForInvoice(bundle);
+                Bundle bundle = createBundleFromMap(map);
+                Intent intent= createIntentFromBundle(bundle);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
+
         }else{
             if("invoice".equalsIgnoreCase(map.get("notification_type"))){
                 sendNotification(map, map.get("msg"), "Invoice");
@@ -59,16 +65,30 @@ public class OkeyMessagingService extends FirebaseMessagingService {
             long id=database.insert("invoice", msg, notifyData, date);
             Log.i("responseData", id+"");
         }
+        if("accept_request".equalsIgnoreCase(map.get("notification_type"))){
+            Bundle bundle=createBundleFromMap(map);
+            Intent intent=new Intent();
+            intent.putExtras(bundle);
+            intent.setAction(Utils.INTENT_ACCEPT_REQUEST);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
+        if("task_procedure".equalsIgnoreCase(map.get("notification_type"))){
+                JSONObject jsonObject=jsonFromMap(map);
+                Intent intent=new Intent(Utils.ACTION_TASK_PROCESS_INTENT);
+                Bundle bundle=new Bundle();
+                bundle.putString("json", jsonObject.toString());
+                intent.putExtras(bundle);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
+                Log.i("responseData", "Task Procedure : "+jsonObject.toString());
+        }
     }
 
     JSONObject jsonFromMap(Map<String, String> map){
         JSONObject jsonObject=new JSONObject();
         try {
             for (Map.Entry<String, String> entry : map.entrySet()) {
-
                 jsonObject.put(entry.getKey(), entry.getValue());
-
             }
         }catch (Exception e){
                 Log.e("responseDataError", e.toString());
@@ -84,9 +104,9 @@ public class OkeyMessagingService extends FirebaseMessagingService {
             manager.createNotificationChannel(channel);
         }
 
-        Bundle bundle=createBundleForInvoiceFromMap(map);
+        Bundle bundle= createBundleFromMap(map);
 
-        Intent intent=createIntentForInvoice(bundle);
+        Intent intent= createIntentFromBundle(bundle);
 
 
         Notification  notification=new NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
@@ -101,7 +121,7 @@ public class OkeyMessagingService extends FirebaseMessagingService {
 
     }
 
-    public Intent createIntentForInvoice(Bundle bundle){
+    public Intent createIntentFromBundle(Bundle bundle){
         Intent intent=new Intent(this, InvoiceActivity.class);
                 if(bundle.getString("notification_type", "0").equalsIgnoreCase("invoice")){
                     intent.putExtras(bundle);
@@ -110,7 +130,7 @@ public class OkeyMessagingService extends FirebaseMessagingService {
     }
 
 
-    public Bundle createBundleForInvoiceFromMap(Map<String, String> map){
+    public Bundle createBundleFromMap(Map<String, String> map){
         Bundle bundle=new Bundle();
             for(Map.Entry<String, String> entry : map.entrySet()){
                 String key=entry.getKey();

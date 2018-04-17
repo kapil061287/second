@@ -13,16 +13,18 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:id="@+id/nav_header_img"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:src="@drawable/logo" />
 
 
     <TextView
+        android:layout_gravity="center_horizontal"
         android:id="@+id/username_text_nav_header"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Guest !"
@@ -30,8 +32,9 @@
 
 
     <TextView
+        android:layout_gravity="center_horizontal"
         android:id="@+id/view_profile"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:visibility="gone"

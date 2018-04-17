@@ -90,7 +90,7 @@ public class SubServiceFragment extends Fragment implements ApiListener<JsonObje
         recyclerView.setAdapter(adapter);
         recyclerView.scrollToPosition(position);
         ImageView imageView =view.findViewById(R.id.header_image_viewpager);
-        radioGroup=view.findViewById(R.id.radiogroup_viewpager);
+       // radioGroup=view.findViewById(R.id.radiogroup_viewpager);
 
 
         GlideApp.with(getActivity())
@@ -110,6 +110,7 @@ public class SubServiceFragment extends Fragment implements ApiListener<JsonObje
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 JsonObject res=response.body();
+                Log.i("responseData", "Response Sub Service : "+res.toString());
                 if(res==null) return;
                 boolean success=res.get("successBool").getAsBoolean();
                 if(success){

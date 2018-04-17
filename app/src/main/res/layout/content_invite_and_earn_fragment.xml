@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+    android:layout_height="match_parent">
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:fontFamily="@font/nexa"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/invit_text_bold"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:fontFamily="@font/nexa"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/invite_text"
+            android:gravity="center_horizontal"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content" />
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+        <EditText
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:id="@+id/reffer_code"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="@dimen/margin_left"
+            android:layout_marginRight="@dimen/margin_right"
+            android:background="@drawable/input_background_refferal"
+            android:drawableRight="@drawable/ic_share_black_24dp"
+            android:hint="Refferal Code"
+            android:paddingLeft="@dimen/input_padding_left"
+            android:paddingRight="15dp"
+            android:text="Y6789"
+            android:layout_marginBottom="40dp"
+            android:textColor="#ffffffff"
+            android:textColorHint="#ffffffff"/>
+        </FrameLayout>
+
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

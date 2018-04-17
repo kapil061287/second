@@ -117,7 +117,15 @@
             android:label="@string/title_activity_service_history"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".screens.CancelTaskActivity" />
-        <activity android:name=".screens.TestActivity"></activity>
+        <activity android:name=".screens.TestActivity" />
+        <activity
+            android:name=".screens.PaymentActivity"
+            android:label="@string/title_activity_payment"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screens.BookLetarActivity"
+            android:label="@string/title_activity_book_letar"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

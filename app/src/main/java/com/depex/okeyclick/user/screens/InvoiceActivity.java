@@ -1,19 +1,25 @@
 package com.depex.okeyclick.user.screens;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,19 +34,26 @@ import com.braintreepayments.api.exceptions.InvalidArgumentException;
 import com.braintreepayments.api.models.GooglePaymentRequest;
 import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.depex.okeyclick.user.R;
+import com.depex.okeyclick.user.adpater.CouponAdapter;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
+import com.depex.okeyclick.user.model.Coupon;
 import com.google.android.gms.wallet.Cart;
 import com.google.android.gms.wallet.LineItem;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.WalletConstants;
+import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,6 +107,12 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     @BindView(R.id.apply_coupen)
     EditText applyCouponEdit;
 
+    @BindView(R.id.parent_constraint_layout)
+    ConstraintLayout parentConstraintLayout;
+
+    @BindView(R.id.want_coupon)
+    Button wantCoupon;
+
     @BindView(R.id.coupen_text)
     TextView coupenText;
 
@@ -127,6 +146,12 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     private String subCategoryPriceStr;
     private String packagePriceStr;
     private String spPriceStr;
+    private String paymentStatus;
+
+    private String currencySymbol;
+
+    private boolean isPaymentSucceed;
+    Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +160,17 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar toolbar =  findViewById(R.id.toolbar);
         toolbar.setTitle("Invoice");
         setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         ButterKnife.bind(this);
+        bundle=new Bundle();
 
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
         applyBtn.setOnClickListener(this);
@@ -146,8 +181,10 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, "Sorry Invalid Invoice", Toast.LENGTH_LONG).show();
             return;
         }
-        taskId=bundle.getString("task_id");
+
+        taskId=preferences.getString("task_id", "");
         subtotalStr=bundle.getString("subtotal");
+        currencySymbol=getString(R.string.uro);
         serviceTaxStr=bundle.getString("service_tax");
         baseFareStr=bundle.getString("base_fare");
         cityTaxStr=bundle.getString("city_tax");
@@ -159,22 +196,32 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         subCategoryPriceStr=bundle.getString("subcategory_price");
         packagePriceStr=bundle.getString("package_price");
         spPriceStr=bundle.getString("sp_price");
-
-
+        paymentStatus=bundle.getString("paymentStatus");
+        initPaymentStatus(paymentStatus);
 
 
        // this.subTotal.setText(subtotalStr);
-        this.subTotal.setText(formatIn2Digit(subtotalStr));
+        this.subTotal.setText(currencySymbol+formatIn2Digit(subtotalStr));
         this.serviceHours.setText(taskDurationStr);
-        this.totalAmount.setText("Total Amount\n"+formatIn2Digit(totalStr));
-        this.basicFare.setText(formatIn2Digit(baseFareStr));
+        this.totalAmount.setText("Total Amount\n"+currencySymbol+formatIn2Digit(totalStr));
+        this.basicFare.setText(currencySymbol+formatIn2Digit(baseFareStr));
         this.cityTex.setText(cityTaxStr+"%");
-        this.serviceTex.setText(serviceTaxStr+"%");
+       // this.serviceTex.setText(serviceTaxStr+"%");
         this.jobId.setText("Job ID : "+taskKeyStr);
         this.customerName.setText(customerNameStr);
         this.dateInvoice.setText(createdDateStr);
-        this.totalAmount2.setText(formatIn2Digit(totalStr));
+        this.totalAmount2.setText(currencySymbol+formatIn2Digit(totalStr));
         paymentBtn.setOnClickListener(this);
+        wantCoupon.setOnClickListener(this);
+    }
+
+    private void initPaymentStatus(String paymentStatus) {
+        if(paymentStatus!=null){
+            if(paymentStatus.equalsIgnoreCase("paid")){
+                setVisiblity(View.GONE, applyCouponLinearLayout, paymentBtn, cancelBtn, wantCoupon);
+                setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
+            }
+        }
     }
 
     private String formatIn2Digit(String subtotalStr) {
@@ -191,39 +238,124 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                 cancelCoupon(coupenText.getText().toString());
                 break;
             case R.id.apply_btn:
-                applyCoupen(applyCouponEdit.getText().toString());
+                //applyCoupen(applyCouponEdit.getText().toString());
                 break;
             case R.id.payment_btn:
                // onBrainTreeSubmit();
-                onPaid("Success");
+                bundle.putString("total", totalStr);
+                if(!isPaymentSucceed) {
+                    onStripePayment(bundle);
+                }else {
+                    setResult(RESULT_OK);
+                    finish();
+                }
+
+                break;
+            case R.id.want_coupon:
+                showCouponList();
                 break;
         }
     }
 
-    private void onBrainTreeSubmit() {
+    @Override
+    public void onBackPressed() {
+        if(isPaymentSucceed) {
+            setResult(RESULT_OK);
+        }else {
+            setResult(RESULT_CANCELED);
+        }
+        finish();
+    }
 
-        String mAuthrization="eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiI4YmUyZTcyODFmZDEyZTAzYWRmMWVmNTRlN2E2Mjg1YzgwNTI1ZDBiNzBmMmE5MjdmNjMyMGVjMGJlNTc1MWIwfGNyZWF0ZWRfYXQ9MjAxOC0wMi0yMlQwNTo1MTo0Mi40NzQyMDgyMjUrMDAwMFx1MDAyNm1lcmNoYW50X2lkPXFneWJobmdxd3R5bndibWtcdTAwMjZwdWJsaWNfa2V5PWdtaHltd3g2NnN4YjJ2ZGYiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvcWd5YmhuZ3F3dHlud2Jtay9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzL3FneWJobmdxd3R5bndibWsvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tL3FneWJobmdxd3R5bndibWsifSwidGhyZWVEU2VjdXJlRW5hYmxlZCI6dHJ1ZSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiRGVwZXggVGVjaG5vbG9naWVzIiwiY2xpZW50SWQiOm51bGwsInByaXZhY3lVcmwiOiJodHRwOi8vZXhhbXBsZS5jb20vcHAiLCJ1c2VyQWdyZWVtZW50VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3RvcyIsImJhc2VVcmwiOiJodHRwczovL2Fzc2V0cy5icmFpbnRyZWVnYXRld2F5LmNvbSIsImFzc2V0c1VybCI6Imh0dHBzOi8vY2hlY2tvdXQucGF5cGFsLmNvbSIsImRpcmVjdEJhc2VVcmwiOm51bGwsImFsbG93SHR0cCI6dHJ1ZSwiZW52aXJvbm1lbnROb05ldHdvcmsiOnRydWUsImVudmlyb25tZW50Ijoib2ZmbGluZSIsInVudmV0dGVkTWVyY2hhbnQiOmZhbHNlLCJicmFpbnRyZWVDbGllbnRJZCI6Im1hc3RlcmNsaWVudDMiLCJiaWxsaW5nQWdyZWVtZW50c0VuYWJsZWQiOnRydWUsIm1lcmNoYW50QWNjb3VudElkIjoiZGVwZXh0ZWNobm9sb2dpZXMiLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwibWVyY2hhbnRJZCI6InFneWJobmdxd3R5bndibWsiLCJ2ZW5tbyI6Im9mZiJ9";
+    private void onStripePayment(Bundle bundle) {
+
+        Intent intent=new Intent(this, PaymentActivity.class);
+        if(bundle!=null) {
+            intent.putExtras(bundle);
+        }
+        startActivityForResult(intent, 2);
+    }
+
+    private void showCouponList() {
+        JSONObject requestData=new JSONObject();
+        JSONObject data=new JSONObject();
         try {
-            BraintreeFragment fragment=BraintreeFragment.newInstance(this, mAuthrization);
-            PayPal.authorizeAccount(fragment);
-        } catch (InvalidArgumentException e) {
-           Log.e("responseData", "Error in Braintree Fragment : "+e.toString());
+            data.put("v_code", getString(R.string.v_code));
+            data.put("apikey", getString(R.string.apikey));
+            data.put("userToken", preferences.getString("userToken", "0"));
+            data.put("user_id", preferences.getString("user_id", "0"));
+            requestData.put("RequestData", data);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
 
-        /*DropInRequest dropInRequest=new DropInRequest().clientToken("eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiI4YmUyZTcyODFmZDEyZTAzYWRmMWVmNTRlN2E2Mjg1YzgwNTI1ZDBiNzBmMmE5MjdmNjMyMGVjMGJlNTc1MWIwfGNyZWF0ZWRfYXQ9MjAxOC0wMi0yMlQwNTo1MTo0Mi40NzQyMDgyMjUrMDAwMFx1MDAyNm1lcmNoYW50X2lkPXFneWJobmdxd3R5bndibWtcdTAwMjZwdWJsaWNfa2V5PWdtaHltd3g2NnN4YjJ2ZGYiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvcWd5YmhuZ3F3dHlud2Jtay9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzL3FneWJobmdxd3R5bndibWsvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tL3FneWJobmdxd3R5bndibWsifSwidGhyZWVEU2VjdXJlRW5hYmxlZCI6dHJ1ZSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiRGVwZXggVGVjaG5vbG9naWVzIiwiY2xpZW50SWQiOm51bGwsInByaXZhY3lVcmwiOiJodHRwOi8vZXhhbXBsZS5jb20vcHAiLCJ1c2VyQWdyZWVtZW50VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3RvcyIsImJhc2VVcmwiOiJodHRwczovL2Fzc2V0cy5icmFpbnRyZWVnYXRld2F5LmNvbSIsImFzc2V0c1VybCI6Imh0dHBzOi8vY2hlY2tvdXQucGF5cGFsLmNvbSIsImRpcmVjdEJhc2VVcmwiOm51bGwsImFsbG93SHR0cCI6dHJ1ZSwiZW52aXJvbm1lbnROb05ldHdvcmsiOnRydWUsImVudmlyb25tZW50Ijoib2ZmbGluZSIsInVudmV0dGVkTWVyY2hhbnQiOmZhbHNlLCJicmFpbnRyZWVDbGllbnRJZCI6Im1hc3RlcmNsaWVudDMiLCJiaWxsaW5nQWdyZWVtZW50c0VuYWJsZWQiOnRydWUsIm1lcmNoYW50QWNjb3VudElkIjoiZGVwZXh0ZWNobm9sb2dpZXMiLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwibWVyY2hhbnRJZCI6InFneWJobmdxd3R5bndibWsiLCJ2ZW5tbyI6Im9mZiJ9")
-                .amount(totalAmount2.getText().toString());
-        dropInRequest
-                .collectDeviceData(true)
-                .googlePaymentRequest(getGooglePaymentRequest())
-                .paypalAdditionalScopes(Collections.singletonList(PayPal.SCOPE_ADDRESS))
-                .androidPayCart(getAndroidPayCart())
-                .androidPayShippingAddressRequired(true)
-                .androidPayPhoneNumberRequired(true)
-                .androidPayAllowedCountriesForShipping("US");
-        Intent dropInIntent=dropInRequest.getIntent(this);
-        startActivityForResult(dropInIntent, 1);*/
+        new Retrofit.Builder()
+                    .addConverterFactory(new StringConvertFactory())
+                    .baseUrl(Utils.SITE_URL)
+                    .build()
+                    .create(ProjectAPI.class)
+                    .getCouponList(requestData.toString())
+                    .enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            String responseString=response.body();
+                            Log.i("responseData", "Invoice CouponList : "+responseString );
+                            try {
+                                JSONObject res=new JSONObject(responseString);
+                                boolean success=res.getBoolean("successBool");
+                                if(success){
+                                    JSONObject resObj=res.getJSONObject("response");
+                                    JSONArray arr=resObj.getJSONArray("List");
+                                    Gson gson=new Gson();
+                                    Coupon[]couponArr=gson.fromJson(arr.toString(), Coupon[].class);
+                                    List<Coupon> couponList= Arrays.asList(couponArr);
+                                    showAlertForCoupon(couponList);
+                                }else {
+                                    showAlertForNoCoupon();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            showCouponList();
+                        }
+                    });
     }
+
+    private void showAlertForNoCoupon() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.no_coupon))
+                .setMessage(getString(R.string.no_coupon_msg))
+                .setPositiveButton("OK", null)
+                .create().show();
+    }
+
+    private void showAlertForCoupon(List<Coupon> couponList) {
+        final List<Coupon> coupons=couponList;
+        final BottomSheetDialog dialog=new BottomSheetDialog(this);
+        dialog.setTitle("Choose Coupon");
+        LayoutInflater inflater= (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view=inflater.inflate(R.layout.content_bottom_sheet_coupon_layout, parentConstraintLayout, false);
+        ListView listView=view.findViewById(R.id.list_content_bottom_sheet_coupen);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(InvoiceActivity.this,coupons.get(i).getCouponKey(), Toast.LENGTH_LONG ).show();
+                String coupenKey=coupons.get(i).getCouponKey();
+                dialog.dismiss();
+                applyCoupen(coupenKey);
+            }
+        });
+        CouponAdapter adapter=new CouponAdapter(couponList, this);
+        listView.setAdapter(adapter);
+        dialog.setContentView(view);
+        dialog.show();
+    }
+
 
 
     public void applyCoupen(final String coupen){
@@ -270,19 +402,22 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                                     double minusAmount=0;*/
                                     float subTotalFloatValue=Float.parseFloat(subtotalStr);
                                    float flatDiscount= (float) resObj.getDouble("flat_discount");
+                                    NumberFormat numberFormat=NumberFormat.getInstance();
+                                    numberFormat.setMaximumFractionDigits(2);
 
                                     //if 1 than precentage if 2 than money
                                     switch (resObj.getInt("discount_type")){
                                         case 1:
                                             flatDiscount=  subTotalFloatValue*(flatDiscount/100);
-                                            applyCoupenMinus.setText("-"+flatDiscount);
+
+                                            applyCoupenMinus.setText("-"+numberFormat.format(flatDiscount));
                                             /*if(subTotalFloatValue>0){
                                                 minusAmount=subTotalFloatValue*(value/100);
                                                 remainAmount=subTotalFloatValue-minusAmount;
                                             }*/
                                             break;
                                         case 2:
-                                            applyCoupenMinus.setText("-"+flatDiscount);
+                                            applyCoupenMinus.setText("-"+numberFormat.format(flatDiscount));
                                             /*if(subTotalFloatValue>0) {
                                                 remainAmount=subTotalFloatValue-value;
                                                 minusAmount=value;
@@ -290,17 +425,17 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                                             break;
                                     }
 
-                                    updateSubTotal=resObj.getString("subtotal");
-                                    updateTotal=resObj.getString("total");
+                                    updateSubTotal=numberFormat.format(resObj.getDouble("subtotal"));
+                                    updateTotal=numberFormat.format(resObj.getDouble("total"));
                                     InvoiceActivity.this.subTotal.setText(updateSubTotal);
                                     totalAmount2.setText(updateTotal);
                                     totalAmount2.setText(updateTotal);
-
+                                    wantCoupon.setVisibility(View.GONE);
 
                                     //Remain amout show
 
                                     setVisiblity( View.VISIBLE ,applyCouponMinusLinearLayout, cancelCouponLinearLayout);
-                                    setVisiblity(View.GONE, applyCouponLinearLayout);
+                                    //setVisiblity(View.GONE, applyCouponLinearLayout);
 
                                     cancelBtn.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -329,33 +464,29 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==1){
+        if(requestCode==2){
             if(resultCode==RESULT_OK){
-
-                DropInResult dropInResult=data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
-                PaymentMethodType paymentMethodType=dropInResult.getPaymentMethodType();
-                if(paymentMethodType==PaymentMethodType.PAYPAL){
-                    Toast.makeText(this,"Payment method is paypal", Toast.LENGTH_LONG).show();
+                isPaymentSucceed=data.getExtras().getBoolean("pay");
+                if(isPaymentSucceed){
+                    paymentBtn.setText("Done");
+                    onPaid(isPaymentSucceed);
+                }else {
+                    onPaid(isPaymentSucceed);
                 }
-                PaymentMethodNonce paymentMethodNonce=dropInResult.getPaymentMethodNonce();
-                String nonce=paymentMethodNonce.getNonce();
-                //OnSuccess when the payment is maid from user
-                onPaid("success");
 
-                Log.i("responseData", "Nonce : "+nonce);
-
-            }else {
-                Exception error=(Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
-                Log.e("dropInError", error.toString());
             }
         }
     }
 
-    private void onPaid(String success) {
-            setVisiblity(View.GONE, applyCouponLinearLayout, paymentBtn, cancelBtn);
+    private void onPaid(boolean paid) {
+        if(paid) {
+            setVisiblity(View.GONE, applyCouponLinearLayout, cancelBtn, wantCoupon);
             setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
-            BottomSheetDialog dialog=new BottomSheetDialog(this);
             sendConfirmationToSp("success");
+
+        }else {
+                Toast.makeText(this, "Payment is not succeed !", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void sendConfirmationToSp(final String success) {
@@ -402,12 +533,13 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                             JSONObject res=new JSONObject(responseString);
                             boolean success=res.getBoolean("successBool");
                             if(success){
-                                startReviewBottomSheet();
+                                //startReviewBottomSheet();
                             }
                         } catch (JSONException e) {
                             Log.e("responseDataError", "Send Confirmation to SP : "+e.toString());
                         }
                     }
+
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
@@ -426,30 +558,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
             view.setVisibility(visibility);
         }
     }
-    private GooglePaymentRequest getGooglePaymentRequest() {
 
-        return new GooglePaymentRequest()
-                .transactionInfo(TransactionInfo.newBuilder()
-                        .setTotalPrice("1.00")
-                        .setCurrencyCode("USD")
-                        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                        .build())
-                .emailRequired(true);
-    }
 
-    private Cart getAndroidPayCart() {
-        return Cart.newBuilder()
-                .setCurrencyCode("USD")
-                .setTotalPrice("1.00")
-                .addLineItem(LineItem.newBuilder()
-                        .setCurrencyCode("USD")
-                        .setDescription("Description")
-                        .setQuantity("1")
-                        .setUnitPrice("1.00")
-                        .setTotalPrice("1.00")
-                        .build())
-                .build();
-    }
 
  public void  cancelCoupon(final String coupon){
         JSONObject requestData=new JSONObject();
@@ -464,6 +574,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
          data.put("subtotal", subtotalStr);
          data.put("total", totalStr);
          requestData.put("RequestData", data);
+         Log.i("requestData", "Cancel Coupon : "+requestData.toString());
 
          new Retrofit.Builder()
                  .addConverterFactory(new StringConvertFactory())
@@ -481,11 +592,12 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                              if(success){
                                  updateTotal=null;
                                  updateSubTotal=null;
-                                 totalAmount2.setText(totalStr);
-                                 totalAmount.setText(totalStr);
-                                 subTotal.setText(subtotalStr);
+                                 totalAmount2.setText(formatIn2Digit(totalStr));
+                                 totalAmount.setText(formatIn2Digit(totalStr));
+                                 subTotal.setText(formatIn2Digit(subtotalStr));
                                  setVisiblity(View.GONE, applyCouponMinusLinearLayout, cancelCouponLinearLayout);
-                                 setVisiblity(View.VISIBLE, applyCouponLinearLayout);
+                                 //setVisiblity(View.VISIBLE, applyCouponLinearLayout);
+                                 setVisiblity(View.VISIBLE, wantCoupon);
                              }
                          } catch (JSONException e) {
                              e.printStackTrace();
@@ -501,7 +613,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                  });
 
      } catch (JSONException e) {
-         e.printStackTrace();
+         Log.e("responseDataError", "Invoice Activity"+e.toString());
      }
  }
+
 }

@@ -1,16 +1,16 @@
 package com.depex.okeyclick.user.screens;
 
-import android.Manifest;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
@@ -37,19 +36,19 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.maps.android.PolyUtil;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.mikhaellopez.circularprogressbar.CircularProgressBar;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Iterator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,12 +58,18 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
     GoogleMap googleMap;
     TextView textView;
+
     String task_id;
     boolean isTracking = true;
     MyTask myTask;
+    @BindView(R.id.view_profile_btn)
     Button viewProfile;
+    @BindView(R.id.service_provider_profilelayout)
     LinearLayout profileLinearLayout;
+
+    @BindView(R.id.back_image)
     ImageView backImage;
+
     String spMobile;
     FusedLocationProviderClient fusedLocationProviderClient;
     Polyline polyline;
@@ -74,20 +79,27 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     Marker customerMarker;
     String spName;
     Marker Spmarker;
+    @BindView(R.id.sp_name)
     TextView spNameText;
+    @BindView(R.id.call_btn_to_sp)
     Button callBtnToSp;
+    @BindView(R.id.connecting_nearest)
     LinearLayout connetingNearst;
+    @BindView(R.id.parent_constraint_layout)
     ConstraintLayout parentLayout;
 
     SharedPreferences preferences;
     String profilePicUrl;
+
+    @BindView(R.id.profile_pic_activity_job_assigned)
     RoundedImageView profilePicImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_job_assigned);
-        preferences = getSharedPreferences("service_pref_user", MODE_PRIVATE);
+        setContentView(R.layout.content_job_assigned);
+        ButterKnife.bind(this);
+        preferences = getSharedPreferences(Utils.SERVICE_PREF, MODE_PRIVATE);
         preferences.edit().putInt("requestTime", 1).apply();
         String token= FirebaseInstanceId.getInstance().getToken();
         Log.i("tokenR", token);
@@ -95,17 +107,16 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         task_id = preferences.getString("task_id", "0");
         //textView = findViewById(R.id.pending_request_txt);
         spNameText = findViewById(R.id.sp_name);
-        profilePicImageView=findViewById(R.id.profile_pic_activity_job_assigned);
+
         myTask = new MyTask();
-        connetingNearst = findViewById(R.id.connecting_nearest);
-        viewProfile = findViewById(R.id.view_profile_btn);
+
         viewProfile.setOnClickListener(this);
-        callBtnToSp = findViewById(R.id.call_btn_to_sp);
+
         callBtnToSp.setOnClickListener(this);
-        profileLinearLayout = findViewById(R.id.service_provider_profilelayout);
-        backImage = findViewById(R.id.back_image);
+
+
         myTask.execute();
-        parentLayout = findViewById(R.id.parent_constraint_layout);
+
         //progressBar=findViewById(R.id.circle_progress_bar);
 
         getSupportActionBar().setTitle("Wating for Response...");
@@ -115,18 +126,78 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     }
 
     boolean breakJob = false;
-    boolean isAccept=false;
+   // boolean isAccept=false;
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.call_btn_to_sp:
-                callToProvider(getSpMobile());
+                //callToProvider(getSpMobile());
+                generateInvoice();
                 break;
             case R.id.view_profile_btn:
                 veiwProfile(getSpId());
                 break;
         }
+    }
+
+    private void generateInvoice() {
+            JSONObject data=new JSONObject();
+            JSONObject requestData=new JSONObject();
+        try {
+            data.put("v_code", getString(R.string.v_code));
+            data.put("apikey", getString(R.string.apikey));
+            data.put("userToken", preferences.getString("userToken", "0"));
+            data.put("user_id", preferences.getString("user_id", "0"));
+            data.put("task_id", preferences.getString("task_id", "0"));
+            data.put("task_WDuration", preferences.getString("quanOfWork", "0"));
+            requestData.put("RequestData", data);
+
+            new Retrofit.Builder()
+                    .addConverterFactory(new StringConvertFactory())
+                    .baseUrl(Utils.SITE_URL)
+                    .build()
+                    .create(ProjectAPI.class)
+                    .generateInvoice(requestData.toString())
+                    .enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            String responseString=response.body();
+                            Log.i("responseData","Invoice : "+ responseString);
+                            try {
+                                JSONObject res=new JSONObject(responseString);
+                                boolean success=res.getBoolean("successBool");
+                                if(success){
+                                    JSONObject resObj=res.getJSONObject("response");
+                                    Bundle bundle=new Bundle();
+                                    for(Iterator<String> keys =resObj.keys();keys.hasNext();){
+                                        String key=keys.next();
+                                        bundle.putString(key, resObj.getString(key));
+
+                                    }
+                                    startInvoice(bundle);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+
+                        }
+                    });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startInvoice(Bundle bundle) {
+        Intent intent=new Intent(this, InvoiceActivity.class);
+        if(bundle!=null){
+            intent.putExtras(bundle);
+        }
+        startActivity(intent);
     }
 
     private void veiwProfile(String spId) {
@@ -158,6 +229,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
             return null;
         }
 
+
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
@@ -174,7 +246,6 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -186,7 +257,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
 
 
 
-//check is accept request
+    //check is accept request
 
     public void check() {
 
@@ -246,7 +317,6 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                     Spmarker.remove();
                                 }
 
-
                                 MarkerOptions markerOptions=new MarkerOptions();
                                 markerOptions.position(new LatLng(Double.parseDouble(getSpLatitude()), Double.parseDouble(getSpLngtitud())))
                                         .visible(true)
@@ -256,7 +326,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                 //myTask.cancel(true);
                                 createPolyline();
 
-                                trackSp();
+                                //trackSp();
                                 checkServiceProviderRunningStatus();
 
                               /*  TrackSp trackSp=new TrackSp();
@@ -275,7 +345,6 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                                             myTask.cancel(true);
                                             resendHitTohttp();
                                             snackbar.dismiss();
-                                           //finish();
                                         }
                                     });
                                 }
@@ -294,14 +363,11 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                 });
     }
 
-
     boolean isArrived;
 
     private void checkServiceProviderRunningStatus() {
-
         JSONObject requestData=new JSONObject();
         JSONObject data=new JSONObject();
-
         try {
             data.put("v_code", getString(R.string.v_code));
             data.put("apikey", getString(R.string.apikey));
@@ -311,6 +377,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
 
         new Retrofit.Builder()
@@ -369,6 +436,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         startActivity(intent);
         finish();
     }
+
 
     private void createPolyline() {
 
@@ -533,6 +601,9 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
+
+/*
+
     public void trackSp(){
         new Retrofit
                 .Builder()
@@ -585,6 +656,11 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
                     }
                 });
     }
+*/
+
+
+
+
 
 
     public void sendTokenToserver(String token){
@@ -628,6 +704,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
             }
         });
     }
+
 
     private void resendHitTohttp() {
         double lat=getIntent().getExtras().getDouble("lat");

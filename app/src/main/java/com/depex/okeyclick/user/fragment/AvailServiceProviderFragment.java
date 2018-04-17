@@ -32,6 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.braintreepayments.api.Json;
 import com.depex.okeyclick.user.database.OkeyClickDatabaseHelper;
 import com.depex.okeyclick.user.model.UserPackage;
 import com.depex.okeyclick.user.R;
@@ -42,6 +43,7 @@ import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
 import com.depex.okeyclick.user.listener.PackageClickListener;
+import com.depex.okeyclick.user.screens.JobAssignByNotification;
 import com.depex.okeyclick.user.screens.JobAssignedActivity;
 import com.depex.okeyclick.user.screens.LoginActivity;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -81,6 +83,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -89,7 +93,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class AvailServiceProviderFragment extends Fragment implements OnMapReadyCallback, ApiListener<JsonObject>, PackageClickListener, View.OnClickListener {
+public class AvailServiceProviderFragment extends Fragment implements OnMapReadyCallback, ApiListener<JsonObject>, PackageClickListener, View.OnClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraMoveCanceledListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnMyLocationButtonClickListener {
+    private static final int BOOK_LATAR_REQUEST_CODE = 2;
+    private static final int BOOK_NOW_REQUEST_CODE = 3;
     GoogleMap googleMap;
     SharedPreferences preferences;
     Marker marker;
@@ -97,46 +103,48 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     boolean isLogin;
     JSONObject data = null;
     Context context;
+    @BindView(R.id.bottom_panel_avail_fragment)
     LinearLayout linearLayout;
     int currentHeight;
-    RecyclerView recyclerView;
+    SubserviceInnerViewpagerFragment fragment;
     LocationRequest locationRequest;
     LocationCallback mLocationCallback;
     Location location;
     boolean isAnimate;
     ProgressBar progressBar;
     UserPackage userPackage;
+    @BindView(R.id.book_now_btn_avail_fragment)
     Button bookNowBtn;
+    @BindView(R.id.book_later_btn_avail_fragment)
     Button bookLaterBtn;
     Menu menu;
     MenuItem menuItem;
+    @BindView(R.id.parent_constraint_layout)
     ConstraintLayout constraintLayout;
     ArrayList<Marker> markers = new ArrayList<>();
     OkeyClickDatabaseHelper databaseHelper;
     SpotsDialog spotsDialog;
+    @BindView(R.id.recycler_view_package)
+    RecyclerView recyclerView;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_avail_service_provide_fragment, container, false);
+        ButterKnife.bind(this, view);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapfragment);
         mapFragment.getMapAsync(this);
         Toolbar toolbar = getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
         menu = toolbar.getMenu();
         //progressBar=view.findViewById(R.id.progress_bar_avail);
-        linearLayout=view.findViewById(R.id.bottom_panel_avail_fragment);
-        databaseHelper=new OkeyClickDatabaseHelper(context);
+
+        databaseHelper = new OkeyClickDatabaseHelper(context);
         linearLayout.findViewById(R.id.done_btn_availfragment).setOnClickListener(this);
-        constraintLayout=view.findViewById(R.id.parent_constraint_layout);
 
 
-        spotsDialog=new SpotsDialog(context);
+        spotsDialog = new SpotsDialog(context);
 
-
-
-
-        bookNowBtn = view.findViewById(R.id.book_now_btn_avail_fragment);
-        bookLaterBtn = view.findViewById(R.id.book_later_btn_avail_fragment);
         bookLaterBtn.setOnClickListener(this);
         bookNowBtn.setOnClickListener(this);
 
@@ -152,7 +160,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if(location==null) return;
+                if (location == null) return;
                 changeLocation(location);
             }
         });
@@ -177,11 +185,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         };
 
 
-
-
-
-        recyclerView = view.findViewById(R.id.recycler_view_package);
-
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.addConverterFactory(GsonConverterFactory.create());
         builder.baseUrl(Utils.SITE_URL);
@@ -190,9 +193,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         Call<JsonObject> packageCall = projectAPI.getPackages(getString(R.string.apikey));
         packageCall.enqueue(new CallbackApi<>(this));
 
-
-        preferences = getActivity().getSharedPreferences("service_pref_user", Context.MODE_PRIVATE);
-        setLogin(preferences.getBoolean("isLogin", false));
+        preferences = getActivity().getSharedPreferences(Utils.SERVICE_PREF, Context.MODE_PRIVATE);
+        setLogin();
 
         String json = null;
         Bundle bundle = getArguments();
@@ -213,7 +215,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     public void onResume() {
         super.onResume();
 
-        if(menuItem==null) {
+        if (menuItem == null) {
             menuItem = menu.add(/*groupid*/1,/*Itemid*/1,/*Order*/1,/*Title*/"Pick a Location");
 
 
@@ -242,22 +244,33 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             return;
         }
 
-       // client.requestLocationUpdates(locationRequest, mLocationCallback, null);
+        // client.requestLocationUpdates(locationRequest, mLocationCallback, null);
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        this.googleMap.setMyLocationEnabled(true);
+        this.googleMap.setOnMyLocationButtonClickListener(this);
+        this.googleMap.setOnCameraMoveListener(this);
+        this.googleMap.setOnCameraMoveCanceledListener(this);
+        this.googleMap.setOnCameraIdleListener(this);
+
+
     }
 
     public void changeLocation(Location location) {
-        if(location==null)return;
+        if (location == null) return;
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         this.location = location;
         LatLng latLng = new LatLng(lat, lng);
-        if(marker!=null)
+        if (marker != null)
             marker.remove();
 
         String fullname = preferences.getString("fullname", "You");
@@ -299,9 +312,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onStop() {
         super.onStop();
-        menuItem=null;
+        menuItem = null;
         client.removeLocationUpdates(mLocationCallback);
-        Toolbar toolbar=getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
+        Toolbar toolbar = getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
         toolbar.getMenu().removeItem(1);
 
     }
@@ -311,7 +324,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     public void success(Call<JsonObject> call, Response<JsonObject> response, Object... objects) {
         if (response.body() == null)
             return;
-        Log.i("responseData","From Avail Fragment Line 328"+ response.body().toString());
+        Log.i("responseData", "From Avail Fragment Line 328" + response.body().toString());
         JsonObject res = response.body();
         boolean success = res.get("successBool").getAsBoolean();
         if (success) {
@@ -330,17 +343,13 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
 
     @Override
     public void onPackageClick(final UserPackage userPackage) {
-
-
-
         this.userPackage = userPackage;
 
-
-        final BottomSheetDialog bottomSheetDialog=new BottomSheetDialog(context);
-        View view=LayoutInflater.from(context).inflate(R.layout.package_bottom_sheet_layout, null, false);
-        TextView textView=view.findViewById(R.id.pac_description);
-        TextView textView1=view.findViewById(R.id.package_name_desc);
-        Button button=view.findViewById(R.id.done_btn_pack_desc);
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.package_bottom_sheet_layout, null, false);
+        TextView textView = view.findViewById(R.id.pac_description);
+        TextView textView1 = view.findViewById(R.id.package_name_desc);
+        Button button = view.findViewById(R.id.done_btn_pack_desc);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -351,110 +360,111 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         textView.setText(userPackage.getPackageDescription());
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
-        if(location!=null){
-            getAvailableServiceProvider(location,userPackage);
+        if (location != null) {
+            getAvailableServiceProvider(location, userPackage);
             return;
         }
 
 
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
 
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    getAvailableServiceProvider(location, userPackage);
-                    Geocoder geocoder=new Geocoder(context, Locale.getDefault());
-                    try {
-                        List<Address> addresses=geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                        Log.i("localityLog", addresses+" : "+location);
-                        for(Address address : addresses){
-                            Log.i("localityLog", address.getLocality()+"");
-                        }
-
-                    } catch (Exception e) {
-                       Log.e("localityLog", e.toString());
+        client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                getAvailableServiceProvider(location, userPackage);
+                Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    Log.i("localityLog", addresses + " : " + location);
+                    for (Address address : addresses) {
+                        Log.i("localityLog", address.getLocality() + "");
                     }
+
+                } catch (Exception e) {
+                    Log.e("localityLog", e.toString());
                 }
-            });
+            }
+        });
     }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context=context;
+        this.context = context;
     }
 
 
-    public void getAvailableServiceProvider(Location location, UserPackage userPackage){
-        Log.i("locationLog", location+"");
-        double currentLat=location.getLatitude();
-        double currentLng=location.getLongitude();
+    public void getAvailableServiceProvider(Location location, UserPackage userPackage) {
+        Log.i("locationLog", location + "");
+        double currentLat = location.getLatitude();
+        double currentLng = location.getLongitude();
 //        double currentLat=28.5834765;
 //        double currentLng=77.3186916;
 
-        String id=userPackage.getId();
+        String id = userPackage.getId();
 
-        JSONObject requestData=new JSONObject();
+        JSONObject requestData = new JSONObject();
         try {
             data.put("package", id);
             data.put("latitude", currentLat);
             data.put("longitude", currentLng);
             requestData.put("RequestData", data);
-            Log.i("requestData", "Request Data for Avail sp : "+requestData.toString());
+            Log.i("requestData", "Request Data for Avail sp : " + requestData.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Retrofit.Builder builder=new Retrofit.Builder();
+        Retrofit.Builder builder = new Retrofit.Builder();
         builder.baseUrl(Utils.SITE_URL);
         builder.addConverterFactory(new StringConvertFactory());
-        Call<String> availuser= builder.build()
+        Call<String> availuser = builder.build()
                 .create(ProjectAPI.class)
                 .availableServiceProvider(requestData.toString());
         availuser.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                String responseString=response.body();
-                Log.i("responseData", "Avail Service : "+responseString);
-                if(markers.size()>0){
-                    for(Marker marker : markers){
+                String responseString = response.body();
+                Log.i("responseData", "Avail Service : " + responseString);
+                if (markers.size() > 0) {
+                    for (Marker marker : markers) {
                         marker.remove();
                     }
                     markers.clear();
                 }
 
                 try {
-                    JSONObject res=new JSONObject(responseString);
-                    boolean success=res.getBoolean("successBool");
-                    if(success){
-                        JSONObject responseData=res.getJSONObject("response");
-                        JSONArray jsonArray=responseData.getJSONArray("List");
-                        for(int i=0;i<jsonArray.length();i++){
-                            JSONObject object=jsonArray.getJSONObject(i);
-                            double lat=object.getDouble("latitude");
-                            double lng=object.getDouble("longitude");
-                            String first_name=object.getString("first_name");
-                            String last_name=object.getString("last_name");
+                    JSONObject res = new JSONObject(responseString);
+                    boolean success = res.getBoolean("successBool");
+                    if (success) {
+                        JSONObject responseData = res.getJSONObject("response");
+                        JSONArray jsonArray = responseData.getJSONArray("List");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            double lat = object.getDouble("latitude");
+                            double lng = object.getDouble("longitude");
+                            String first_name = object.getString("first_name");
+                            String last_name = object.getString("last_name");
+                            String url = object.getString("profile_pic");
 
-                            Geocoder geocoder=new Geocoder(context);
-                            String address="SP Location";
+                            Geocoder geocoder = new Geocoder(context);
+                            String address = "SP Location";
                             try {
-                                List<Address> list=geocoder.getFromLocation(lat,lng, 1);
-                                Address address1=list.get(0);
-                                address=address1.getAddressLine(0);
+                                List<Address> list = geocoder.getFromLocation(lat, lng, 1);
+                                Address address1 = list.get(0);
+                                address = address1.getAddressLine(0);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
 
-                            Marker marker=googleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(first_name+" "+last_name).visible(true).snippet(address));
+                            Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(first_name + " " + last_name).visible(true).snippet(address));
                             //marker.showInfoWindow();
+
                             markers.add(marker);
                         }
-                    }else {
+                    } else {
                         Toast.makeText(context, "Sorry! No Service Provider ", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
@@ -470,26 +480,27 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     }
 
 
-    public void sendHttpRequest(JSONObject  jsonObject){
-        final Retrofit.Builder builder=new Retrofit.Builder();
-        ProjectAPI projectAPI=builder.baseUrl(Utils.SITE_URL)
+    public void sendHttpRequest(JSONObject jsonObject) {
+        final Retrofit.Builder builder = new Retrofit.Builder();
+        Log.i("requestData", "Create Request Quary : " + jsonObject.toString());
+        ProjectAPI projectAPI = builder.baseUrl(Utils.SITE_URL)
                 .addConverterFactory(new StringConvertFactory())
                 .build().create(ProjectAPI.class);
         projectAPI.createRequest(jsonObject.toString()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                String responseString=response.body();
-                Log.i("responseData", "Create Request API : "+responseString);
+                String responseString = response.body();
+                Log.i("responseData", "Create Request API : " + responseString);
                 try {
-                    JSONObject res= new JSONObject(responseString);
-                    boolean success=res.getBoolean("successBool");
-                    if(success){
-                        JSONObject responseObj=res.getJSONObject("response");
-                        String task_id=responseObj.getString("task_id");
-                        String task_key=responseObj.getString("task_key");
-                        Bundle bundle=new Bundle();
+                    JSONObject res = new JSONObject(responseString);
+                    boolean success = res.getBoolean("successBool");
+                    if (success) {
+                        JSONObject responseObj = res.getJSONObject("response");
+                        String task_id = responseObj.getString("task_id");
+                        String task_key = responseObj.getString("task_key");
+                        Bundle bundle = new Bundle();
                         bundle.putString("task_id", task_id);
-                        Bundle bundle1=new Bundle();
+                        Bundle bundle1 = new Bundle();
                         preferences.edit().putString("task_id", task_id).apply();
                         preferences.edit().putString("task_key", task_key).apply();
                         databaseHelper.taskInsert("created", task_id, null, null, preferences.getString("user_id", "0"));
@@ -498,17 +509,16 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                         bundle1.putString("category", data.getString("category"));
                         bundle1.putString("subcategory", data.getString("subcategory"));
                         bundle1.putString("package", userPackage.getId());
-                        Intent intent=new Intent(context, JobAssignedActivity.class);
+                        Intent intent = new Intent(context, JobAssignByNotification.class);
                         intent.putExtras(bundle1);
                         spotsDialog.dismiss();
                         startActivity(intent);
-                    }else{
+                    } else {
                         spotsDialog.dismiss();
-
-                        JSONObject errorObj=res.getJSONObject("ErrorObj");
-                        String code=errorObj.getString("ErrorCode");
-                        if(code.equals("103")){
-                            String msg=errorObj.getString("ErrorMsg");
+                        JSONObject errorObj = res.getJSONObject("ErrorObj");
+                        String code = errorObj.getString("ErrorCode");
+                        if (code.equals("103")) {
+                            String msg = errorObj.getString("ErrorMsg");
                             Snackbar.make(constraintLayout, msg, Snackbar.LENGTH_INDEFINITE).setAction("OK", null).show();
                         }
                     }
@@ -517,6 +527,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                     Log.e("responseDataError", e.toString());
                 }
             }
+
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -527,14 +538,13 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     }
 
 
-
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.book_now_btn_avail_fragment:
-                if(location==null){
+                if (location == null) {
                     spotsDialog.dismiss();
-                    final Snackbar snackbar=Snackbar.make(view, "We are unable to pick your location please Select your location!", Snackbar.LENGTH_INDEFINITE);
+                    final Snackbar snackbar = Snackbar.make(view, "We are unable to pick your location please Select your location!", Snackbar.LENGTH_INDEFINITE);
                     snackbar.show();
                     snackbar.setAction("cancel", new View.OnClickListener() {
                         @Override
@@ -544,9 +554,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                     });
                     return;
                 }
-                if(userPackage==null){
+                if (userPackage == null) {
                     spotsDialog.dismiss();
-                    final Snackbar snackbar=Snackbar.make(view, "Please Select your package!", Snackbar.LENGTH_INDEFINITE);
+                    final Snackbar snackbar = Snackbar.make(view, "Please Select your package!", Snackbar.LENGTH_INDEFINITE);
                     snackbar.show();
                     snackbar.setAction("cancel", new View.OnClickListener() {
                         @Override
@@ -554,7 +564,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                             snackbar.dismiss();
                         }
                     });
+                    return;
                 }
+                hitBookNow();
 
                 /*if(preferences.getInt("requestTime", 0)==1){
                     //resendHitTohttp();
@@ -562,110 +574,208 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 }*/
 
 
-                    if(isLogin()){
-                       // progressBar.setVisibility(View.VISIBLE);
-                        //Toast.makeText(context, "start booking ", Toast.LENGTH_LONG).show();
-                        JSONObject jsonObject=new JSONObject();
-                        try {
-                            jsonObject.put("v_code", getString(R.string.v_code));
-                            jsonObject.put("apikey", getString(R.string.apikey));
-                            jsonObject.put("category", data.getString("category"));
-                            jsonObject.put("subcategory", data.getString("subcategory"));
-                            jsonObject.put("package", userPackage.getId());
-                            jsonObject.put("latitude", location.getLatitude());
-                            jsonObject.put("longitude", location.getLongitude());
-                            jsonObject.put("task_title", "");
-                            jsonObject.put("applied_coupen", "");
-                            jsonObject.put("userToken", preferences.getString("userToken", "0"));
-                            jsonObject.put("created_by", preferences.getString("user_id", "0"));
-                            JSONObject requestData=new JSONObject();
-                            requestData.put("RequestData", jsonObject);
-                            Log.i("requestDataCreate", "Create Request : "+jsonObject.toString());
-                            sendHttpRequest(requestData);
-                            preferences.edit()
-                                    .putString("from_book_screen", jsonObject.toString())
-                                    .putBoolean("createRequest", true)
-                                    .apply();
-                        }catch (Exception e){
-                            Log.e("responseDataError", "Error brom Booking : "+e);
-                        }
-                    }else{
-                        JSONObject jsonObject=new JSONObject();
-                        try {
-                            jsonObject.put("v_code", getString(R.string.v_code));
-                            jsonObject.put("apikey", getString(R.string.apikey));
-                            jsonObject.put("category", data.getString("category"));
-                            jsonObject.put("subcategory", data.getString("subcategory"));
-                            jsonObject.put("package", userPackage.getId());
-                            jsonObject.put("latitude", location.getLatitude());
-                            jsonObject.put("longitude", location.getLongitude());
-                            jsonObject.put("task_title", "");
-                            jsonObject.put("applied_coupen", "");
-                            Bundle bundle=new Bundle();
-                            bundle.putDouble("lat",location.getLatitude() );
-                            bundle.putDouble("lng", location.getLongitude());
-
-                            Intent intent=new Intent(context, LoginActivity.class);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            preferences.edit()
-                                    .putString("from_book_screen", jsonObject.toString())
-                                    .putBoolean("createRequest", true)
-                                    .apply();
-
-                        } catch (JSONException e) {
-                            Log.e("responseDataError", "Error brom Booking : "+e);
-                        }
-                    }
                 break;
             case R.id.book_later_btn_avail_fragment:
+
+                if (location == null) {
+                    spotsDialog.dismiss();
+                    final Snackbar snackbar = Snackbar.make(view, "We are unable to pick your location please Select your location!", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.show();
+                    snackbar.setAction("cancel", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackbar.dismiss();
+                        }
+                    });
+                    return;
+                }
+                if (userPackage == null) {
+                    spotsDialog.dismiss();
+                    final Snackbar snackbar = Snackbar.make(view, "Please Select your package!", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.show();
+                    snackbar.setAction("cancel", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackbar.dismiss();
+                        }
+                    });
+                    return;
+                }
+
+
+                hitBookLater();
+
                 break;
             case R.id.done_btn_availfragment:
 
                 break;
         }
     }
-//TODO Resend api hit
 
+    private void hitBookLater() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("category", data.getString("category"));
+            json.put("subcategory", data.getString("subcategory"));
+            json.put("package", userPackage.getId());
+            json.put("lat", location.getLatitude());
+            json.put("lng", location.getLongitude());
+            json.put("task_WDuration", preferences.getString("quanOfWork", "0"));
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        fragment = SubserviceInnerViewpagerFragment.getInstance(json.toString());
+        if (isLogin()) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.nav_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+
+        } else {
+            startLoginActivity(false);
+        }
+    }
+
+    private void startLoginActivity(boolean isBookNow) {
+
+        if (isBookNow) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isBookNow", true);
+            Intent intent = new Intent(context, LoginActivity.class);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, BOOK_NOW_REQUEST_CODE);
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isBookLetar", true);
+            Intent intent = new Intent(context, LoginActivity.class);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, BOOK_LATAR_REQUEST_CODE);
+        }
+    }
+
+    public void hitBookNow() {
+        if (isLogin()) {
+            // progressBar.setVisibility(View.VISIBLE);
+            //Toast.makeText(context, "start booking ", Toast.LENGTH_LONG).show();
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("v_code", getString(R.string.v_code));
+                jsonObject.put("apikey", getString(R.string.apikey));
+                jsonObject.put("category", data.getString("category"));
+                jsonObject.put("subcategory", data.getString("subcategory"));
+                jsonObject.put("package", userPackage.getId());
+                jsonObject.put("task_WDuration", preferences.getString("quanOfWork", "0"));
+                jsonObject.put("latitude", location.getLatitude());
+                jsonObject.put("longitude", location.getLongitude());
+                jsonObject.put("task_title", "");
+                jsonObject.put("applied_coupen", "");
+                jsonObject.put("userToken", preferences.getString("userToken", "0"));
+                jsonObject.put("created_by", preferences.getString("user_id", "0"));
+                JSONObject requestData = new JSONObject();
+                requestData.put("RequestData", jsonObject);
+                Log.i("requestDataCreate", "Create Request : " + jsonObject.toString());
+                sendHttpRequest(requestData);
+               /* preferences.edit()
+                        .putString("from_book_screen", jsonObject.toString())
+                        .putBoolean("createRequest", true)
+                        .apply();*/
+            } catch (Exception e) {
+                Log.e("responseDataError", "Error brom Booking : " + e);
+            }
+        } else {
+            startLoginActivity(true);
+        }
+    }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==1 && resultCode== Activity.RESULT_OK){
-            Place place=PlaceAutocomplete.getPlace(context, data);
-            LatLng latLng=place.getLatLng();
-            if(marker!=null)
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            Place place = PlaceAutocomplete.getPlace(context, data);
+            LatLng latLng = place.getLatLng();
+            if (marker != null)
                 marker.remove();
             client.removeLocationUpdates(mLocationCallback);
-            MarkerOptions markerOptions=new MarkerOptions();
+            MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.visible(true)
                     .title(preferences.getString("fullname", "You"))
                     .position(latLng);
-                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.if_blue_pin_68011));
+            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.if_blue_pin_68011));
             marker = googleMap.addMarker(markerOptions);
-            CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLngZoom(latLng, 13);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
             googleMap.moveCamera(cameraUpdate);
-            Location location=new Location("A");
+            Location location = new Location("A");
             location.setLatitude(latLng.latitude);
             location.setLongitude(latLng.longitude);
-            if(userPackage!=null)
-            getAvailableServiceProvider(location, userPackage);
-            this.location=location;
+            if (userPackage != null)
+                getAvailableServiceProvider(location, userPackage);
+            this.location = location;
+        }
+        if (requestCode == BOOK_LATAR_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Log.i("successLoginLater", preferences.getString("user_id", "0"));
+            setLogin();
+            hitBookLater();
+        }
+        if (requestCode == BOOK_NOW_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Log.i("successLoginNow", preferences.getString("user_id", "0"));
+            setLogin();
+            hitBookNow();
         }
     }
-
 
 
     public boolean isLogin() {
         return isLogin;
     }
 
-    public void setLogin(boolean login) {
-        isLogin = login;
+    public void setLogin() {
+
+        isLogin = preferences.getBoolean("isLogin", false);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onCameraMove() {
+
+        linearLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onCameraMoveCanceled() {
+        linearLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onCameraIdle() {
+        linearLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(context, "Toast here : ", Toast.LENGTH_LONG).show();
+
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }
+        client.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location == null) return;
+                double lat=location.getLatitude();
+                double lng=location.getLongitude();
+                LatLng latLng=new LatLng(lat, lng);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+                changeLocation(location);
+            }
+        });
+        return true;
     }
 }

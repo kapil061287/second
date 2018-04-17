@@ -11,6 +11,15 @@ public class Notification {
     private String notifyData;
     private String notifyDate;
     private String notifyMsg;
+    private String notifyId;
+
+    public String getNotifyId() {
+        return notifyId;
+    }
+
+    public void setNotifyId(String notifyId) {
+        this.notifyId = notifyId;
+    }
 
     public String getImageUrl() {
         return imageUrl;

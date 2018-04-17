@@ -3,6 +3,7 @@ package com.depex.okeyclick.user.fragment;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,12 +30,14 @@ import com.depex.okeyclick.user.factory.StringConvertFactory;
 import com.depex.okeyclick.user.model.BookLaterServiceProvider;
 import com.depex.okeyclick.user.model.SubService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -61,37 +64,44 @@ public  class SubserviceInnerViewpagerFragment extends Fragment implements View.
     @BindView(R.id.inner_view_pager_recycler)
     RecyclerView innerViewPagerRecycler;
 
+    SharedPreferences preferences;
+
+    //Json From previous screen from book later btn category subcategory package
+    String json;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.content_book_later_most_inner_fragment, container, false);
         ButterKnife.bind(this, view);
         Bundle bundle=getArguments();
-        String json=bundle.getString("json");
-        Gson gson=new Gson();
-
+        json=bundle.getString("json");
+       // Gson gson=new Gson();
+        preferences=context.getSharedPreferences(Utils.SERVICE_PREF, Context.MODE_PRIVATE);
         arr=new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-        SubService subService=gson.fromJson(json, SubService.class);
+        //SubService subService=gson.fromJson(json, SubService.class);
         dateBtn.setOnClickListener(this);
         timeBtn.setOnClickListener(this);
-        initServiceProvider(subService);
+        initServiceProvider(json);
         return view;
     }
 
-    private void initServiceProvider(final SubService subService) {
+    private void initServiceProvider(final String json) {
 
         JSONObject requestData=new JSONObject();
         JSONObject data=new JSONObject();
-        double lat=77.391;
-        double lng=28.5355;
+
         try {
+            JSONObject request=new JSONObject(json);
+            double lat=77.391;
+            double lng=28.5355;
             data.put("v_code", getString(R.string.v_code));
             data.put("apikey", getString(R.string.apikey));
-            data.put("latitude", lat);
-            data.put("longitue", lng);
-            data.put("category", subService.getServiceId());
-            data.put("subcategory", subService.getId());
+            data.put("latitude", request.getString("lat"));
+            data.put("package", request.getString("package"));
+            data.put("longitue", request.getString("lng"));
+            data.put("category", request.getString("category"));
+            data.put("subcategory",request.getString("subcategory"));
             requestData.put("RequestData", data);
             Log.i("requestData", "BookLater Inner Fragment : "+requestData.toString());
         } catch (JSONException e) {
@@ -116,18 +126,10 @@ public  class SubserviceInnerViewpagerFragment extends Fragment implements View.
                             if(success){
                                 JSONObject resObj=res.getJSONObject("response");
                                 JSONArray arr=resObj.getJSONArray("List");
-                                List<BookLaterServiceProvider> bookLaterServiceProviders=new ArrayList<>();
-                                for(int i=0;i<arr.length();i++){
-                                    JSONObject jsonObject=arr.getJSONObject(i);
-                                    BookLaterServiceProvider provider=new BookLaterServiceProvider();
-                                    provider.setId(jsonObject.getString("id"));
-                                    provider.setImageUrl(jsonObject.getString("sp_profile"));
-                                    provider.setDistance(jsonObject.getString("distance"));
-                                    provider.setRating((float) jsonObject.getDouble("rating"));
-                                    provider.setPricePerHour(jsonObject.getString("hr_price"));
-                                    provider.setName("Mr. "+jsonObject.getString("first_name")+" "+jsonObject.getString("last_name"));
-                                    bookLaterServiceProviders.add(provider);
-                                }
+
+                                Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-d H:m:s").create();
+                                BookLaterServiceProvider[]bookLaterServiceProvidersArr=gson.fromJson(arr.toString(), BookLaterServiceProvider[].class);
+                                List<BookLaterServiceProvider> bookLaterServiceProviders=new ArrayList<>(Arrays.asList(bookLaterServiceProvidersArr));
                                 InnerViewPagerRecyclerViewAdapter adapter=new InnerViewPagerRecyclerViewAdapter(bookLaterServiceProviders, context, SubserviceInnerViewpagerFragment.this);
                                 LinearLayoutManager manager=new LinearLayoutManager(context);
                                 innerViewPagerRecycler.setLayoutManager(manager);
@@ -141,7 +143,7 @@ public  class SubserviceInnerViewpagerFragment extends Fragment implements View.
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         Log.e("responseDataError", "Inner View Pager Fragment : "+t.toString());
-                        initServiceProvider(subService);
+                        initServiceProvider(json);
                     }
                 });
     }
@@ -188,8 +190,22 @@ public  class SubserviceInnerViewpagerFragment extends Fragment implements View.
         timeBtn.setText(new StringBuilder().append(i).append(":").append(i1).toString());
     }
 
+
+    //Fragemnt click listener
     @Override
     public void onInnerViewPagerRecyclerItemClick(BookLaterServiceProvider provider) {
-
+            ServiceProviderProfileFragment fragment=ServiceProviderProfileFragment.getInstance(provider, json);
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.nav_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+    }
+    public static SubserviceInnerViewpagerFragment getInstance(String json){
+        SubserviceInnerViewpagerFragment fragment=new SubserviceInnerViewpagerFragment();
+        Bundle bundle=new Bundle();
+        bundle.putString("json", json);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 }

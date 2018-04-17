@@ -4,14 +4,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 
 import com.depex.okeyclick.user.model.Service;
 import com.depex.okeyclick.user.R;
@@ -40,23 +45,18 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
     RecyclerView services_recycler;
     private String tag="HomeFragment";
     private SpotsDialog spotsDialog;
+    private boolean isInGridView;
+    private MenuItem menuItem;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i("tagWithTag", "Toast is cleared !");
-        return true;
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        View view=inflater.inflate(R.layout.content_home_fragment, container, false);
         ButterKnife.bind(this, view);
+        Toolbar toolbar=getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
+
+        //menuItem.setOnMenuItemClickListener(this);
         spotsDialog=new SpotsDialog(getActivity());
         spotsDialog.show();
         Retrofit.Builder builder=new Retrofit.Builder();
@@ -65,10 +65,24 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
         Call<JsonObject> servicesCall=api.getServices(getString(R.string.apikey));
         CallbackApi callbackApi=new CallbackApi(this);
         servicesCall.enqueue(callbackApi);
-
+        Log.i("fragmentLify", "OnCreate()");
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+
+        if(menuItem!=null){
+            menuItem.setVisible(false);
+        }
+        super.onPause();
+        Log.i("fragmentLify", "OnPause()");
+    }
 
     @Override
     public void success(Call<JsonObject> call, Response<JsonObject> response, Object... objects) {
@@ -87,6 +101,7 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
 //                    Log.i("responseData", "Services : "+services.get(0).getSubServices().get(0).getId());
                     ServicesRecyclerAdapter adapter = new ServicesRecyclerAdapter(getActivity(), services, getFragmentManager());
                     LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+//                    GridLayoutManager manager=new GridLayoutManager(getActivity(), 2);
                     services_recycler.setLayoutManager(manager);
                     services_recycler.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
                     services_recycler.setAdapter(adapter);
@@ -94,6 +109,7 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
                     break;
             }
         }
+
 
 
             if(objects.length>0){
@@ -108,4 +124,34 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
         if(response!=null)
         Log.i(tag ,response.body().toString() );
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.grid_list_menu:
+                    if(isInGridView){
+                        isInGridView=false;
+                        item.setIcon(R.drawable.ic_apps_black_24dp);
+                        services_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        services_recycler.getAdapter().notifyDataSetChanged();
+                    }else {
+                        isInGridView=true;
+                        services_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                        services_recycler.getAdapter().notifyDataSetChanged();
+                        item.setIcon(R.drawable.ic_format_list_bulleted_black_24dp);
+                    }
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.menuItem=menu.findItem(R.id.grid_list_menu);
+        menuItem.setVisible(true);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
 }

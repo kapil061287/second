@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#ff1fcbff</color>
     <color name="colorPrimaryDark">#ff009acc</color>
+    <color name="icon_back">#ff009acc</color>
     <color name="colorAccent">#FF4081</color>
     <color name="spleshColor">#ff1fcbff</color>
 

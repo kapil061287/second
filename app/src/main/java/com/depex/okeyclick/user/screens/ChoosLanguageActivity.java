@@ -21,6 +21,7 @@ import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
+import com.depex.okeyclick.user.launch.SecondSplashActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,18 +54,13 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choos_language);
         ButterKnife.bind(this);
-        //spanish_btn=findViewById(R.id.spanish_lang_btn);
-        //eng_button=findViewById(R.id.eng_lng_button);
-        //set onClick listener
+
         onClickListener(spanish_btn, eng_button);
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
-        /*AlertDialog.Builder builder=new AlertDialog.Builder(this, R.style.AppTheme_AlertDialog);
-        builder.setView(LayoutInflater.from(this).inflate(R.layout.progressbar_layout, null, false));
-        dialog=builder.create();*/
+
         dialog=new SpotsDialog(this);
 
         dialog.setTitle("Please Wait...");
-
     }
 
 
@@ -99,14 +95,14 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
                     configuration.setLocale(new Locale("es"));
                     resources.updateConfiguration(configuration, displayMetrics);
                 }
-
-                if (isLogin){
+                startSecondLaunchActivity();
+               /* if (isLogin){
                     checkLogin();
                 }else {
                     bundle.putString("locale", "es_es");
                     loginIntent.putExtras(bundle);
                     startActivity(loginIntent);
-                }
+                }*/
                 break;
             case R.id.eng_lng_button:
                 isLogin=preferences.getBoolean("isLogin", false);
@@ -115,86 +111,21 @@ public class ChoosLanguageActivity extends AppCompatActivity implements View.OnC
                     configuration.setLocale(new Locale("en"));
                 }
                 resources.updateConfiguration(configuration, displayMetrics);
+                startSecondLaunchActivity();
 
-                if (isLogin){
+              /*  if (isLogin){
                     checkLogin();
                 }else {
                     bundle.putString("locale", "en_us");
                     loginIntent.putExtras(bundle);
                     startActivity(loginIntent);
-                }
+                }*/
                 break;
         }
     }
 
-    public void checkLogin(){
-        JSONObject requestData=new JSONObject();
-        JSONObject data=new JSONObject();
-        dialog.show();
-        try {
-            data.put("v_code", getString(R.string.v_code));
-            data.put("apikey", getString(R.string.apikey));
-            data.put("deviceType", "android");
-            data.put("userToken", preferences.getString("userToken", "0"));
-            data.put("user_id", preferences.getString("user_id", "0"));
-            data.put("DeviceToken", "");
-            requestData.put("RequestData", data);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        new Retrofit
-                .Builder()
-                .baseUrl(Utils.SITE_URL)
-                .addConverterFactory(new StringConvertFactory())
-                .build()
-                .create(ProjectAPI.class)
-                .checkToken(requestData.toString())
-                .enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        String responseString=response.body();
-                        if(responseString==null)return;
-                        try {
-                            JSONObject res=new JSONObject(responseString);
-                            boolean success=res.getBoolean("successBool");
-                            if(success){
-                                dialog.dismiss();
-
-                                Intent intent=new Intent(ChoosLanguageActivity.this, HomeActivity.class);
-                                startActivity(intent);
-
-                            }else{
-                                dialog.dismiss();
-                                preferences.edit()
-                                        .remove("isLogin")
-                                        .remove("fullname")
-                                        .remove("userToken")
-                                        .remove("user_id")
-                                        .apply();
-
-                                Intent intent=new Intent(ChoosLanguageActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                            }
-                        } catch (JSONException e) {
-                            dialog.dismiss();
-                            final Snackbar snackbar=Snackbar.make(findViewById(R.id.cont_layout_language_btn), "Please Check your Internet Connection !", Snackbar.LENGTH_INDEFINITE);
-                            snackbar.setAction("OK", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                snackbar.dismiss();
-                                }
-                            });
-                            snackbar.show();
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.e("responseDataError", t.toString());
-                        dialog.dismiss();
-                    }
-                });
+    private void startSecondLaunchActivity() {
+        Intent intent=new Intent(this, SecondSplashActivity.class);
+        startActivity(intent);
     }
 }

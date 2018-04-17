@@ -20,6 +20,7 @@ import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +49,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @BindView(R.id.text_password)
     TextInputLayout text_password;
     SharedPreferences preferences;
+    boolean bookLatar=false;
+    boolean bookNow=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +60,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         ButterKnife.bind(this);
         Bundle bundle=getIntent().getExtras();
+        if(bundle!=null){
+            bookLatar=bundle.getBoolean("isBookLetar", false);
+            bookNow=bundle.getBoolean("isBookNow", false);
+        }
         skip_btn.setOnClickListener(this);
         login_btn.setOnClickListener(this);
         signup_btn.setOnClickListener(this);
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
-        boolean requestGen=preferences.getBoolean("createRequest", false);
-        if(requestGen){
+
+        if(bookNow  || bookLatar ){
             skip_btn.setVisibility(View.GONE);
         }
+
+
     }
 
 
@@ -75,8 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(homeIntent);
                 break;
             case R.id.signup_btn:
-                Intent signupIntent=new Intent(this, SignupActivity.class);
-                startActivity(signupIntent);
+                startSignupProcess();
                 break;
             case R.id.login_btn:
                 String username=text_username.getEditText().getText().toString();
@@ -90,6 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     data.put("deviceID", "82150528-23LG-4622-B303-68B4572F9305");
                     data.put("username", username);
                     data.put("password", password);
+                    data.put("device_token", FirebaseInstanceId.getInstance().getToken());
                     data.put("loginWith", "");
                     requestData.put("RequestData", data);
 
@@ -115,18 +125,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     .putString("userToken", responseData.getString("userToken"))
                                             .putString("fullname", responseData.getString("fullname"))
                                     .putBoolean("isLogin", true).apply();
-                                    if(preferences.getBoolean("createRequest", false)){
-                                        String requestjson=preferences.getString("from_book_screen", "0");
-                                        JSONObject jsonObject=new JSONObject(requestjson);
-                                        jsonObject.put("userToken", preferences.getString("userToken", "0"));
-                                        jsonObject.put("created_by", preferences.getString("user_id", "0"));
-                                        JSONObject jsonObject1=new JSONObject();
-                                        jsonObject1.put("RequestData", jsonObject);
-                                        sendHttpRequest(jsonObject1);
-                                       Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
-                                       intent.putExtras(getIntent().getExtras());
-                                       startActivity(intent);
-                                       finish();
+                                    if(bookLatar || bookNow){
+                                        setResult(RESULT_OK);
+                                        finish();
                                     }else{
                                         Intent intent=new Intent(LoginActivity.this, HomeActivity.class);
                                         startActivity(intent);
@@ -137,6 +138,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     JSONObject errorObj=res.getJSONObject("ErrorObj");
                                     String errorCode=errorObj.getString("ErrorCode");
                                     if(errorCode.equals("108")){
+
                                         String errorMsg=errorObj.getString("ErrorMsg");
                                         Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                                     }
@@ -162,41 +164,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void sendHttpRequest(JSONObject  jsonObject){
-
-        final Retrofit.Builder builder=new Retrofit.Builder();
-        ProjectAPI projectAPI=builder.baseUrl(Utils.SITE_URL)
-                .addConverterFactory(new StringConvertFactory())
-                .build().create(ProjectAPI.class);
-        projectAPI.createRequest(jsonObject.toString()).enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String responseString=response.body();
-                Log.i("responseData", responseString);
-                try {
-                    JSONObject res= new JSONObject(responseString);
-                    boolean success=res.getBoolean("successBool");
-                    if(success){
-                        JSONObject responseObj=res.getJSONObject("response");
-                        String task_id=responseObj.getString("task_id");
-                        Bundle bundle=new Bundle();
-                        bundle.putString("task_id", task_id);
-
-                        Intent intent=new Intent(LoginActivity.this, JobAssignedActivity.class);
-                        preferences.edit().putString("task_id", task_id).apply();
-                        startActivity(intent);
-                        finish();
-                    }
-                } catch (JSONException e) {
-                    Log.e("responseDataError", e.toString());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.e("responseError", t.toString());
-            }
-        });
+    private void startSignupProcess() {
+        Intent signupIntent=new Intent(this, SignupActivity.class);
+        if(!bookLatar || !bookNow) {
+            startActivity(signupIntent);
+        }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(bookNow || bookLatar){
+            setResult(RESULT_CANCELED);
+            finish();
+        }else {
+            super.onBackPressed();
+        }
+    }
 }

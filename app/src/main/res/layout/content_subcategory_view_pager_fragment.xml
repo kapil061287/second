@@ -3,9 +3,6 @@
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-<android.support.v4.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -17,13 +14,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/nexa"
                 android:id="@+id/overlay_text_subcategory_fragment"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:elevation="8dp"
-
                 android:textAllCaps="true"
                 android:textColor="#ffffffff"
                 android:textSize="28dp"
@@ -33,22 +30,26 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+
                 android:id="@+id/header_image_viewpager1"
                 android:layout_width="match_parent"
                 android:background="#55000000"
                 android:elevation="5dp"
                 android:scaleType="fitXY"
-                android:layout_height="200dp" />
+                android:layout_height="150dp" />
 
-    <ImageView
-        android:id="@+id/header_image_viewpager"
-        android:layout_width="match_parent"
-        android:scaleType="fitXY"
-        android:elevation="3dp"
-        android:layout_height="200dp" />
+            <ImageView
+                android:id="@+id/header_image_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginBottom="8dp"
+                android:elevation="3dp"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
     <TextView
+        android:fontFamily="@font/nexa"
         android:textSize="20dp"
         android:layout_marginTop="@dimen/margint_sub_top"
         android:textStyle="bold"
@@ -58,27 +59,38 @@
         android:textColor="#0fbcec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <RadioGroup
-        android:id="@+id/radiogroup_viewpager"
+    <LinearLayout
+        android:id="@+id/parent_linear_select_view"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </RadioGroup>
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+    </LinearLayout>
     <Button
-        android:text="Next"
+        android:text="Confirm Service"
+        android:fontFamily="@font/nexa"
         android:id="@+id/next_btn_viewpager"
         android:background="@color/login_btn"
         android:textColor="#ffffffff"
         android:layout_gravity="right"
-        android:layout_marginRight="@dimen/margin_right"
         android:drawableRight="@drawable/ic_arrow_forward_black_24dp"
-        android:paddingRight="15dp"
-        android:paddingLeft="15dp"
-        android:drawablePadding="20dp"
-
-        android:layout_marginBottom="@dimen/margin_right"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
 </LinearLayout>
+
+<!--<Button-->
+<!--android:text="Next"-->
+<!--android:fontFamily="@font/nexa"-->
+<!--android:id="@+id/next_btn_viewpager"-->
+<!--android:background="@color/login_btn"-->
+<!--android:textColor="#ffffffff"-->
+<!--android:layout_gravity="right"-->
+<!--android:layout_marginRight="@dimen/margin_right"-->
+<!--android:drawableRight="@drawable/ic_arrow_forward_black_24dp"-->
+<!--android:paddingRight="15dp"-->
+<!--android:paddingLeft="15dp"-->
+<!--android:drawablePadding="20dp"-->
+<!--android:layout_marginBottom="@dimen/margin_right"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content" />-->

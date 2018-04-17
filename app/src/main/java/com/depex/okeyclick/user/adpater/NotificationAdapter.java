@@ -1,6 +1,7 @@
 package com.depex.okeyclick.user.adpater;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +11,17 @@ import android.widget.TextView;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.model.Notification;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class NotificationAdapter  extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
     List<Notification> notifications;
     Context context;
+    private  String[]arr={"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     NotificationItemClickListenter notificationItemClickListenter;
     public NotificationAdapter(Context context, List<Notification> notifications, NotificationItemClickListenter notificationItemClickListenter){
         this.context=context;
@@ -37,7 +43,22 @@ public class NotificationAdapter  extends RecyclerView.Adapter<NotificationAdapt
         String notifyMsg=notification.getNotifyMsg();
         holder.notificationTitle.setText(notifyTitle);
         holder.notificationMsg.setText(notifyMsg);
-        holder.notification_date.setText(notiyDate);
+
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-d" );
+        try {
+         Date dt=  format.parse(notiyDate);
+         SimpleDateFormat format1=new SimpleDateFormat("d MMM, yyyy");
+
+            holder.notification_date.setText(format1.format(dt));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+       /* String[]arr=notiyDate.split("-");
+        int monthIndex= Integer.parseInt(arr[1]);
+*/
         final int i=position;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

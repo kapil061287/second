@@ -12,6 +12,7 @@
     android:layout_height="wrap_content">
 <RelativeLayout
     android:layout_width="match_parent"
+    android:visibility="gone"
     android:layout_height="wrap_content">
     <TextView
         android:text="Select Date"
@@ -35,6 +36,7 @@
 
 </FrameLayout>
     <FrameLayout
+        android:visibility="gone"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

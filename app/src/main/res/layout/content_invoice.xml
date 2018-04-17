@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/parent_constraint_layout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.depex.okeyclick.user.screens.InvoiceActivity"
     tools:showIn="@layout/activity_invoice">
@@ -169,6 +171,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>-->
             <LinearLayout
+                android:visibility="gone"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="@dimen/left_margin_in_invoice"
                 android:orientation="horizontal"
@@ -232,22 +235,36 @@
                     android:id="@+id/apply_coupon_minus"
                     android:gravity="center_horizontal"
                     android:layout_weight="1"
-                    android:textColor="#175417"
+                    android:textColor="#1b6e1b"
                     android:theme="@style/AppTheme.TextViewFont"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_marginTop="20dp"
+           <android.support.v7.widget.CardView
+               android:layout_width="match_parent"
+               app:cardElevation="3dp"
+               android:layout_marginTop="20dp"
+                app:cardBackgroundColor="@color/colorPrimaryDark"
+               android:layout_height="40dp">
+
+               <FrameLayout
                 android:layout_marginLeft="@dimen/left_margin_in_invoice"
+                   android:layout_marginRight="@dimen/right_margin_in_invoice"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent">
+               <LinearLayout
+                   android:layout_gravity="center_vertical"
+
+
                 android:orientation="horizontal"
-                android:layout_marginRight="@dimen/right_margin_in_invoice"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:theme="@style/AppTheme.TextViewFont"
                     android:layout_weight="1"
+                    android:textColor="#ffffffff"
                     android:layout_marginRight="10dp"
                     android:text="Total Amount"
                     android:layout_width="0dp"
@@ -256,15 +273,19 @@
                     android:id="@+id/total_amount_txt2"
                     android:gravity="center_horizontal"
                     android:layout_weight="1"
+                    android:textColor="#ffffffff"
                     android:theme="@style/AppTheme.TextViewFont"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+               </FrameLayout>
+           </android.support.v7.widget.CardView>
 
 
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:id="@+id/apply_coupon_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -289,7 +310,19 @@
                     android:theme="@style/AppTheme.TextViewFont"
                     android:layout_width="0dp"
                     android:layout_height="40dp" />
+
             </LinearLayout>
+
+            <Button
+                android:text="Do you want a coupon ?"
+                android:background="@color/transparent"
+                android:textAllCaps="false"
+                android:id="@+id/want_coupon"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
 
             <LinearLayout
                 android:layout_marginTop="20dp"
@@ -323,18 +356,8 @@
 
 
 
-            <Button
-                android:layout_marginTop="20dp"
-                android:text="Payment"
-                android:theme="@style/AppTheme.TextViewFont"
-                android:id="@+id/payment_btn"
-                android:background="@color/skip_back_color"
-                android:textColor="#ffffffff"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp" />
             <TextView
-                android:text="Paid"
+                android:text="@string/paid_text"
                 android:textSize="18dp"
                 android:id="@+id/paid_txt"
                 android:visibility="gone"
@@ -343,6 +366,17 @@
                 android:theme="@style/AppTheme.TextViewFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <Button
+                android:layout_marginTop="20dp"
+                android:text="Payment"
+                android:theme="@style/AppTheme.TextViewFont"
+                android:id="@+id/payment_btn"
+                android:background="@drawable/pay_btn_rounded"
+                android:textColor="#ffffffff"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp" />
+
         </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -4,23 +4,124 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
-<ImageView
-    android:background="@drawable/contact_image"
-    android:layout_width="match_parent"
-    android:layout_marginTop="20dp"
-    android:scaleType="centerCrop"
-    android:layout_gravity="center_horizontal"
-    android:layout_height="100dp" />
 
-    <TextView
-        android:layout_marginTop="20dp"
-        android:drawableLeft="@drawable/ic_phone_black_24dp"
-        android:text="@string/customer_care_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:layout_marginLeft="40dp"
-        android:text="180211111111"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+    <FrameLayout
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <TextView
+            android:textSize="15dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/customer_care_icon"
+            android:fontFamily="@font/nexa"
+            android:text="@string/customer_care_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+    <FrameLayout
+
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <TextView
+            android:textSize="11dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:fontFamily="@font/nexa"
+            android:text="1800-000-0000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+    <FrameLayout
+
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <Button
+            android:textSize="12dp"
+            android:textColor="#42b36f"
+            android:text="@string/call_now_txt"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@drawable/call_now_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" />
+    </FrameLayout>
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:drawableLeft="@drawable/term_and_condition_icon_1"
+            android:id="@+id/term_condition_textview"
+            android:fontFamily="@font/nexa"
+            android:gravity="center_vertical"
+            android:textSize="15dp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:id="@+id/data_protection_low_textView"
+            android:fontFamily="@font/nexa"
+            android:textSize="15dp"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/data_protection_law"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:text="@string/link_to_web_site"
+            android:fontFamily="@font/nexa"
+            android:textSize="15dp"
+            android:drawableLeft="@drawable/web_link"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:id="@+id/web_site_link_text_view"
+                android:fontFamily="@font/nexa"
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:id="@+id/faq_text"
+            android:fontFamily="@font/nexa"
+            android:textSize="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 </LinearLayout>

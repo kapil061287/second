@@ -26,6 +26,7 @@
                 android:layout_marginTop="-50dp"
                 />
             <Button
+                android:fontFamily="@font/nexa"
                 android:background="#00000000"
                 android:text="@string/skip"
                 android:id="@+id/skip_btn"
@@ -75,7 +76,7 @@
                 android:textColor="#ffffffff"
                 android:padding="10dp"
                 android:text="@string/login"
-
+                android:fontFamily="@font/nexa"
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginLeft="@dimen/margin_left"
                 android:id="@+id/login_btn"
@@ -85,6 +86,7 @@
                 android:background="@color/colorPrimaryDark"
                 android:id="@+id/signup_btn"
                 android:text="@string/signup_txt"
+                android:fontFamily="@font/nexa"
                 android:textColor="#ffffffff"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:layout_marginLeft="@dimen/margin_left"
@@ -95,6 +97,7 @@
                 android:text="Forget Password ?"
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginLeft="@dimen/margin_left"
+                android:fontFamily="@font/nexa"
                 android:layout_gravity="right"
                 android:background="#00ffffff"
                 android:textColor="@color/colorPrimaryDark"

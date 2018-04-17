@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.depex.okeyclick.user.GlideApp;
+import com.depex.okeyclick.user.fragment.SubServiceFragment2;
 import com.depex.okeyclick.user.model.Service;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.contants.Utils;
@@ -89,7 +90,7 @@ public class ServicesRecyclerAdapter  extends RecyclerView.Adapter<ServicesRecyc
 
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.nav_container, new SubServiceFragment().newIntance(services, position), "service")
+                    .replace(R.id.nav_container, new SubServiceFragment2().newInstance(services, position), "service")
                     .addToBackStack(null)
                     .commit();
         }

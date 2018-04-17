@@ -65,7 +65,7 @@ public class ServiceHistoryAdapter extends RecyclerView.Adapter<ServiceHistoryAd
             case "7":
                 return "Complete";
             case "8":
-                return "Confirm Complete";
+                return "Complete";
             case "9":
                 return "Cancel";
             default:

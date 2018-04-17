@@ -108,7 +108,7 @@ public class ServicesRecyclerSubServiceAdapter  extends RecyclerView.Adapter<Ser
                     Fragment fragment=homeActivity.getSupportFragmentManager().findFragmentByTag("service");
                     View view1=fragment.getView();
                     ImageView imageView=view1.findViewById(R.id.header_image_viewpager);
-                    final RadioGroup radioGroup=view1.findViewById(R.id.radiogroup_viewpager);
+                    //final RadioGroup radioGroup=view1.findViewById(R.id.radiogroup_viewpager);
 
 
                     Service service= (Service) view.getTag();
@@ -136,8 +136,8 @@ public class ServicesRecyclerSubServiceAdapter  extends RecyclerView.Adapter<Ser
                                     SubService[]subservicesarr=gson.fromJson(subservicesList, SubService[].class);
                                     ArrayList<SubService> subServices=new ArrayList<>(Arrays.asList(subservicesarr));
                                     Log.i("responseJson", subServices.toString());
-                                    radioGroup.removeAllViews();
-                                    createRadios(radioGroup, subServices);
+                                    //radioGroup.removeAllViews();
+                                    //createRadios(radioGroup, subServices);
                                 }
                         }
 

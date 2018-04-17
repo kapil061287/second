@@ -40,7 +40,7 @@
     </group>
     <group android:id="@+id/group5" >
 -->
-    <item android:id="@+id/invite_earn"
+    <item android:id="@+id/invite_earn_menu"
         android:icon="@drawable/invite_and_earn_icon"
         android:title="@string/invite_and_earn"
         />

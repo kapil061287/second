@@ -38,7 +38,6 @@ public class SubServiceFragment2 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view=inflater.inflate(R.layout.content_subservice_fragment, null, false);
         TabLayout tabLayout=view.findViewById(R.id.tabs1);
         ViewPager viewPager=view.findViewById(R.id.view_pager_profile1);
@@ -51,11 +50,11 @@ public class SubServiceFragment2 extends Fragment {
             Log.i("bundleNull", "Bundle is null ");
             return view;
         }
-        String json=bundle.getString("jsonServiceList", "");
+        String json=bundle.getString("json", "");
         int position=bundle.getInt("position", 0);
-        Log.i("positionElements", String.valueOf(position));
+
         Gson gson=new Gson();
-        Log.i("tagFragment", getTag()+"");
+
         Service[]arr=gson.fromJson(json, Service[].class);
         List<Service> services=new ArrayList<>(Arrays.asList(arr));
         for(Service service : services){
@@ -81,7 +80,7 @@ public class SubServiceFragment2 extends Fragment {
             tabLayout.addTab(tab);
             service.getServiceName();
         }
-        Log.i("responseDataPosition", position+"");
+
 
         MyAdpater adpater=new MyAdpater(getChildFragmentManager(), services);
         viewPager.setAdapter(adpater);
@@ -94,8 +93,18 @@ public class SubServiceFragment2 extends Fragment {
         super.onAttach(context);
         this.context=context;
     }
-    class MyAdpater extends FragmentPagerAdapter{
 
+    public static SubServiceFragment2 newInstance(List<Service> services, int position){
+            Bundle bundle=new Bundle();
+            Gson gson=new Gson();
+            String json=gson.toJson(services);
+            bundle.putString("json", json);
+            bundle.putInt("position", position);
+            SubServiceFragment2 serviceFragment2=new SubServiceFragment2();
+            serviceFragment2.setArguments(bundle);
+            return serviceFragment2;
+    }
+    class MyAdpater extends FragmentPagerAdapter{
         List<Service> services;
         public MyAdpater(FragmentManager fm, List<Service> list) {
             super(fm);
@@ -105,13 +114,14 @@ public class SubServiceFragment2 extends Fragment {
         @Override
         public Fragment getItem(int position) {
             SubServiceViewPagerFragment subServiceViewPagerFragment=new SubServiceViewPagerFragment();
-            String url=services.get(position).getImageUrl();
             Bundle bundle=new Bundle();
             String json=new Gson().toJson(services.get(position));
             bundle.putString("json", json);
+            //Log.i("responseData", "SubService 2 json"+json);
             subServiceViewPagerFragment.setArguments(bundle);
             return subServiceViewPagerFragment;
         }
+
 
         @Override
         public int getCount() {

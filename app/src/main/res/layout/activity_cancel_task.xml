@@ -28,6 +28,8 @@
         <Button
             android:text="Cancel Task"
             android:id="@+id/cancel_task_btn"
+            android:fontFamily="@font/nexa"
+            android:textStyle="bold"
             android:layout_gravity="center_horizontal"
             android:layout_width="150dp"
             android:background="@drawable/cancel_task_back"

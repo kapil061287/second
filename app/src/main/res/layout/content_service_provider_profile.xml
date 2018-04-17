@@ -39,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/service_provider_name"
+            android:fontFamily="@font/nexa"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:text="ServiceProviderName"
@@ -60,14 +61,43 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:gravity="right"
+                android:fontFamily="@font/nexa"
                 android:text="Price / per hour :" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:fontFamily="@font/nexa"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:id="@+id/per_hour_price"
+                android:paddingLeft="10dp" />
+
+        </LinearLayout>
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:id="@+id/per_hour_price"
+                android:gravity="right"
+                android:fontFamily="@font/nexa"
+                android:text="Job Status" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:fontFamily="@font/nexa"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:id="@+id/status"
                 android:paddingLeft="10dp" />
 
         </LinearLayout>
@@ -78,11 +108,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/nexa"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:gravity="right"
@@ -109,19 +141,23 @@
         <Button
             android:text="Cancel The Job"
             android:background="#00000000"
+            android:fontFamily="@font/nexa"
             android:textColor="@color/colorPrimaryDark"
             android:layout_gravity="center_horizontal"
             android:id="@+id/cancel_btn"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/reviews_txt" />

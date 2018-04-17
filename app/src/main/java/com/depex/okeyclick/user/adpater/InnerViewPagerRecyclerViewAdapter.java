@@ -7,22 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.model.BookLaterServiceProvider;
-import com.hedgehog.ratingbar.RatingBar;
-
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class InnerViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<InnerViewPagerRecyclerViewAdapter.InnerViewPagerRecyclerViewHolder> {
-
 
     private List<BookLaterServiceProvider> bookLaterServiceProviders;
     private Context context;
@@ -46,7 +42,7 @@ public class InnerViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<Inne
             holder.nameTextView.setText(bookLaterServiceProvider.getName());
             holder.distanceTextViewInner.setText(bookLaterServiceProvider.getDistance());
             //holder.ratingBarInner.setStar(bookLaterServiceProvider.getRating());
-            holder.ratingBarInner.setStar(3);
+            holder.ratingBarInner.setRating(3);
             holder.pricePerHourInner.setText(bookLaterServiceProvider.getPricePerHour());
         GlideApp.with(context)
                 .load(bookLaterServiceProvider.getImageUrl())

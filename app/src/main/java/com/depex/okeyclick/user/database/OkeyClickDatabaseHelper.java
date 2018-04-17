@@ -10,9 +10,6 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-/**
- * Created by we on 2/23/2018.
- */
 
 public class OkeyClickDatabaseHelper extends SQLiteOpenHelper {
 
@@ -24,7 +21,7 @@ public class OkeyClickDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
             sqLiteDatabase.execSQL("create table notify(_id integer primary key autoincrement, " +
                     "notification_type varchar(50)," +
-                    "notify_msg text, notify_data text, notify_date varchar(20))");
+                    "notify_msg text, notify_data text, notify_date varchar(20), payment_status varchar(20))");
         sqLiteDatabase.execSQL("create table taskTable(_id integer primary key autoincrement, " +
                 "taskKey varchar(10), status varchar(20), task_id varchar(10) not null unique , sp_id varchar(10), createdBy varchar(10))");
     }
@@ -47,6 +44,11 @@ public class OkeyClickDatabaseHelper extends SQLiteOpenHelper {
         values.put("sp_id", sp_id);
         values.put("createdBy", createdBy);
         return getDatabase().insert("taskTable", null, values);
+    }
+    public int updatePaymentInNotify(String id, String paymentStatus){
+        ContentValues values=new ContentValues();
+        values.put("payment_status", paymentStatus);
+        return getDatabase().update("notify",values,  "_id="+id, null);
     }
 
     public int taskUpdate(String task_id , String status, String sp_id, String taskKey){
@@ -96,4 +98,5 @@ public class OkeyClickDatabaseHelper extends SQLiteOpenHelper {
     public Cursor getNotifications(){
         return getDatabase().rawQuery("select *from notify", null);
     }
+
 }

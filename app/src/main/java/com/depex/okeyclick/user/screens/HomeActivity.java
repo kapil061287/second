@@ -19,11 +19,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.fragment.ContactUsFragment;
 import com.depex.okeyclick.user.fragment.HomeFragment;
+import com.depex.okeyclick.user.fragment.InviteAndEarnFragment;
 import com.depex.okeyclick.user.fragment.ReportAndIssue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
@@ -63,7 +67,9 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
         preferences=getSharedPreferences("service_pref_user", MODE_PRIVATE);
         fragmentTransaction=fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.nav_container, new HomeFragment())
+        HomeFragment homeFragment=new HomeFragment();
+        homeFragment.setHasOptionsMenu(true);
+        fragmentTransaction.replace(R.id.nav_container, homeFragment)
                 .commit();
 
         NavigationView navigationView =  findViewById(R.id.nav_view);
@@ -74,6 +80,9 @@ public class HomeActivity extends AppCompatActivity
         for(int i=0;i<count;i++){
             View view=navigationView.getHeaderView(i);
             TextView textView=view.findViewById(R.id.view_profile);
+            ImageView imageView=view.findViewById(R.id.nav_header_img);
+            String url="imageurl";
+            GlideApp.with(this).load(url).circleCrop().placeholder(R.drawable.user_dp_place_holder).into(imageView);
             TextView textView1=view.findViewById(R.id.username_text_nav_header);
             if(textView!=null){
                 if(preferences.getBoolean("isLogin", false)){
@@ -148,6 +157,12 @@ public class HomeActivity extends AppCompatActivity
         case R.id.service_history_menu:
             startServiceHistoryActivity();
             break;
+        case R.id.invite_earn_menu:
+            InviteAndEarnFragment fragment=new InviteAndEarnFragment();
+            fragmentTransaction=fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.nav_container, fragment, "inviteEarn").addToBackStack(null);
+            fragmentTransaction.commit();
+            break;
     }
         DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -162,7 +177,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home, menu);
-
+        menu.findItem(R.id.grid_list_menu).setVisible(false);
         return true;
     }
 }

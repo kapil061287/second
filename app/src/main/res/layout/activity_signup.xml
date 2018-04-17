@@ -22,6 +22,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Create your account"
                 android:textAllCaps="true"
+                android:fontFamily="@font/nexa"
                 android:textSize="18dp"
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
@@ -49,6 +50,7 @@
                 android:layout_marginLeft="@dimen/margin_left"
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
+                android:fontFamily="@font/nexa"
                 android:background="@drawable/input_box_draw_signup"
                 android:hint="Name"
                 android:paddingLeft="@dimen/input_padding_left" />
@@ -60,11 +62,13 @@
                 android:layout_marginLeft="@dimen/margin_left"
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
+                android:fontFamily="@font/nexa"
                 android:background="@drawable/input_box_draw_signup"
                 android:hint="Last Name"
                 android:paddingLeft="@dimen/input_padding_left" />
 
             <EditText
+                android:fontFamily="@font/nexa"
                 android:id="@+id/email_signup"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_layout_height"
@@ -77,6 +81,7 @@
                 android:padding="@dimen/input_padding_left" />
 
             <EditText
+                android:fontFamily="@font/nexa"
                 android:id="@+id/password_signup"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_layout_height"
@@ -89,6 +94,7 @@
                 android:paddingLeft="@dimen/input_padding_left" />
 
             <EditText
+                android:fontFamily="@font/nexa"
                 android:id="@+id/confim_password_signup"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_layout_height"
@@ -105,6 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_layout_height"
                 android:layout_marginLeft="@dimen/margin_left"
+                android:fontFamily="@font/nexa"
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:background="@drawable/input_box_draw_signup"
@@ -124,12 +131,14 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.2"
+                    android:fontFamily="@font/nexa"
                     android:background="@drawable/input_box_draw_signup"
                     android:hint="Enter your mobile no."
                     android:paddingLeft="@dimen/input_padding_left" />
 
                 <Button
                     android:layout_width="0dp"
+                    android:fontFamily="@font/nexa"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
@@ -142,6 +151,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_layout_height"
+                android:fontFamily="@font/nexa"
                 android:layout_marginLeft="@dimen/margin_left"
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
@@ -153,6 +163,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_layout_height"
+                android:fontFamily="@font/nexa"
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="@dimen/margin_left"
                 android:layout_marginRight="@dimen/margin_right"
