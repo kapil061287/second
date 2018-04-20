@@ -15,17 +15,24 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
@@ -68,7 +75,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class JobAssignByNotification extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraIdleListener {
+public class JobAssignByNotification extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraIdleListener, RatingBar.OnRatingBarChangeListener {
 
     private static final int INVOICE_REQUEST_CODE = 5;
     GoogleMap googleMap;
@@ -78,7 +85,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     boolean isTracking = true;
     MyTask myTask;
     @BindView(R.id.view_profile_btn)
-    Button viewProfile;
+    LinearLayout viewProfile;
     @BindView(R.id.service_provider_profilelayout)
     LinearLayout profileLinearLayout;
 
@@ -100,7 +107,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     @BindView(R.id.sp_name)
     TextView spNameText;
     @BindView(R.id.call_btn_to_sp)
-    Button callBtnToSp;
+    LinearLayout callBtnToSp;
     @BindView(R.id.connecting_nearest)
     LinearLayout connetingNearst;
     @BindView(R.id.parent_constraint_layout)
@@ -112,21 +119,48 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     @BindView(R.id.profile_pic_activity_job_assigned)
     RoundedImageView profilePicImageView;
     @BindView(R.id.cancel_btn)
-    Button cancelBtn;
+    LinearLayout cancelBtn;
 
     boolean isPaymentSucceed;
 
     MyReciever myReciever;
     boolean isRequestAccepted;
 
-    @BindView(R.id.confirm_complete_btn)
-    Button confirmComplteBtn;
+    //@BindView(R.id.confirm_complete_btn)
+   // Button confirmComplteBtn;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    private RatingBar ratingBarBottomSheet;
+    private TextView rateTextView;
+    private Button submitRatingBtn;
+    private EditText rateCommentEdit;
+
+    @BindView(R.id.cancel_text_assign_activity)
+    TextView cancelText;
+
+    @BindView(R.id.cancel_img)
+    ImageView cancelImage;
+
+    @BindView(R.id.pay_now_img)
+    ImageView payNowImage;
+
+    @BindView(R.id.pay_now_text)
+    TextView payNawText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_job_assigned);
+        setContentView(R.layout.activity_job_assigned);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         preferences = getSharedPreferences(Utils.SERVICE_PREF, MODE_PRIVATE);
         preferences.edit().putInt("requestTime", 1).apply();
         String token= FirebaseInstanceId.getInstance().getToken();
@@ -144,7 +178,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         cancelBtn.setOnClickListener(this);
         registerReciever();
         myTask.execute();
-        confirmComplteBtn.setOnClickListener(this);
+//        confirmComplteBtn.setOnClickListener(this);
 
         getSupportActionBar().setTitle("Wating for Response...");
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -176,16 +210,152 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
                 veiwProfile(getSpId());
                 break;
             case R.id.cancel_btn:
-                startReasonActivity();
+                if(!isPaymentSucceed)
+                    startReasonActivity();
+                else
+                    generateInvoice();
+
                 break;
-            case R.id.confirm_complete_btn:
-                confirmComplete();
+            case R.id.submit_rating_btn:
+                    submitRating();
                 break;
+
 
         }
     }
 
     private void confirmComplete() {
+                JSONObject requestData=new JSONObject();
+                JSONObject data=new JSONObject();
+        try {
+            data.put("v_code", getString(R.string.v_code));
+            data.put("apikey", getString(R.string.apikey));
+            data.put("user_id", preferences.getString("user_id", "0"));
+            data.put("userToken", preferences.getString("userToken", "0"));
+            data.put("task_id", preferences.getString("task_id", "0"));
+            requestData.put("RequestData", data);
+
+            new Retrofit.Builder()
+                    .baseUrl(Utils.SITE_URL)
+                    .addConverterFactory(new StringConvertFactory())
+                    .build()
+                    .create(ProjectAPI.class)
+                    .confirmComplete(requestData.toString())
+                    .enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            String responseString=response.body();
+                            Log.i("responseData", "Confirm Complete : "+responseString);
+                            try {
+                                JSONObject res=new JSONObject(responseString);
+                                boolean success=res.getBoolean("successBool");
+                                if(success){
+                                    showReviewSheet();
+                                }
+                            } catch (JSONException e) {
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+
+                                Log.e("responseData","confirm complete error : "+ t.toString());
+                        }
+                    });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showReviewSheet() {
+        View view= LayoutInflater.from(this).inflate(R.layout.content_final_review_bottom_sheet, null, false);
+        BottomSheetDialog dialog=new BottomSheetDialog(this);
+        dialog.setContentView(view);
+        dialog.show();
+
+        ratingBarBottomSheet=view.findViewById(R.id.rating_bar_review_bottom_sheet);
+        rateTextView=view.findViewById(R.id.rate_txt);
+        submitRatingBtn=view.findViewById(R.id.submit_rating_btn);
+        submitRatingBtn.setOnClickListener(this);
+        rateTextView.setText(getRatingText(ratingBarBottomSheet.getRating()));
+        ratingBarBottomSheet.setOnRatingBarChangeListener(this);
+        rateCommentEdit=view.findViewById(R.id.write_review_edit);
+    }
+
+    public static String getRatingText(float rate){
+        String rateText="Excellent";
+        if(rate<=1){
+            rateText="Poor";
+        }
+        else if(rate>1 && rate<=2){
+            rateText="Fair";
+        }
+        else if(rate>2 && rate<=3){
+            rateText="Average";
+        }
+        else if(rate>3 && rate<=4){
+            rateText="Good";
+        }
+        else if (rate>4 && rate<=5){
+            rateText="Excellent";
+        }
+        return rateText;
+    }
+
+    private void submitRating() {
+        JSONObject requestData=new JSONObject();
+        JSONObject data=new JSONObject();
+        try {
+            data.put("v_code", getString(R.string.v_code));
+            data.put("apikey", getString(R.string.apikey));
+            data.put("userToken", preferences.getString("userToken", "0"));
+            data.put("sender_id", preferences.getString("user_id","0"));
+            data.put("receiver_id", getSpId());
+            data.put("task_id", task_id);
+            data.put("rate", ratingBarBottomSheet.getRating());
+            data.put("comment", rateCommentEdit.getText().toString());
+            requestData.put("RequestData", data);
+            Log.i("requestData", "Rating API : "+requestData);
+        } catch (JSONException e) {
+            Log.i("responseData","Json Error :"+e.toString());
+        }
+
+        new Retrofit.Builder()
+                .baseUrl(Utils.SITE_URL)
+                .addConverterFactory(new StringConvertFactory())
+                .build()
+                .create(ProjectAPI.class)
+                .rating(requestData.toString())
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        String responseString=response.body();
+                        Log.i("responseData", "Rating Api : "+responseString);
+                        try {
+                            JSONObject res=new JSONObject(responseString);
+                            boolean success=res.getBoolean("successBool");
+                            if(success){
+                                JSONObject resObj=res.getJSONObject("response");
+                                String msg=resObj.getString("msg");
+                                showConfirmRatingDialog(msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                            Log.e("responseDataError", "Job Assigned By Notification : "+t.toString());
+                    }
+                });
+
+    }
+
+    private void showConfirmRatingDialog(String msg) {
 
     }
 
@@ -274,6 +444,11 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         if(isRequestAccepted) {
             profileLinearLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+
     }
 
 
@@ -695,20 +870,19 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
             Log.i("responseData","Task Status : "+taskStatus);
             switch (taskStatus){
                 case "3":
-                        taskProcess.setText(R.string.start_job_journey);
+//                        taskProcess.setText(R.string.start_job_journey);
                     break;
                 case "4":
-                    taskProcess.setText(R.string.arrive);
+//                    taskProcess.setText(R.string.arrive);
                     break;
                 case "5":
-                    taskProcess.setText(R.string.start_job);
+//                    taskProcess.setText(R.string.start_job);
                     break;
                 case "7":
-                    confirmComplteBtn.setVisibility(View.VISIBLE);
-                    callBtnToSp.setVisibility(View.GONE);
+                    //confirmComplteBtn.setVisibility(View.VISIBLE);
+                 /*   callBtnToSp.setVisibility(View.GONE);
                     viewProfile.setVisibility(View.GONE);
-                    taskProcess.setText(R.string.finish_job_sp_side);
-
+                    taskProcess.setText(R.string.finish_job_sp_side);*/
                     break;
             }
         } catch (JSONException e) {
@@ -774,8 +948,11 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
                         case INVOICE_REQUEST_CODE:
                             if(resultCode==RESULT_OK){
                                 isPaymentSucceed=true;
-                                callBtnToSp.setText("Call");
-                                cancelBtn.setVisibility(View.GONE);
+                                cancelText.setText(R.string.paid_text);
+                                //cancelImage.setImageDrawable(R.drawable.);
+                                cancelImage.setImageResource(R.drawable.ic_paid);
+                                payNowImage.setImageResource(R.drawable.ic_call);
+                                payNawText.setText(R.string.call_txt);
                             }
                             break;
                     }

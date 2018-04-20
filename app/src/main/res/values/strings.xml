@@ -41,7 +41,7 @@
     <string name="logout_menu_nav">Logout</string>
     <string name="string_content_inavail_fragment">This package is good package for the uer !</string>
     <string name="pending_customer_request">Request sent to 5 nearest provider...</string>
-    <string name="notification_activity_text">There is no notification</string>
+    <string name="notification_activity_text">There are no notifications</string>
     <string name="schedule_visit_txt">Schedule a Visit</string>
 
     <string name="server_key">AIzaSyCD42eqt4BAMw-9y4sqLF0Ac6xV_ZxzOo4</string>
@@ -61,7 +61,7 @@
     <string name="service_feedback">Service Feedback</string>
     <string name="other">Other</string>
     <string name="submit">Submit</string>
-    <string name="feedback_revert">\"Our Customer Service Team will responde to you in less than 48 hours\"</string>
+    <string name="feedback_revert">\"Our Customer Service Team will respond to you in less than 48 hours\"</string>
     <string name="customer_care_number">Customer Care Phone</string>
     <string name="connecting_nearest_5_provider">Connecting Nearest 5 provider...</string>
     <string name="title_activity_service_history">ServiceHistoryActivity</string>
@@ -92,4 +92,10 @@
     <string name="finish_job_sp_side">Finish Job from sp side</string>
     <string name="task_process">Task Process :</string>
     <string name="confirm_complete">Confirm Complete</string>
+    <string name="show_date_format">MMM dd, yyyy</string>
+    <string name="date_time_format_from_web">yyyy-MM-d H:m:s</string>
+    <string name="pay_now">Pay Now</string>
+    <string name="title_activity_task_details">TaskDetailsActivity</string>
+
+
 </resources>

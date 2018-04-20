@@ -15,8 +15,10 @@ import android.view.ViewGroup;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.adpater.ServiceHistoryAdapter;
 import com.depex.okeyclick.user.adpater.ServiceHistoryItemClickListener;
+import com.depex.okeyclick.user.contants.UtilMethods;
 import com.depex.okeyclick.user.model.ServiceHistory;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +41,7 @@ public class ServiceHistoryCompleteFragment extends Fragment implements ServiceH
         Bundle bundle=getArguments();
         String json=bundle.getString("json");
         Log.i("responseData", "Service History Complete : "+json);
-        Gson gson=new Gson();
+        Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-d H:m:s").create();
         ServiceHistory[]arr=gson.fromJson(json, ServiceHistory[].class);
         List<ServiceHistory> list= new ArrayList<>(Arrays.asList(arr));
         List<ServiceHistory> list1=new ArrayList<>();
@@ -72,6 +74,6 @@ public class ServiceHistoryCompleteFragment extends Fragment implements ServiceH
 
     @Override
     public void onServiceHistoryItemClickListener(ServiceHistory serviceHistory) {
-
+        UtilMethods.viewTaskProcess(context,serviceHistory);
     }
 }

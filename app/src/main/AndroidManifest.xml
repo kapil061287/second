@@ -111,7 +111,8 @@
         </activity>
         <activity
             android:name=".screens.JobAssignByNotification"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screens.ServiceHistoryActivity"
             android:label="@string/title_activity_service_history"
@@ -125,6 +126,10 @@
         <activity
             android:name=".screens.BookLetarActivity"
             android:label="@string/title_activity_book_letar"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screens.TaskDetailsActivity"
+            android:label="@string/title_activity_task_details"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

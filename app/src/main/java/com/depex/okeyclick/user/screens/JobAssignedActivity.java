@@ -63,7 +63,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     boolean isTracking = true;
     MyTask myTask;
     @BindView(R.id.view_profile_btn)
-    Button viewProfile;
+    LinearLayout viewProfile;
     @BindView(R.id.service_provider_profilelayout)
     LinearLayout profileLinearLayout;
 
@@ -82,7 +82,7 @@ public class JobAssignedActivity extends AppCompatActivity implements OnMapReady
     @BindView(R.id.sp_name)
     TextView spNameText;
     @BindView(R.id.call_btn_to_sp)
-    Button callBtnToSp;
+    LinearLayout callBtnToSp;
     @BindView(R.id.connecting_nearest)
     LinearLayout connetingNearst;
     @BindView(R.id.parent_constraint_layout)

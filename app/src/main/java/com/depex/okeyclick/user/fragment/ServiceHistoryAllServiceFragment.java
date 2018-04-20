@@ -15,8 +15,11 @@ import android.view.ViewGroup;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.adpater.ServiceHistoryAdapter;
 import com.depex.okeyclick.user.adpater.ServiceHistoryItemClickListener;
+import com.depex.okeyclick.user.contants.UtilMethods;
+import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.model.ServiceHistory;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +43,7 @@ public class ServiceHistoryAllServiceFragment extends Fragment implements Servic
         Bundle bundle=getArguments();
         String json=bundle.getString("json");
         Log.i("responseData", "Service History all Service : "+json);
-        Gson gson=new Gson();
+        Gson gson=new GsonBuilder().setDateFormat(getString(R.string.date_time_format_from_web)).create();
         ServiceHistory[]arr=gson.fromJson(json, ServiceHistory[].class);
         List<ServiceHistory> list= new ArrayList<>(Arrays.asList(arr));
 
@@ -67,7 +70,7 @@ public class ServiceHistoryAllServiceFragment extends Fragment implements Servic
 
     @Override
     public void onServiceHistoryItemClickListener(ServiceHistory serviceHistory) {
-
+        UtilMethods.viewTaskProcess(context,serviceHistory);
     }
 }
 

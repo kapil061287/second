@@ -150,6 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
+                            Toast.makeText(LoginActivity.this, "Please Check your internet connection !", Toast.LENGTH_LONG).show();
                                 Log.e("responseError", t.toString());
                         }
                     });

@@ -97,4 +97,13 @@ public interface ProjectAPI {
     @POST("book_latter.php")
     Call<String> bookLetarReq(@Body String body);
 
+    @POST("confirm_complete.php")
+    Call<String> confirmComplete(@Body String body);
+
+    @POST("rating.php")
+    Call<String> rating(@Body String body);
+
+    @POST("taskDetail.php")
+    Call<String> taskDetails(@Body String body);
+
 }

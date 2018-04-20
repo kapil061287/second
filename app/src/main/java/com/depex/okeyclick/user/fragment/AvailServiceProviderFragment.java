@@ -503,7 +503,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                         Bundle bundle1 = new Bundle();
                         preferences.edit().putString("task_id", task_id).apply();
                         preferences.edit().putString("task_key", task_key).apply();
-                        databaseHelper.taskInsert("created", task_id, null, null, preferences.getString("user_id", "0"));
+                        //databaseHelper.taskInsert("created", task_id, null, null, preferences.getString("user_id", "0"));
                         bundle1.putDouble("lat", AvailServiceProviderFragment.this.location.getLatitude());
                         bundle1.putDouble("lng", AvailServiceProviderFragment.this.location.getLongitude());
                         bundle1.putString("category", data.getString("category"));

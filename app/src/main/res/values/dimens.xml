@@ -30,6 +30,8 @@
     <dimen name="spb_stroke_width">4dp</dimen>
     <dimen name="left_margin_in_invoice">30dp</dimen>
     <dimen name="right_margin_in_invoice">30dp</dimen>
+    <dimen name="left_margin_login">20dp</dimen>
+    <dimen name="right_margin_login">20dp</dimen>
 
 
 </resources>
