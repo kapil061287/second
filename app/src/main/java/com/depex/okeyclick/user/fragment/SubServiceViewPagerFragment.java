@@ -1,5 +1,4 @@
 package com.depex.okeyclick.user.fragment;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,10 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
@@ -25,28 +22,16 @@ import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.listener.OnSubserviceSelectListener;
 import com.depex.okeyclick.user.model.Service;
 import com.depex.okeyclick.user.model.SubService;
-import com.depex.okeyclick.user.view.SubCatRadioButton;
 import com.depex.okeyclick.user.view.SubserviceSelectView;
 import com.google.gson.Gson;
-import com.stripe.Stripe;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
-import com.stripe.exception.AuthenticationException;
-import com.stripe.exception.CardException;
-import com.stripe.exception.InvalidRequestException;
-import com.stripe.model.Account;
-import com.stripe.model.Payout;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dmax.dialog.SpotsDialog;
 
 public class SubServiceViewPagerFragment extends Fragment implements View.OnClickListener, OnSubserviceSelectListener {
 
@@ -60,11 +45,14 @@ public class SubServiceViewPagerFragment extends Fragment implements View.OnClic
     int quantityOfWork;
     SharedPreferences preferences;
 
+    SpotsDialog spotsDialog;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.content_subcategory_view_pager_fragment, container, false);
         ButterKnife.bind(this, view);
+        spotsDialog=new SpotsDialog(context);
         Bundle bundle=getArguments();
         nextButton.setOnClickListener(this);
         String json=bundle.getString("json", "");
@@ -88,7 +76,10 @@ public class SubServiceViewPagerFragment extends Fragment implements View.OnClic
         Log.i("responseDataBund", url);
         ImageView imageView=view.findViewById(R.id.header_image_viewpager);
 
-        GlideApp.with(context).load(url).into(imageView);
+        GlideApp.with(context)
+                .load(url)
+
+                .into(imageView);
 
         } catch (JSONException e) {
             Log.e("responseDataError", e.toString());
@@ -105,12 +96,13 @@ public class SubServiceViewPagerFragment extends Fragment implements View.OnClic
     @Override
     public void onClick(View view) {
 
+
         if(subService==null && quantityOfWork ==0){
-            Log.i("responseData", "Please Choose minimum one service !");
+            Toast.makeText(context, "Please Choose minimum one service !", Toast.LENGTH_LONG).show();
             return;
         }
 
-
+        spotsDialog.show();
 
             preferences.edit().putString("quanOfWork", String.valueOf(quantityOfWork)).apply();
 
@@ -122,14 +114,19 @@ public class SubServiceViewPagerFragment extends Fragment implements View.OnClic
                 data.put("apikey", getString(R.string.apikey));
                 data.put("category", serviceID);
                 data.put("subcategory", subServiceID);
+                data.put("quanOfWork", quantityOfWork);
+                data.put("subserviceName", subService.getSubServiceName());
 
             } catch (JSONException e) {
                 e.printStackTrace();
+                return;
             }
 
             Fragment fragment = AvailServiceProviderFragment.newInstance(data.toString());
+            fragment.setHasOptionsMenu(true);
             FragmentManager manager = getParentFragment().getFragmentManager();
             manager.beginTransaction().replace(R.id.nav_container, fragment).addToBackStack(null).commit();
+            spotsDialog.dismiss();
 
             Log.i("responseRadio", subService.getId() + "");
 

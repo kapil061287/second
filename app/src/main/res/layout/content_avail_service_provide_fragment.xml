@@ -21,18 +21,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <fragment
+        android:id="@+id/mapfragment"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
-        <fragment
-            android:id="@+id/mapfragment"
-            android:layout_weight="1"
-            class="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
+
         <LinearLayout
             android:id="@+id/bottom_panel_avail_fragment"
             android:layout_width="match_parent"
@@ -57,35 +75,47 @@
 
             </android.support.v7.widget.RecyclerView>
 
-            <FrameLayout
+            <LinearLayout
                 android:id="@+id/book_btn_book_later_btn_avail_fram_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="@dimen/input_margin_top">
-
+<FrameLayout
+    android:layout_weight="1"
+    android:layout_width="0dp"
+    android:padding="10dp"
+    android:layout_height="match_parent">
                 <Button
                     android:id="@+id/book_now_btn_avail_fragment"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-
-                    android:layout_marginLeft="@dimen/margin_left"
-                    android:background="@color/signup_box_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/book_now_round"
                     android:text="@string/book_now"
-                    android:textColor="#ffffffff" />
+                    android:textColor="@color/y_color" />
+</FrameLayout>
+                <FrameLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:padding="10dp"
+                    android:layout_height="match_parent">
 
                 <Button
                     android:id="@+id/book_later_btn_avail_fragment"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="@dimen/margin_right"
-                    android:background="@color/login_btn"
-                    android:text="@string/book_later"
-                    android:textColor="#ffffffff" />
+                    android:layout_width="match_parent"
 
-            </FrameLayout>
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:layout_gravity="center_horizontal"
+
+                    android:background="@drawable/book_later_round"
+                    android:text="@string/book_later"
+                    android:textColor="@color/login_btn" />
+                </FrameLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/description_text_avail_fragment"

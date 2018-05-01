@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,16 +12,15 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.depex.okeyclick.user.R;
+import com.depex.okeyclick.user.screens.WebInnerViewActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by we on 1/17/2018.
- */
 
 public class ContactUsFragment extends Fragment implements View.OnClickListener {
 
@@ -36,6 +34,9 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
     @BindView(R.id.faq_text)
     TextView faqTextView;
 
+    @BindView(R.id.call_now_btn)
+    Button callNow;
+
     String webSiteLink="http://www.okeyclick.com";
     @Nullable
     @Override
@@ -46,6 +47,10 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
         String dataProtectionLowtext="<u>"+getString(R.string.data_protection_low)+"</u>";
         String webSiteLinkText="<u> www.okeyclick.com</u>";
         String faqText="<u>"+getString(R.string.faq)+"</u>";
+        callNow.setOnClickListener(this);
+        termCondition.setOnClickListener(this);
+        dataProtectionLow.setOnClickListener(this);
+        faqTextView.setOnClickListener(this);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -73,6 +78,28 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
                 intent.setData(Uri.parse(webSiteLink));
                 startActivity(intent);
                 break;
+            case R.id.call_now_btn:
+                    Intent intent1=new Intent(Intent.ACTION_DIAL);
+                    intent1.setData(Uri.parse("tel:9896786"));
+                    startActivity(intent1);
+                break;
+            case R.id.faq_text:
+                startWebView(getString(R.string.faq_url), "FAQS");
+                break;
+            case R.id.data_protection_low_textView:
+                startWebView(getString(R.string.data_protection_low_url), "Data Protection Low");
+                break;
+            case R.id.term_condition_textview:
+                startWebView(getString(R.string.term_and_condition_url), "Term And Conditions");
+                break;
         }
+    }
+    public void startWebView(String url, String title){
+        Intent intent=new Intent(getActivity(), WebInnerViewActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("title", title);
+        bundle.putString("url", url);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

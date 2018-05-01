@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -49,6 +50,8 @@ public class ServiceHistoryAllServiceFragment extends Fragment implements Servic
 
         ServiceHistoryAdapter adapter=new ServiceHistoryAdapter(context, list, this);
         LinearLayoutManager manager=new LinearLayoutManager(context);
+        DividerItemDecoration dividerItemDecoration=new DividerItemDecoration(context, manager.getOrientation());
+        serviceHistoryAllRec.addItemDecoration(dividerItemDecoration);
         serviceHistoryAllRec.setLayoutManager(manager);
         serviceHistoryAllRec.setAdapter(adapter);
         return view;

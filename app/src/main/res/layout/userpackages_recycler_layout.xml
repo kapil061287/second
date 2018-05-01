@@ -17,12 +17,17 @@
     <TextView
         android:id="@+id/package_name_recycler_txt"
         android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal|center_vertical"
         android:layout_width="wrap_content"
         android:textColor="#ff000000"
         android:textStyle="bold"
         android:textSize="16dp"
         android:layout_height="wrap_content" />
-
+<LinearLayout
+    android:layout_gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <TextView
         android:textStyle="bold"
         android:textColor="#ff000000"
@@ -30,5 +35,10 @@
         android:id="@+id/package_price_recycler_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/info_ico"
+        android:layout_width="24dp"
+        android:layout_height="24dp" />
+</LinearLayout>
 
 </LinearLayout>

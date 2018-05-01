@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:background="#FFCCCCCC"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"/>
+    
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="left|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="@string/base_fare"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="right|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="200"
+                android:id="@+id/base_fare"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:background="#FFCCCCCC"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="left|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="@string/service_hour"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="right|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="3 x 200"
+                android:textStyle="bold"
+                android:id="@+id/services"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:background="#FFCCCCCC"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="left|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="@string/city_tax"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="right|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="21%"
+                android:id="@+id/city_tax"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:background="#FFCCCCCC"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="left|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="@string/total"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_gravity="right|center_vertical"
+                android:layout_width="wrap_content"
+                android:text="982"
+                android:id="@+id/total"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:background="#FFCCCCCC"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+</LinearLayout>

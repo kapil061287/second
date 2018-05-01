@@ -4,6 +4,8 @@ package com.depex.okeyclick.user.adpater;
 
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +29,13 @@ public class ServicesRecyclerAdapter  extends RecyclerView.Adapter<ServicesRecyc
     private List<Service> services;
     Context context;
     FragmentManager fragmentManager;
+    RecyclerView.LayoutManager manager;
 
-    public ServicesRecyclerAdapter(Context context, List<Service> services, FragmentManager fragmentManager){
+    public ServicesRecyclerAdapter(Context context, List<Service> services, FragmentManager fragmentManager, RecyclerView.LayoutManager manager){
         this.context=context;
         this.services=services;
         this.fragmentManager=fragmentManager;
+        this.manager= manager;
     }
 
     @Override
@@ -46,6 +50,7 @@ public class ServicesRecyclerAdapter  extends RecyclerView.Adapter<ServicesRecyc
         holder.itemView.setTag(service);
         String name=service.getServiceName();
         String url=service.getImageUrl();
+
         if(holder.serviceName==null){
             Toast.makeText(context, "Null is ", Toast.LENGTH_LONG).show();
             return;
@@ -55,9 +60,17 @@ public class ServicesRecyclerAdapter  extends RecyclerView.Adapter<ServicesRecyc
         if(holder.serviceImg==null){
             return;
         }
+
+        holder.serviceImg.setAdjustViewBounds(true);
+        if(manager instanceof GridLayoutManager)
+            holder.serviceImg.setScaleType(ImageView.ScaleType.MATRIX);
+        else
+            holder.serviceImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+
         GlideApp.with(context)
                 .load(Utils.IMAGE_URL+url)
-                .fitCenter()
+                //.centerCrop()
                 .into(holder.serviceImg);
     }
 
@@ -85,12 +98,11 @@ public class ServicesRecyclerAdapter  extends RecyclerView.Adapter<ServicesRecyc
 
             int position=services.indexOf(view.getTag());
 
-
-
-
+            SubServiceFragment2 serviceFragment2=SubServiceFragment2.newInstance(services, position);
+            serviceFragment2.setHasOptionsMenu(true);
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.nav_container, new SubServiceFragment2().newInstance(services, position), "service")
+                    .replace(R.id.nav_container, serviceFragment2, "service")
                     .addToBackStack(null)
                     .commit();
         }

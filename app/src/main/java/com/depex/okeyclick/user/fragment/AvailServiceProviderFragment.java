@@ -2,6 +2,7 @@ package com.depex.okeyclick.user.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +34,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.braintreepayments.api.Json;
 import com.depex.okeyclick.user.database.OkeyClickDatabaseHelper;
 import com.depex.okeyclick.user.model.UserPackage;
 import com.depex.okeyclick.user.R;
@@ -44,7 +45,6 @@ import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
 import com.depex.okeyclick.user.listener.PackageClickListener;
 import com.depex.okeyclick.user.screens.JobAssignByNotification;
-import com.depex.okeyclick.user.screens.JobAssignedActivity;
 import com.depex.okeyclick.user.screens.LoginActivity;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -106,7 +106,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @BindView(R.id.bottom_panel_avail_fragment)
     LinearLayout linearLayout;
     int currentHeight;
-    SubserviceInnerViewpagerFragment fragment;
+    LaterBookFragment fragment;
     LocationRequest locationRequest;
     LocationCallback mLocationCallback;
     Location location;
@@ -118,7 +118,8 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @BindView(R.id.book_later_btn_avail_fragment)
     Button bookLaterBtn;
     Menu menu;
-    MenuItem menuItem;
+    MenuItem homeMenuItem;
+    MenuItem locationMenuItem;
     @BindView(R.id.parent_constraint_layout)
     ConstraintLayout constraintLayout;
     ArrayList<Marker> markers = new ArrayList<>();
@@ -184,16 +185,15 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             }
         };
 
-
+        preferences = getActivity().getSharedPreferences(Utils.SERVICE_PREF, Context.MODE_PRIVATE);
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.addConverterFactory(GsonConverterFactory.create());
         builder.baseUrl(Utils.SITE_URL);
         Retrofit retrofit = builder.build();
         ProjectAPI projectAPI = retrofit.create(ProjectAPI.class);
-        Call<JsonObject> packageCall = projectAPI.getPackages(getString(R.string.apikey));
-        packageCall.enqueue(new CallbackApi<>(this));
 
-        preferences = getActivity().getSharedPreferences(Utils.SERVICE_PREF, Context.MODE_PRIVATE);
+
+
         setLogin();
 
         String json = null;
@@ -204,6 +204,9 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         }
         try {
             data = new JSONObject(json);
+            Call<JsonObject> packageCall = projectAPI.getPackages(getString(R.string.apikey) ,
+                    preferences.getString("quanOfWork", "0"), "Noida", data.getString("subcategory"));
+            packageCall.enqueue(new CallbackApi<>(this));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -214,9 +217,13 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onResume() {
         super.onResume();
+        if(locationMenuItem!=null)
+        this.locationMenuItem.setVisible(true);
+        if(homeMenuItem!=null)
+        this.homeMenuItem.setVisible(true);
 
-        if (menuItem == null) {
-            menuItem = menu.add(/*groupid*/1,/*Itemid*/1,/*Order*/1,/*Title*/"Pick a Location");
+       /* if (menuItem == null) {
+            menuItem = menu.add(*//*groupid*//*1,*//*Itemid*//*1,*//*Order*//*1,*//*Title*//*"Pick a Location");
 
 
             menuItem.setIcon(R.drawable.ic_location_on_black_24dp);
@@ -225,15 +232,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
-                    PlaceAutocomplete.IntentBuilder intentBuilder = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY);
-                    try {
-                        Intent intent = intentBuilder.build(getActivity());
-                        startActivityForResult(intent, 1);
-                    } catch (GooglePlayServicesRepairableException e) {
-                        e.printStackTrace();
-                    } catch (GooglePlayServicesNotAvailableException e) {
-                        e.printStackTrace();
-                    }
+
                     return true;
                 }
             });
@@ -242,7 +241,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
-        }
+        }*/
 
         // client.requestLocationUpdates(locationRequest, mLocationCallback, null);
     }
@@ -312,11 +311,10 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     @Override
     public void onStop() {
         super.onStop();
-        menuItem = null;
+        //menuItem = null;
         client.removeLocationUpdates(mLocationCallback);
         Toolbar toolbar = getActivity().getWindow().getDecorView().findViewById(R.id.toolbar);
         toolbar.getMenu().removeItem(1);
-
     }
 
 
@@ -334,7 +332,7 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
             UserPackage[] packagesArr = gson.fromJson(package_list, UserPackage[].class);
             ArrayList<UserPackage> userPackages = new ArrayList<>(Arrays.asList(packagesArr));
             Log.i("userPackages", userPackages.toString());
-            final PackageRecyclerAdapter packageRecyclerAdapter = new PackageRecyclerAdapter(getActivity(), userPackages, this);
+            final PackageRecyclerAdapter packageRecyclerAdapter = new PackageRecyclerAdapter(getActivity(), userPackages, this, false);
             LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(packageRecyclerAdapter);
@@ -345,21 +343,6 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
     public void onPackageClick(final UserPackage userPackage) {
         this.userPackage = userPackage;
 
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.package_bottom_sheet_layout, null, false);
-        TextView textView = view.findViewById(R.id.pac_description);
-        TextView textView1 = view.findViewById(R.id.package_name_desc);
-        Button button = view.findViewById(R.id.done_btn_pack_desc);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        textView1.setText(userPackage.getPackageName());
-        textView.setText(userPackage.getPackageDescription());
-        bottomSheetDialog.setContentView(view);
-        bottomSheetDialog.show();
         if (location != null) {
             getAvailableServiceProvider(location, userPackage);
             return;
@@ -389,6 +372,55 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         });
     }
 
+    @Override
+    public void onPackageLongClick(UserPackage userPackage) {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.package_bottom_sheet_layout, null, false);
+        TextView textView = view.findViewById(R.id.pac_description);
+        TextView textView1 = view.findViewById(R.id.package_name_desc);
+        Button button = view.findViewById(R.id.done_btn_pack_desc);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+        textView1.setText(userPackage.getPackageName());
+        textView.setText(userPackage.getPackageDescription());
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+    }
+
+    @Override
+    public void onInfoClick(UserPackage userPackage) {
+        showAlert(userPackage);
+    }
+
+    private void showAlert(UserPackage userPackage) {
+
+        View view=LayoutInflater.from(context).inflate(R.layout.content_info_package, null, false);
+        TextView baseFare=view.findViewById(R.id.base_fare);
+        TextView services=view.findViewById(R.id.services);
+        TextView cityTax=view.findViewById(R.id.city_tax);
+        TextView total=view.findViewById(R.id.total);
+        cityTax.setText(userPackage.getCityTax()+"%");
+        total.setText(getString(R.string.uro)+userPackage.getTotal());
+        baseFare.setText(getString(R.string.uro)+userPackage.getBaseFare());
+        try {
+            services.setText(data.getString("quanOfWork")+" x "+context.getString(R.string.uro)+userPackage.getSubCategoryPrice());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        new AlertDialog.Builder(context)
+                .setView(view)
+                .setTitle(userPackage.getPackageName())
+                .setPositiveButton("OK", null)
+                .create().show();
+
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -617,16 +649,17 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
         try {
             json.put("category", data.getString("category"));
             json.put("subcategory", data.getString("subcategory"));
+            json.put("subserviceName", data.getString("subserviceName"));
             json.put("package", userPackage.getId());
             json.put("lat", location.getLatitude());
             json.put("lng", location.getLongitude());
-            json.put("task_WDuration", preferences.getString("quanOfWork", "0"));
+            json.put("task_WDuration", data.getString("quanOfWork"));
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        fragment = SubserviceInnerViewpagerFragment.getInstance(json.toString());
+        fragment = LaterBookFragment.getInstance(json.toString());
         if (isLogin()) {
             getFragmentManager()
                     .beginTransaction()
@@ -776,6 +809,58 @@ public class AvailServiceProviderFragment extends Fragment implements OnMapReady
                 changeLocation(location);
             }
         });
+        return true;
+    }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(this.homeMenuItem!=null){
+            this.homeMenuItem.setVisible(false);
+        }
+        if(this.locationMenuItem!=null){
+            this.locationMenuItem.setVisible(false);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.homeMenuItem=menu.findItem(R.id.home_menu_home);
+        this.locationMenuItem=menu.findItem(R.id.location_menu);
+        this.locationMenuItem.setVisible(true);
+        this.homeMenuItem.setVisible(true);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.location_menu:
+                PlaceAutocomplete.IntentBuilder intentBuilder = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY);
+                try {
+                    Intent intent = intentBuilder.build(getActivity());
+                    startActivityForResult(intent, 1);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.home_menu_home:
+                    //getFragmentManager().popBackStack();
+                HomeFragment fragment=new HomeFragment();
+                    fragment.setHasOptionsMenu(true);
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.nav_container, fragment, "Home")
+                        .addToBackStack("Home")
+                        .commit();
+
+                break;
+        }
+
         return true;
     }
 }

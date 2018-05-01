@@ -19,6 +19,9 @@
     <color name="tab_background">#FFEEEEEE</color>
     <color name="skip_back_color">#99438c</color>
     <color name="transparent">#00ffffff</color>
+    <color name="y_color">#ff2186c4</color>
     <color name="success_color">#22BB33</color>
+    <color name="toolbar_title_color">#FF000000</color>
+
 
 </resources>

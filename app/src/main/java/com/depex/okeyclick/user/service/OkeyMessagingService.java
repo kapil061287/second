@@ -82,6 +82,17 @@ public class OkeyMessagingService extends FirebaseMessagingService {
 
                 Log.i("responseData", "Task Procedure : "+jsonObject.toString());
         }
+
+        if("confirm_time".equalsIgnoreCase(map.get("notification_type"))){
+            JSONObject jsonObject=jsonFromMap(map);
+            Intent intent=new Intent(Utils.CONFIRM_SP_TIME);
+            Bundle bundle=new Bundle();
+            bundle.putString("json", jsonObject.toString());
+            intent.putExtras(bundle);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+            Log.i("responseData", "Task Procedure : "+jsonObject.toString());
+        }
     }
 
     JSONObject jsonFromMap(Map<String, String> map){

@@ -11,6 +11,7 @@
     <ImageView
         android:background="#88000000"
         android:elevation="10dp"
+
         android:id="@+id/back_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -23,7 +24,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:visibility="visible"
+
         android:layout_marginTop="8dp"
         android:elevation="15dp"
         android:id="@+id/avl_loader"
@@ -69,7 +70,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="80dp"
                 android:layout_marginEnd="8dp"
@@ -83,13 +84,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.makeramen.roundedimageview.RoundedImageView
+                <ImageView
                     android:id="@+id/profile_pic_activity_job_assigned"
                     android:layout_width="110dp"
                     android:layout_height="110dp"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/user_dp_place_holder"
-                    app:riv_corner_radius="100dp" />
+                     />
 
                 <LinearLayout
                     android:layout_marginTop="10dp"
@@ -113,6 +114,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -132,6 +134,34 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:gravity="left"
+                        android:text="JOB ID : 012345"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/nexa"
+                        android:id="@+id/job_id"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:text="|"
+                        android:fontFamily="@font/nexa"
+                        android:gravity="center"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:fontFamily="@font/nexa"
+                        android:id="@+id/job_amount"
+                        android:text="AMOUNT : $ 600.00"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -260,6 +290,7 @@
         android:background="@drawable/connecting_back"
         android:id="@+id/connecting_nearest"
         android:elevation="25dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

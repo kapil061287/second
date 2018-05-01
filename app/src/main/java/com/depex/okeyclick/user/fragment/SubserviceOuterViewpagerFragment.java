@@ -72,13 +72,13 @@ public class SubserviceOuterViewpagerFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            SubserviceInnerViewpagerFragment subserviceInnerViewpagerFragment=new SubserviceInnerViewpagerFragment();
+            LaterBookFragment laterBookFragment =new LaterBookFragment();
             Bundle bundle=new Bundle();
             Gson gson=new Gson();
             String json=gson.toJson(subServices.get(position));
             bundle.putString("json", json);
-            subserviceInnerViewpagerFragment.setArguments(bundle);
-            return subserviceInnerViewpagerFragment;
+            laterBookFragment.setArguments(bundle);
+            return laterBookFragment;
         }
 
         @Override

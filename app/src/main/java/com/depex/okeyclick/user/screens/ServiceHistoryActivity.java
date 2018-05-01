@@ -1,6 +1,7 @@
 package com.depex.okeyclick.user.screens;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.support.design.widget.TabLayout;
@@ -50,17 +51,23 @@ public class ServiceHistoryActivity extends AppCompatActivity {
 
     @BindView(R.id.service_history_view_pager)
     ViewPager serviceHistoryViewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_history);
-        Toolbar toolbar =  findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         toolbar.setTitle("Service History");
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_color));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            toolbar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
 
-        ButterKnife.bind(this);
+
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

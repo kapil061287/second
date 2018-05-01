@@ -8,4 +8,6 @@ import com.depex.okeyclick.user.model.UserPackage;
 
 public interface PackageClickListener {
     void onPackageClick(UserPackage userPackage);
+    void onPackageLongClick(UserPackage userPackage);
+    void onInfoClick(UserPackage userPackage);
 }

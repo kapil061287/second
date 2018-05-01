@@ -3,6 +3,7 @@ package com.depex.okeyclick.user.screens;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,11 +35,13 @@ import com.braintreepayments.api.dropin.utils.PaymentMethodType;
 import com.braintreepayments.api.exceptions.InvalidArgumentException;
 import com.braintreepayments.api.models.GooglePaymentRequest;
 import com.braintreepayments.api.models.PaymentMethodNonce;
+import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.adpater.CouponAdapter;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
+import com.depex.okeyclick.user.model.BookLaterServiceProvider;
 import com.depex.okeyclick.user.model.Coupon;
 import com.google.android.gms.wallet.Cart;
 import com.google.android.gms.wallet.LineItem;
@@ -112,6 +116,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
     @BindView(R.id.want_coupon)
     Button wantCoupon;
+    @BindView(R.id.paid_image_view)
+    ImageView paidImageView;
 
     @BindView(R.id.coupen_text)
     TextView coupenText;
@@ -139,6 +145,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     String taskDurationStr;
     String totalStr;
     String customerNameStr;
+    boolean automatic;
     String createdDateStr;
     String taskKeyStr;
     String updateTotal;
@@ -146,12 +153,16 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
     private String subCategoryPriceStr;
     private String packagePriceStr;
     private String spPriceStr;
-    private String paymentStatus;
+    //private String paymentStatus;
 
     private String currencySymbol;
 
     private boolean isPaymentSucceed;
+    private boolean paymentDone;
+    String adminCommissionStr;
+    String spTotalStr;
     Bundle bundle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +170,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_invoice);
         Toolbar toolbar =  findViewById(R.id.toolbar);
         toolbar.setTitle("Invoice");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_color));
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -176,10 +188,18 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         applyBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
 
+
         Bundle bundle=getIntent().getExtras();
         if(bundle==null){
             Toast.makeText(this, "Sorry Invalid Invoice", Toast.LENGTH_LONG).show();
             return;
+        }
+        paymentDone=bundle.getBoolean("paidStatus");
+        isPaymentSucceed=paymentDone;
+        if(paymentDone){
+            setVisiblity(View.GONE, paymentBtn, coupenText);
+            setVisiblity(View.VISIBLE, paidImageView);
+            GlideApp.with(this).load(R.drawable.paid).into(paidImageView);
         }
 
         taskId=preferences.getString("task_id", "");
@@ -192,12 +212,17 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         totalStr=bundle.getString("total");
         customerNameStr=bundle.getString("cs_name");
         createdDateStr=bundle.getString("created_date");
-        taskKeyStr=bundle.getString("task_key");
+        taskKeyStr=taskId;
+        //taskKeyStr=bundle.getString("task_id");
         subCategoryPriceStr=bundle.getString("subcategory_price");
         packagePriceStr=bundle.getString("package_price");
         spPriceStr=bundle.getString("sp_price");
-        paymentStatus=bundle.getString("paymentStatus");
-        initPaymentStatus(paymentStatus);
+       // paymentStatus=bundle.getString("paymentStatus");
+        spTotalStr=bundle.getString("sp_total");
+        adminCommissionStr=bundle.getString("admin_commission");
+        //initPaymentStatus(paymentStatus);
+
+        initPaymentStatus(isPaymentSucceed);
 
 
        // this.subTotal.setText(subtotalStr);
@@ -215,14 +240,22 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
         wantCoupon.setOnClickListener(this);
     }
 
-    private void initPaymentStatus(String paymentStatus) {
+   /* private void initPaymentStatus(String paymentStatus) {
         if(paymentStatus!=null){
             if(paymentStatus.equalsIgnoreCase("paid")){
                 setVisiblity(View.GONE, applyCouponLinearLayout, paymentBtn, cancelBtn, wantCoupon);
-                setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
+                //setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
             }
         }
-    }
+    }*/
+   private void initPaymentStatus(boolean paidStatus) {
+           if(paidStatus){
+               setVisiblity(View.GONE, applyCouponLinearLayout, paymentBtn, cancelBtn, wantCoupon);
+               setVisiblity(View.VISIBLE,paidImageView);
+               GlideApp.with(this).load(R.drawable.paid).into(paidImageView);
+               //setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
+           }
+   }
 
     private String formatIn2Digit(String subtotalStr) {
         double d=Double.parseDouble(subtotalStr);
@@ -243,6 +276,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.payment_btn:
                // onBrainTreeSubmit();
                 bundle.putString("total", totalStr);
+               bundle.putString("admin_commission", adminCommissionStr);
+               bundle.putString("sp_total", spTotalStr);
                 if(!isPaymentSucceed) {
                     onStripePayment(bundle);
                 }else {
@@ -469,6 +504,20 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                 isPaymentSucceed=data.getExtras().getBoolean("pay");
                 if(isPaymentSucceed){
                     paymentBtn.setText("Done");
+
+                    paymentBtn.setVisibility(View.GONE);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(2000);
+                                setResult(RESULT_OK);
+                                finish();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                     onPaid(isPaymentSucceed);
                 }else {
                     onPaid(isPaymentSucceed);
@@ -480,10 +529,10 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
 
     private void onPaid(boolean paid) {
         if(paid) {
-            setVisiblity(View.GONE, applyCouponLinearLayout, cancelBtn, wantCoupon);
+            setVisiblity(View.GONE, applyCouponLinearLayout, cancelBtn,paymentBtn, wantCoupon);
             setVisiblity(View.VISIBLE, findViewById(R.id.paid_txt));
             sendConfirmationToSp("success");
-
+            GlideApp.with(this).load(R.drawable.paid).into(paidImageView);
         }else {
                 Toast.makeText(this, "Payment is not succeed !", Toast.LENGTH_LONG).show();
         }
@@ -506,7 +555,8 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
             data.put("base_fare", baseFareStr);
             data.put("subtotal", subtotalStr);
             data.put("total", totalStr);
-            data.put("payment_method", "COD");
+            data.put("charge_id", preferences.getString("charge_id", "0"));
+            data.put("payment_method", "Stripe");
             data.put("payment_status", success);
             data.put("applied_coupon", applyCouponEdit.getText().toString());
             data.put("task_WDuration", taskDurationStr);
@@ -549,9 +599,7 @@ public class InvoiceActivity extends AppCompatActivity implements View.OnClickLi
                 });
     }
 
-    private void startReviewBottomSheet() {
 
-    }
 
     public void setVisiblity(int visibility, View... v){
         for(View view : v){

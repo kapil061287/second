@@ -1,6 +1,8 @@
 package com.depex.okeyclick.user.screens;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -46,6 +48,10 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         setContentView(R.layout.activity_notification);
         ButterKnife.bind(this);
         toolbar=findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_color));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            toolbar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
         okeyClickDatabaseHelper =new OkeyClickDatabaseHelper(this);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);

@@ -29,7 +29,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.makeramen.roundedimageview.RoundedImageView
+        <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/user_image_provider_profile"

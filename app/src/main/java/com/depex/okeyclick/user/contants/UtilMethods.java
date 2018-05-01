@@ -3,12 +3,15 @@ package com.depex.okeyclick.user.contants;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
 import com.depex.okeyclick.user.model.ServiceHistory;
+import com.depex.okeyclick.user.screens.JobAssignByNotification;
+import com.depex.okeyclick.user.screens.StartJobActivity;
 import com.depex.okeyclick.user.screens.TaskDetailsActivity;
 
 import org.json.JSONException;
@@ -50,25 +53,68 @@ public class UtilMethods {
                             String responseString=response.body();
                             Log.i("responseData","Task Details API : "+responseString);
                             String status=serviceHistory1.getStatus();
-                            switch (status){
-                                case "1":
-                                    break;
-                                case "2":
-                                    break;
-                                case "3":
-                                        
-                                    break;
-                                case "4":
-                                    break;
-                                case "5":
-                                    break;
-                                case "6":
-                                    break;
-                                case "7":
-                                 //   Intent intent=new Intent(context, TaskDetailsActivity.class);
-                                   // context.startActivity(intent);
-                                    break;
+                            try {
+                                JSONObject res=new JSONObject(responseString);
+                                boolean success=res.getBoolean("successBool");
+                                Bundle bundle=null;
+                                Intent intent=null;
+                                if(success){
+
+                                    JSONObject jsonObject=res.getJSONObject("response");
+
+                                    switch (status){
+                                        case "1":
+                                            break;
+                                        case "2":
+                                           /* bundle=new Bundle();
+                                            bundle.putString("taskDetailsJson", jsonObject.toString());
+                                            intent=new Intent(context, JobAssignByNotification.class);
+                                            intent.putExtras(bundle);
+                                            context.startActivity(intent);*/
+                                            break;
+                                        case "3":
+                                         /*   bundle=new Bundle();
+                                            bundle.putString("taskDetailsJson", jsonObject.toString());
+                                            intent=new Intent(context, JobAssignByNotification.class);
+                                            intent.putExtras(bundle);
+                                            context.startActivity(intent);*/
+                                            break;
+                                        case "4":
+                                          /*  bundle=new Bundle();
+                                            bundle.putString("taskDetailsJson", jsonObject.toString());
+                                            intent=new Intent(context, StartJobActivity.class);
+                                            intent.putExtras(bundle);
+                                            context.startActivity(intent);*/
+                                            break;
+                                        case "5":
+                                          /*  bundle=new Bundle();
+                                            bundle.putString("taskDetailsJson", jsonObject.toString());
+                                            intent=new Intent(context, StartJobActivity.class);
+                                            intent.putExtras(bundle);
+                                            context.startActivity(intent);*/
+                                            break;
+                                        case "6":
+                                          /*  bundle=new Bundle();
+                                            bundle.putString("taskDetailsJson", jsonObject.toString());
+                                            intent=new Intent(context, JobAssignByNotification.class);
+                                            intent.putExtras(bundle);
+                                            context.startActivity(intent);*/
+                                            break;
+                                        case "7":
+                                            break;
+                                        case "8":
+                                           /* bundle=new Bundle();
+                                            bundle.putString("taskDetailsJson", jsonObject.toString());
+                                            intent=new Intent(context, TaskDetailsActivity.class);
+                                            intent.putExtras(bundle);
+                                            context.startActivity(intent);*/
+                                            break;
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
+
                         }
 
                         @Override
@@ -82,4 +128,10 @@ public class UtilMethods {
             e.printStackTrace();
         }
     }
+
+
+    public static void showDialog(Context context){
+
+    }
+
 }

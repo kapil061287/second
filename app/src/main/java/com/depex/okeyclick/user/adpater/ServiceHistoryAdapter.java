@@ -38,6 +38,7 @@ public class ServiceHistoryAdapter extends RecyclerView.Adapter<ServiceHistoryAd
         this.serviceHistories=serviceHistories;
     }
 
+
     @Override
     public ServiceHistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view=LayoutInflater.from(context).inflate(R.layout.service_history_recycler_layout, parent, false);
@@ -47,7 +48,7 @@ public class ServiceHistoryAdapter extends RecyclerView.Adapter<ServiceHistoryAd
     @Override
     public void onBindViewHolder(ServiceHistoryViewHolder holder, int position) {
         final ServiceHistory serviceHistory=serviceHistories.get(position);
-            GlideApp.with(context).load(serviceHistory.getCategoryIcon()).into(holder.serviceImage);
+            GlideApp.with(context).load(serviceHistory.getCategoryIcon()).placeholder(R.drawable.history_icon).into(holder.serviceImage);
             Date date=serviceHistory.getCreatedByDate();
             SimpleDateFormat dateFormat1=new SimpleDateFormat("KK:mm a");
             String taskName="<b>"+dateFormat1.format(date)+"</b> on "+serviceHistory.getCategory();
@@ -57,6 +58,7 @@ public class ServiceHistoryAdapter extends RecyclerView.Adapter<ServiceHistoryAd
             }else {
                 holder.taskName.setText(Html.fromHtml(taskName));
             }
+            holder.spName.setText(serviceHistory.getSpName());
 
 
             SimpleDateFormat dateFormat=new SimpleDateFormat(context.getString(R.string.show_date_format));
@@ -95,7 +97,7 @@ public class ServiceHistoryAdapter extends RecyclerView.Adapter<ServiceHistoryAd
             case "5":
                 return "Start Job";
             case "6":
-                return "Inprogress";
+                return "Paid";
             case "7":
                 return "Complete";
             case "8":

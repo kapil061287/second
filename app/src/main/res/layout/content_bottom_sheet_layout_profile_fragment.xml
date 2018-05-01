@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/upload_with"
+        android:fontFamily="@font/nexa"
+        android:textSize="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp" />
+
+
+    <Button
+        android:text="@string/camera"
+        android:background="#00000000"
+        android:fontFamily="@font/nexa"
+        android:textSize="16dp"
+        android:id="@+id/camera_btn"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp" />
+    <Button
+        android:id="@+id/gallery_btn"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/gallery"
+        android:background="#00000000"
+        android:fontFamily="@font/nexa"
+        android:textSize="16dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp" />
+
+
+</LinearLayout>

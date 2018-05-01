@@ -1,5 +1,6 @@
 package com.depex.okeyclick.user.fragment;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,11 +15,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
+
 import com.bumptech.glide.request.transition.Transition;
 import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.model.Service;
@@ -34,6 +39,7 @@ import java.util.List;
 public class SubServiceFragment2 extends Fragment {
 
     private Context context;
+    MenuItem menuItem;
 
     @Nullable
     @Override
@@ -123,9 +129,50 @@ public class SubServiceFragment2 extends Fragment {
         }
 
 
+
+
         @Override
         public int getCount() {
             return services.size();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(this.menuItem!=null){
+            this.menuItem.setVisible(false);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.menuItem=menu.findItem(R.id.home_menu_home);
+        this.menuItem.setVisible(true);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.home_menu_home:
+                    HomeFragment fragment=new HomeFragment();
+                    fragment.setHasOptionsMenu(true);
+                    getFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.nav_container, fragment, "Home")
+                            .addToBackStack("Home")
+                            .commit();
+                    break;
+            }
+        return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(menuItem!=null){
+            menuItem.setVisible(true);
         }
     }
 }

@@ -14,6 +14,7 @@ import android.graphics.Paint;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
@@ -39,6 +40,7 @@ import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
 import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
+import com.depex.okeyclick.user.model.TaskDetail;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -57,6 +59,8 @@ import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.maps.android.PolyUtil;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -79,7 +83,6 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
 
     private static final int INVOICE_REQUEST_CODE = 5;
     GoogleMap googleMap;
-    TextView textView;
 
     String task_id;
     boolean isTracking = true;
@@ -117,7 +120,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     String profilePicUrl;
 
     @BindView(R.id.profile_pic_activity_job_assigned)
-    RoundedImageView profilePicImageView;
+    ImageView profilePicImageView;
     @BindView(R.id.cancel_btn)
     LinearLayout cancelBtn;
 
@@ -148,12 +151,27 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     @BindView(R.id.pay_now_text)
     TextView payNawText;
 
+    @BindView(R.id.job_id)
+    TextView jobId;
+
+    @BindView(R.id.job_amount)
+    TextView jobAmount;
+
+    boolean fromTaskHistory;
+    Bundle taskDetailsBundle;
+    TaskDetail detail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_assigned);
         ButterKnife.bind(this);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_color));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            toolbar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
         setSupportActionBar(toolbar);
+
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,11 +180,54 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
             }
         });
         preferences = getSharedPreferences(Utils.SERVICE_PREF, MODE_PRIVATE);
+
+        getSupportActionBar().setTitle("Wating for Response...");
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment_job_assigned_activity);
+        supportMapFragment.getMapAsync(this);
+
+
+        task_id = preferences.getString("task_id", "0");
+
+        Bundle bundle=getIntent().getExtras();
+        if(bundle!=null) {
+            if (bundle.getString("taskDetailsJson") != null) {
+                String json = bundle.getString("taskDetailsJson");
+                Log.i("responseData", "Task Details : " + json);
+                Gson gson = new GsonBuilder().setDateFormat(getString(R.string.date_time_format_from_web)).create();
+                detail = gson.fromJson(json, TaskDetail.class);
+                task_id=detail.getTaskId();
+                fromTaskHistory = true;
+                String paymentStatus=detail.getPaymentStatus();
+                if(paymentStatus.equalsIgnoreCase("0")){
+                    isPaymentSucceed=false;
+                }else {
+                    isPaymentSucceed=true;
+                }
+                if(isPaymentSucceed){
+                    cancelText.setText(R.string.paid_text);
+                    //cancelImage.setImageDrawable(R.drawable.);
+                    cancelImage.setImageResource(R.drawable.ic_paid);
+                    payNowImage.setImageResource(R.drawable.ic_call);
+                    payNawText.setText(R.string.call_txt);
+                }
+
+                initScreen(detail);
+            }
+        }
+
+
+
+
+
+
+
+
         preferences.edit().putInt("requestTime", 1).apply();
         String token= FirebaseInstanceId.getInstance().getToken();
         Log.i("tokenR", token);
-        sendTokenToserver(token);
-        task_id = preferences.getString("task_id", "0");
+       // sendTokenToserver(token);
+
         //textView = findViewById(R.id.pending_request_txt);
         spNameText = findViewById(R.id.sp_name);
 
@@ -177,13 +238,29 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         callBtnToSp.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
         registerReciever();
-        myTask.execute();
+        if(!fromTaskHistory)
+             myTask.execute();
+
+
+
 //        confirmComplteBtn.setOnClickListener(this);
 
-        getSupportActionBar().setTitle("Wating for Response...");
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment_job_assigned_activity);
-        supportMapFragment.getMapAsync(this);
+
+    }
+
+    private void initScreen(TaskDetail detail) {
+        setSpMobile(detail.getSpPhone());
+        setSpLatitude(detail.getSpLat());
+        setSpLngtitud(detail.getSpLng());
+        setSpName(getSpName());
+        setSpId(detail.getSpId());
+        setProfilePicUrl(detail.getSpProfilePic());
+        isRequestAccepted=true;
+        getSupportActionBar().setTitle("Job ID : " + task_id);
+        jobId.setText("JOB ID : "+task_id);
+        jobAmount.setText("Service Amount : "+getString(R.string.uro)+detail.getTotal());
+        setVisible(View.GONE, findViewById(R.id.back_image), connetingNearst, findViewById(R.id.avl_loader));
+        profileLinearLayout.setVisibility(View.VISIBLE);
     }
 
     private void registerReciever() {
@@ -217,147 +294,14 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
 
                 break;
             case R.id.submit_rating_btn:
-                    submitRating();
+                    //submitRating();
                 break;
-
-
         }
     }
 
-    private void confirmComplete() {
-                JSONObject requestData=new JSONObject();
-                JSONObject data=new JSONObject();
-        try {
-            data.put("v_code", getString(R.string.v_code));
-            data.put("apikey", getString(R.string.apikey));
-            data.put("user_id", preferences.getString("user_id", "0"));
-            data.put("userToken", preferences.getString("userToken", "0"));
-            data.put("task_id", preferences.getString("task_id", "0"));
-            requestData.put("RequestData", data);
-
-            new Retrofit.Builder()
-                    .baseUrl(Utils.SITE_URL)
-                    .addConverterFactory(new StringConvertFactory())
-                    .build()
-                    .create(ProjectAPI.class)
-                    .confirmComplete(requestData.toString())
-                    .enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            String responseString=response.body();
-                            Log.i("responseData", "Confirm Complete : "+responseString);
-                            try {
-                                JSONObject res=new JSONObject(responseString);
-                                boolean success=res.getBoolean("successBool");
-                                if(success){
-                                    showReviewSheet();
-                                }
-                            } catch (JSONException e) {
 
 
-                            }
-                        }
 
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-
-                                Log.e("responseData","confirm complete error : "+ t.toString());
-                        }
-                    });
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showReviewSheet() {
-        View view= LayoutInflater.from(this).inflate(R.layout.content_final_review_bottom_sheet, null, false);
-        BottomSheetDialog dialog=new BottomSheetDialog(this);
-        dialog.setContentView(view);
-        dialog.show();
-
-        ratingBarBottomSheet=view.findViewById(R.id.rating_bar_review_bottom_sheet);
-        rateTextView=view.findViewById(R.id.rate_txt);
-        submitRatingBtn=view.findViewById(R.id.submit_rating_btn);
-        submitRatingBtn.setOnClickListener(this);
-        rateTextView.setText(getRatingText(ratingBarBottomSheet.getRating()));
-        ratingBarBottomSheet.setOnRatingBarChangeListener(this);
-        rateCommentEdit=view.findViewById(R.id.write_review_edit);
-    }
-
-    public static String getRatingText(float rate){
-        String rateText="Excellent";
-        if(rate<=1){
-            rateText="Poor";
-        }
-        else if(rate>1 && rate<=2){
-            rateText="Fair";
-        }
-        else if(rate>2 && rate<=3){
-            rateText="Average";
-        }
-        else if(rate>3 && rate<=4){
-            rateText="Good";
-        }
-        else if (rate>4 && rate<=5){
-            rateText="Excellent";
-        }
-        return rateText;
-    }
-
-    private void submitRating() {
-        JSONObject requestData=new JSONObject();
-        JSONObject data=new JSONObject();
-        try {
-            data.put("v_code", getString(R.string.v_code));
-            data.put("apikey", getString(R.string.apikey));
-            data.put("userToken", preferences.getString("userToken", "0"));
-            data.put("sender_id", preferences.getString("user_id","0"));
-            data.put("receiver_id", getSpId());
-            data.put("task_id", task_id);
-            data.put("rate", ratingBarBottomSheet.getRating());
-            data.put("comment", rateCommentEdit.getText().toString());
-            requestData.put("RequestData", data);
-            Log.i("requestData", "Rating API : "+requestData);
-        } catch (JSONException e) {
-            Log.i("responseData","Json Error :"+e.toString());
-        }
-
-        new Retrofit.Builder()
-                .baseUrl(Utils.SITE_URL)
-                .addConverterFactory(new StringConvertFactory())
-                .build()
-                .create(ProjectAPI.class)
-                .rating(requestData.toString())
-                .enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        String responseString=response.body();
-                        Log.i("responseData", "Rating Api : "+responseString);
-                        try {
-                            JSONObject res=new JSONObject(responseString);
-                            boolean success=res.getBoolean("successBool");
-                            if(success){
-                                JSONObject resObj=res.getJSONObject("response");
-                                String msg=resObj.getString("msg");
-                                showConfirmRatingDialog(msg);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                            Log.e("responseDataError", "Job Assigned By Notification : "+t.toString());
-                    }
-                });
-
-    }
-
-    private void showConfirmRatingDialog(String msg) {
-
-    }
 
     private void startReasonActivity() {
         Intent intent=new Intent(this, CancelTaskActivity.class);
@@ -366,6 +310,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
 
 
     private void generateInvoice() {
+
         JSONObject data=new JSONObject();
         JSONObject requestData=new JSONObject();
         try {
@@ -399,6 +344,8 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
                                         bundle.putString(key, resObj.getString(key));
 
                                     }
+                                    bundle.putBoolean("auto", false);
+                                    bundle.putBoolean("paidStatus", isPaymentSucceed);
                                     startInvoice(bundle);
                                 }
                             } catch (JSONException e) {
@@ -408,11 +355,11 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
-
+                            Log.e("responseDataError", "Job Notification : "+t.toString());
                         }
                     });
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("responseDataError", "Job Notification : "+e.toString());
         }
     }
 
@@ -504,10 +451,21 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         this.googleMap.setOnCameraMoveListener(this);
         this.googleMap.setOnCameraIdleListener(this);
         Bundle bundle=getIntent().getExtras();
-        double lat=bundle.getDouble("lat");
-        double lng=bundle.getDouble("lng");
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15f));
-
+        if(!fromTaskHistory) {
+            double lat = bundle.getDouble("lat");
+            double lng = bundle.getDouble("lng");
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 10f));
+        }else {
+            if(Spmarker!=null){
+                Spmarker.remove();
+            }
+            MarkerOptions markerOptions=new MarkerOptions();
+            markerOptions.position(new LatLng(Double.parseDouble(getSpLatitude()), Double.parseDouble(getSpLngtitud())))
+                    .visible(true)
+                    .title(getSpName());
+            Spmarker=googleMap.addMarker(markerOptions);
+            createPolyline();
+        }
     }
 
 
@@ -521,11 +479,19 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
     }
 
 
+    //private void createPolyline(String csLt, String cslng, String spLt, String splng, String spCurrntLat, String spCurrntLng) {
     private void createPolyline() {
 
         Bundle bundle=getIntent().getExtras();
-        double lat=bundle.getDouble("lat");
-        double lng=bundle.getDouble("lng");
+        double lat;
+        double lng;
+        if(!fromTaskHistory) {
+            lat = bundle.getDouble("lat");
+            lng = bundle.getDouble("lng");
+        }else {
+            lat=Double.parseDouble(detail.getCsLat());
+            lng=Double.parseDouble(detail.getCsLng());
+        }
 
         Location location=new Location("ext");
         location.setLatitude(lat);
@@ -647,7 +613,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
 
     public void setProfilePicUrl(String profilePicUrl) {
         this.profilePicUrl = profilePicUrl;
-        GlideApp.with(this).load(profilePicUrl).into(profilePicImageView);
+        GlideApp.with(this).load(profilePicUrl).circleCrop().into(profilePicImageView);
     }
 
 
@@ -743,6 +709,27 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
                 });
     }
 */
+
+
+    public static String getRatingText(float rate){
+        String rateText="Excellent";
+        if(rate<=1){
+            rateText="Poor";
+        }
+        else if(rate>1 && rate<=2){
+            rateText="Fair";
+        }
+        else if(rate>2 && rate<=3){
+            rateText="Average";
+        }
+        else if(rate>3 && rate<=4){
+            rateText="Good";
+        }
+        else if (rate>4 && rate<=5){
+            rateText="Excellent";
+        }
+        return rateText;
+    }
 
 
 
@@ -852,9 +839,11 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
             switch (intent.getAction()){
                 case Utils.INTENT_ACCEPT_REQUEST:
                     taskProcess.setText(R.string.accept_request);
+                    if(!fromTaskHistory)
                         acceptRequest(intent);
                     break;
                 case Utils.ACTION_TASK_PROCESS_INTENT:
+                    if(!fromTaskHistory)
                         changeTaskStatus(intent);
                     break;
             }
@@ -873,10 +862,10 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
 //                        taskProcess.setText(R.string.start_job_journey);
                     break;
                 case "4":
-//                    taskProcess.setText(R.string.arrive);
+                    startJobStartActivity();
                     break;
                 case "5":
-//                    taskProcess.setText(R.string.start_job);
+                    //taskProcess.setText(R.string.start_job);
                     break;
                 case "7":
                     //confirmComplteBtn.setVisibility(View.VISIBLE);
@@ -888,6 +877,16 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         } catch (JSONException e) {
             Log.i("respnseDataError", "Json Obje Task "+e.toString());
         }
+    }
+
+    private void startJobStartActivity() {
+        Intent intent=new Intent(this, StartJobActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("task_id", task_id);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        unregisterBroadReceiver();
+        finish();
     }
 
 
@@ -920,6 +919,7 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         setVisible(View.GONE, findViewById(R.id.back_image), connetingNearst, findViewById(R.id.avl_loader));
         profileLinearLayout.setVisibility(View.VISIBLE);
         getSupportActionBar().setTitle("Job ID : " + task_id);
+        jobId.setText("JOB ID : "+task_id);
         preferences.edit().putString("task_id", task_id).apply();
         preferences.edit().putBoolean("taskAccepted", true).apply();
 
@@ -930,6 +930,9 @@ public class JobAssignByNotification extends AppCompatActivity implements OnMapR
         setSpName(bundle.getString("sp_name"));
         setSpId(bundle.getString("sp_id"));
         setProfilePicUrl(bundle.getString("sp_profile"));
+
+        jobAmount.setText("Service Amount : "+getString(R.string.uro)+bundle.getString("total"));
+
         isRequestAccepted=true;
         if(Spmarker!=null){
             Spmarker.remove();

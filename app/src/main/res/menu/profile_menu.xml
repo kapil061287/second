@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/edit_profile_menu"
+        android:title="Edit"
+        android:icon="@drawable/ic_edit_black_24dp"
+        app:showAsAction="always"/>
+    <item android:id="@+id/done_profile_menu"
+        android:title="Done"
+        android:icon="@drawable/ic_done_black_24dp"
+        android:visible="false"
+        app:showAsAction="always"/>
+
+</menu>

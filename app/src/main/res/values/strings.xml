@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">OkeyClickUser</string>
     <string name="username">Email or Mobile Number</string>
-    <string name="password">Password</string>
+
     <string name="spanish_lang">Español</string>
     <string name="login">Login</string>
     <string name="skip">Skip</string>
@@ -96,6 +96,47 @@
     <string name="date_time_format_from_web">yyyy-MM-d H:m:s</string>
     <string name="pay_now">Pay Now</string>
     <string name="title_activity_task_details">TaskDetailsActivity</string>
+    <string name="fill_first_name">Please fill valid first name !</string>
+    <string name="valid_last_name">Please fill valid last name !</string>
+    <string name="password_must_6">Password must be length of 6 !</string>
+    <string name="confirm_password_not_match">confirm password does not match !</string>
+    <string name="valid_email">Entor a valid email !</string>
+    <string name="valid_mobile_msg">Entor a valid mobile number !</string>
+    <string name="otp_invalid">OTP is invalid !</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="name">Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="referral_code">Referral Code</string>
+    <string name="enter_your_mobile_no">Enter your mobile no.</string>
+    <string name="request_otp">Request OTP</string>
+    <string name="enter_otp">Enter Otp</string>
+    <string name="register">Register</string>
+    <string name="title_activity_start_job">StartJobActivity</string>
+    <string name="services">Services</string>
+    <string name="add_account">Add</string>
+    <string name="no_save_cards">No Save Cards</string>
+    <string name="stripe_api_secret_key">sk_test_r9OD2Z6WDNC9RwD6jNh3VZSe</string>
+    <string name="stripe_api_key">pk_test_aZDl5CIKT9vXmbp1p3FGCnkH</string>
+    <string name="faq_url">http://depextechnologies.org/okey-click/faq.php</string>
+    <string name="contact_us_url">http://depextechnologies.org/okey-click/contact_us.php</string>
+    <string name="term_and_condition_url">http://depextechnologies.org/okey-click/terms-and-conditions.php</string>
+    <string name="data_protection_low_url">@string/term_and_condition_url</string>
+    <string name="title_activity_web_inner_view">WebInnerViewActivity</string>
+    <string name="first_name">First Name</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="upload_with">Upload With</string>
+    <string name="base_fare">Base Fare</string>
+    <string name="service_hour">Services</string>
+    <string name="city_tax">City Tax</string>
+    <string name="total">Total</string>
+    <string name="booking_confirmed_msg">Your Booking is confirmed !</string>
+    <string name="booking_confirm_title">Booking Confirm</string>
+    <string name="ok">OK</string>
+    <string name="booking_date_confirm_msg">Do you want to confirm this booking date !</string>
 
 
 </resources>

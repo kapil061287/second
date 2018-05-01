@@ -18,6 +18,12 @@
 </group>
     <group android:id="@+id/group2" >
 -->
+
+  <item android:id="@+id/profile_menu"
+      android:icon="@drawable/account"
+      android:visible="false"
+      android:title="@string/view_profile_txt"/>
+
     <item android:id="@+id/account_menu"
         android:icon="@drawable/account"
         android:title="@string/account_menu_nav"/>
@@ -42,14 +48,16 @@
 -->
     <item android:id="@+id/invite_earn_menu"
         android:icon="@drawable/invite_and_earn_icon"
+        android:visible="false"
         android:title="@string/invite_and_earn"
         />
 <!--
     </group>
     <group android:id="@+id/group6" >
 -->
- <!--   <item android:id="@+id/notification_menu"
-        android:title="Notification"/>-->
+    <item android:id="@+id/notification_menu"
+        android:icon="@drawable/notification_icon"
+        android:title="Notification"/>
 <!--
     </group>
     <group android:id="@+id/group7" >
@@ -57,6 +65,7 @@
     <item android:id="@+id/report_issues_menu"
         android:icon="@drawable/report_and_issue"
         android:title="@string/report_issues_menu_nav"/>
+
 <!--
     </group>
     <group android:id="@+id/group8" >

@@ -10,6 +10,7 @@ public class Utils {
     public static final String ACTION_TASK_PROCESS_INTENT = "com.okeyclick.user.task_process";
     public static SubService holdSubService;
     public static int holdQuantityOfWork;
+    public static final String CONFIRM_SP_TIME = "com.okeyclick.confirm.sp.time";
 
     public static final String INTENT_ACCEPT_REQUEST="com.depex.okeyclick.user.model.accept_request";
 

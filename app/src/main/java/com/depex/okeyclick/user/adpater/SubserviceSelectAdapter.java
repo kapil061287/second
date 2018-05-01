@@ -1,6 +1,10 @@
 package com.depex.okeyclick.user.adpater;
 
 import android.content.Context;
+import android.os.Build;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +35,7 @@ public class SubserviceSelectAdapter extends BaseExpandableListAdapter {
         this.context=context;
         this.subServices=subServices;
         this.listView=listView;
+        //listView.setGroupIndicator(null);
         this.onSubserviceSelectListener=onSubserviceSelectListener;
     }
 
@@ -80,7 +85,28 @@ public class SubserviceSelectAdapter extends BaseExpandableListAdapter {
         TextView priceText=view1.findViewById(R.id.price_select_view);
         SubService subService=subServices.get(i);
         String minHrPrice=subService.getMin_hr_price();
-        priceText.setText("$"+minHrPrice+"/hr");
+        String bronzePrice=subService.getBronzePrice();
+        String goldPrice=subService.getGoldPrice();
+        String silverPrice=subService.getSilverPrice();
+
+       /* Spanned priceTextStr=null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            priceTextStr=Html.fromHtml("<span style='color:#000'>Bronze : </span>"+context.getString(R.string.uro)+bronzePrice+"/hr | "+
+                    "Silver : "+context.getString(R.string.uro)+silverPrice+"/hr | "+
+                    "Gold : "+context.getString(R.string.uro)+goldPrice+"/hr", Html.FROM_HTML_MODE_LEGACY);
+        }else {
+            priceTextStr=Html.fromHtml("<span style='color:#000'>Bronze : </span>"+context.getString(R.string.uro)+bronzePrice+"/hr | "+
+                    "Silver : "+context.getString(R.string.uro)+silverPrice+"/hr | "+
+                    "Gold : "+context.getString(R.string.uro)+goldPrice+"/hr");
+        }
+*/
+
+        priceText.setText("Bronze : "+context.getString(R.string.uro)+bronzePrice+"/hr | "+
+                        "Silver : "+context.getString(R.string.uro)+silverPrice+"/hr | "+
+                        "Gold : "+context.getString(R.string.uro)+goldPrice+"/hr");
+
+      //  priceText.setText(priceTextStr);
+
         String subServiceName=subService.getSubServiceName();
         textView.setText(subServiceName);
         return view1;

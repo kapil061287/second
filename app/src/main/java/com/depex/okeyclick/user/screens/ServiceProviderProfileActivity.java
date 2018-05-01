@@ -70,6 +70,7 @@ public class ServiceProviderProfileActivity extends AppCompatActivity implements
         perHourPrice=findViewById(R.id.per_hour_price);
         ratingBar=findViewById(R.id.star_view_profile);
         toolbar=findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_color));
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

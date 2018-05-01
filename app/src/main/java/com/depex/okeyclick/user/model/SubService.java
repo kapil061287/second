@@ -19,8 +19,37 @@ public class SubService {
     private int maxLimit;
     @SerializedName("service_type")
     private String serviceType;
+    @SerializedName("bronze_price")
+    private String bronzePrice;
+    @SerializedName("silver_price")
+    private String silverPrice;
+    @SerializedName("gold_price")
+    private String goldPrice;
 
 
+    public String getBronzePrice() {
+        return bronzePrice;
+    }
+
+    public void setBronzePrice(String bronzePrice) {
+        this.bronzePrice = bronzePrice;
+    }
+
+    public String getSilverPrice() {
+        return silverPrice;
+    }
+
+    public void setSilverPrice(String silverPrice) {
+        this.silverPrice = silverPrice;
+    }
+
+    public String getGoldPrice() {
+        return goldPrice;
+    }
+
+    public void setGoldPrice(String goldPrice) {
+        this.goldPrice = goldPrice;
+    }
 
     public String getSubServiceName() {
         return subServiceName;
@@ -115,7 +144,13 @@ public class SubService {
             return false;
         if (discount_price != null ? !discount_price.equals(that.discount_price) : that.discount_price != null)
             return false;
-        return serviceType != null ? serviceType.equals(that.serviceType) : that.serviceType == null;
+        if (serviceType != null ? !serviceType.equals(that.serviceType) : that.serviceType != null)
+            return false;
+        if (bronzePrice != null ? !bronzePrice.equals(that.bronzePrice) : that.bronzePrice != null)
+            return false;
+        if (silverPrice != null ? !silverPrice.equals(that.silverPrice) : that.silverPrice != null)
+            return false;
+        return goldPrice != null ? goldPrice.equals(that.goldPrice) : that.goldPrice == null;
     }
 
     @Override
@@ -129,8 +164,9 @@ public class SubService {
         result = 31 * result + (discount_price != null ? discount_price.hashCode() : 0);
         result = 31 * result + maxLimit;
         result = 31 * result + (serviceType != null ? serviceType.hashCode() : 0);
-
-
+        result = 31 * result + (bronzePrice != null ? bronzePrice.hashCode() : 0);
+        result = 31 * result + (silverPrice != null ? silverPrice.hashCode() : 0);
+        result = 31 * result + (goldPrice != null ? goldPrice.hashCode() : 0);
         return result;
     }
 }

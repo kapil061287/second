@@ -3,6 +3,9 @@ import com.google.gson.JsonObject;
 
 import java.io.File;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -34,7 +37,10 @@ public interface ProjectAPI {
     Call<String> availableServiceProvider(@Body String body);
 
     @GET("get_package.php")
-    Call<JsonObject> getPackages(@Query("apikey") String apikey);
+    Call<JsonObject> getPackages(@Query("apikey") String apikey,
+                                 @Query("unit") String unit,
+                                 @Query("city_name") String cityName,
+                                 @Query("subcategory") String subCategory);
 
     @POST("create_request.php")
     Call<String> createRequest(@Body String  body);
@@ -106,4 +112,17 @@ public interface ProjectAPI {
     @POST("taskDetail.php")
     Call<String> taskDetails(@Body String body);
 
+    //http://depextechnologies.org/okey-click/api/edit_profile_pic.php
+
+    @Multipart
+    @POST("edit_profile_pic.php")
+    Call<ResponseBody> upload(@Part("v_code")RequestBody v_code, @Part("apikey")RequestBody apikey,
+                              @Part MultipartBody.Part file, @Part("userToken")RequestBody userToken,
+                              @Part("user_id")RequestBody user_id);
+
+    @POST("cs_task_payment_history.php")
+    Call<String> getPaymentHistory(@Body String body);
+
+    @POST("edit_customer_profile.php")
+    Call<String> updateUserDetails(@Body String body);
 }

@@ -3,6 +3,7 @@
     package="com.depex.okeyclick.user">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -96,6 +97,7 @@
         <activity
             android:name=".screens.InvoiceActivity"
             android:label="@string/title_activity_invoice"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity"
@@ -116,6 +118,7 @@
         <activity
             android:name=".screens.ServiceHistoryActivity"
             android:label="@string/title_activity_service_history"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".screens.CancelTaskActivity" />
         <activity android:name=".screens.TestActivity" />
@@ -126,10 +129,21 @@
         <activity
             android:name=".screens.BookLetarActivity"
             android:label="@string/title_activity_book_letar"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screens.TaskDetailsActivity"
             android:label="@string/title_activity_task_details"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screens.StartJobActivity"
+            android:label="@string/title_activity_start_job"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screens.WebInnerViewActivity"
+            android:label="@string/title_activity_web_inner_view"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

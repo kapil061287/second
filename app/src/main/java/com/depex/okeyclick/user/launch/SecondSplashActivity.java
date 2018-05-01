@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.depex.okeyclick.user.R;
 import com.depex.okeyclick.user.api.ProjectAPI;
@@ -22,6 +23,9 @@ import com.depex.okeyclick.user.screens.ServiceProviderProfileActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,11 +34,16 @@ import retrofit2.Retrofit;
 public class SecondSplashActivity extends AppCompatActivity implements View.OnClickListener {
 
     SharedPreferences preferences;
+    @BindView(R.id.next_btn_second_splash)
+    Button button;
+
+    SpotsDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second_splash);
-        Button button=findViewById(R.id.next_btn_second_splash);
+        ButterKnife.bind(this);
+        dialog=new SpotsDialog(this);
         button.setOnClickListener(this);
         preferences=getSharedPreferences(Utils.SERVICE_PREF, MODE_PRIVATE);
     }
@@ -43,6 +52,7 @@ public class SecondSplashActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View view) {
         if(preferences.getBoolean("isLogin", false)) {
             //startLoginActivity();
+            dialog.show();
             checkLogin();
             view.setEnabled(false);
         }else {
@@ -97,13 +107,13 @@ public class SecondSplashActivity extends AppCompatActivity implements View.OnCl
                             JSONObject res=new JSONObject(responseString);
                             boolean success=res.getBoolean("successBool");
                             if(success){
-                                //dialog.dismiss();
+                                dialog.dismiss();
 
                                 Intent intent=new Intent(SecondSplashActivity.this, HomeActivity.class);
                                 startActivity(intent);
 
                             }else{
-                                //dialog.dismiss();
+                                dialog.dismiss();
                                 preferences.edit()
                                         .remove("isLogin")
                                         .remove("fullname")
@@ -132,6 +142,8 @@ public class SecondSplashActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         Log.e("responseDataError", t.toString());
+                        button.setEnabled(true);
+                        Toast.makeText(SecondSplashActivity.this, "No Internet Connection !", Toast.LENGTH_LONG).show();
 
                     }
                 });

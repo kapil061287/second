@@ -28,6 +28,16 @@ public class ServiceHistory  {
     @SerializedName("category_icon")
     private String categoryIcon;
 
+    @SerializedName("sp_name")
+    private String spName;
+
+    public void setSpName(String spName) {
+        this.spName = spName;
+    }
+
+    public String getSpName() {
+        return spName;
+    }
 
     public String getId() {
         return id;
@@ -94,6 +104,7 @@ public class ServiceHistory  {
         this.categoryIcon = categoryIcon;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,7 +123,9 @@ public class ServiceHistory  {
             return false;
         if (category != null ? !category.equals(that.category) : that.category != null)
             return false;
-        return categoryIcon != null ? categoryIcon.equals(that.categoryIcon) : that.categoryIcon == null;
+        if (categoryIcon != null ? !categoryIcon.equals(that.categoryIcon) : that.categoryIcon != null)
+            return false;
+        return spName != null ? spName.equals(that.spName) : that.spName == null;
     }
 
     @Override
@@ -125,6 +138,7 @@ public class ServiceHistory  {
         result = 31 * result + (isScheduler != null ? isScheduler.hashCode() : 0);
         result = 31 * result + (category != null ? category.hashCode() : 0);
         result = 31 * result + (categoryIcon != null ? categoryIcon.hashCode() : 0);
+        result = 31 * result + (spName != null ? spName.hashCode() : 0);
         return result;
     }
 

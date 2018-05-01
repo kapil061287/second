@@ -12,7 +12,23 @@
         android:id="@+id/grid_list_menu"
         android:title="Grid"
         android:visible="true"
-        android:icon="@drawable/ic_format_list_bulleted_black_24dp"
+        android:icon="@drawable/ic_apps_black_24dp"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/home_menu_home"
+        android:title="Home"
+        android:visible="false"
+        android:icon="@drawable/ic_home_black_24dp"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/location_menu"
+        android:title="Home"
+        android:visible="false"
+        android:icon="@drawable/ic_location_on_black_24dp"
         app:showAsAction="always"
         />
 

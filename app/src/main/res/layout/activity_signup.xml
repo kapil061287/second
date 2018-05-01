@@ -20,7 +20,7 @@
             <TextView
                 android:layout_marginTop="20dp"
                 android:layout_gravity="center_horizontal"
-                android:text="Create your account"
+                android:text="@string/create_your_account"
                 android:textAllCaps="true"
                 android:fontFamily="@font/nexa"
                 android:textSize="18dp"
@@ -52,7 +52,7 @@
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:fontFamily="@font/nexa"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Name"
+                android:hint="@string/name"
                 android:paddingLeft="@dimen/input_padding_left" />
 
             <EditText
@@ -64,7 +64,7 @@
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:fontFamily="@font/nexa"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Last Name"
+                android:hint="@string/last_name"
                 android:paddingLeft="@dimen/input_padding_left" />
 
             <EditText
@@ -76,7 +76,7 @@
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/input_padding_left" />
 
@@ -89,7 +89,7 @@
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:paddingLeft="@dimen/input_padding_left" />
 
@@ -102,7 +102,7 @@
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Confirm Password"
+                android:hint="@string/confirm_password"
                 android:inputType="textPassword"
                 android:paddingLeft="@dimen/input_padding_left" />
 
@@ -115,7 +115,7 @@
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Referral Code"
+                android:hint="@string/referral_code"
                 android:paddingLeft="@dimen/input_padding_left" />
 
             <LinearLayout
@@ -133,7 +133,7 @@
                     android:layout_weight="1.2"
                     android:fontFamily="@font/nexa"
                     android:background="@drawable/input_box_draw_signup"
-                    android:hint="Enter your mobile no."
+                    android:hint="@string/enter_your_mobile_no"
                     android:paddingLeft="@dimen/input_padding_left" />
 
                 <Button
@@ -144,7 +144,7 @@
                     android:layout_weight="1"
                     android:id="@+id/request_otp"
                     android:background="@color/colorPrimaryDark"
-                    android:text="Request OTP"
+                    android:text="@string/request_otp"
                     android:textColor="#ffffffff" />
             </LinearLayout>
 
@@ -157,7 +157,7 @@
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:id="@+id/otp_signup"
                 android:background="@drawable/input_box_draw_signup"
-                android:hint="Enter Otp"
+                android:hint="@string/enter_otp"
                 android:paddingLeft="@dimen/input_padding_left" />
 
             <Button
@@ -169,7 +169,7 @@
                 android:layout_marginRight="@dimen/margin_right"
                 android:layout_marginTop="@dimen/input_margin_top"
                 android:background="@color/colorPrimaryDark"
-                android:text="Register"
+                android:text="@string/register"
                 android:id="@+id/register_signup"
                 android:textColor="#ffffffff" />
         </LinearLayout>

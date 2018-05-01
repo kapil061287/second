@@ -1,7 +1,13 @@
 package com.depex.okeyclick.user.fragment;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,12 +20,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -31,6 +39,7 @@ import com.depex.okeyclick.user.contants.Utils;
 import com.depex.okeyclick.user.factory.StringConvertFactory;
 import com.depex.okeyclick.user.model.BookLaterServiceProvider;
 
+import com.depex.okeyclick.user.screens.InvoiceActivity;
 import com.hedgehog.ratingbar.RatingBar;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.philliphsu.bottomsheetpickers.date.DatePickerDialog;
@@ -42,6 +51,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,19 +62,21 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class ServiceProviderProfileFragment extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+    private static final int INVOICE_REQUEST_CODE = 1;
+
     @BindView(R.id.view_pager_profile)
     ViewPager viewPager;
 
     @BindView(R.id.tabs)
     TabLayout tabLayout;
 
-
+    MyReciever myReciever;
     String spId;
     SectionPagerAdapter pagerAdapter;
     ProgressBar progressBar;
 
     @BindView(R.id.user_image_provider_profile)
-    RoundedImageView roundedImageView;
+    ImageView roundedImageView;
 
 
     @BindView(R.id.service_provider_name)
@@ -86,6 +98,7 @@ public class ServiceProviderProfileFragment extends Fragment implements View.OnC
 
     BookLaterServiceProvider bookLaterServiceProvider;
     SharedPreferences preferences;
+    private boolean isPaymentSucceed;
 
     @Nullable
     @Override
@@ -95,6 +108,7 @@ public class ServiceProviderProfileFragment extends Fragment implements View.OnC
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
         bookNow.setOnClickListener(this);
+        registerReciever();
         String json=getArguments().getString("json");
         preferences=context.getSharedPreferences(Utils.SERVICE_PREF, Context.MODE_PRIVATE);
         bookLaterServiceProvider=BookLaterServiceProvider.fromJson(json);
@@ -106,7 +120,7 @@ public class ServiceProviderProfileFragment extends Fragment implements View.OnC
         serviceProviderName.setText(bookLaterServiceProvider.getName()+" "+bookLaterServiceProvider.getLastName());
         ratingBar.setStar(3);
         perHourPrice.setText(bookLaterServiceProvider.getPricePerHour());
-        GlideApp.with(context).load(bookLaterServiceProvider.getImageUrl()).into(roundedImageView);
+        GlideApp.with(context).load(bookLaterServiceProvider.getImageUrl()).circleCrop().into(roundedImageView);
         ReviewsServiceProviderFragment reviewsServiceProviderFragment= ReviewsServiceProviderFragment.getInstance(bookLaterServiceProvider);
         DetailsServiceProviderFragment detailsServiceProviderFragment=DetailsServiceProviderFragment.getInstance(bookLaterServiceProvider);
         List<Fragment> fragments=new ArrayList<>();
@@ -163,7 +177,24 @@ public class ServiceProviderProfileFragment extends Fragment implements View.OnC
     }
 
     @Override
-    public void onDateSet(DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+    public void onDateSet(DatePickerDialog dialog, final int year, final int monthOfYear, final int dayOfMonth) {
+
+        new AlertDialog.Builder(context).setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                scheduleTask(year, monthOfYear, dayOfMonth);
+            }
+        }).setTitle("Confirm Schedule")
+                .setNegativeButton("Cancel", null)
+                .setMessage(R.string.booking_date_confirm_msg)
+                .create()
+                .show();
+    }
+
+    public void scheduleTask(int year, int monthOfYear, int dayOfMonth){
+
+
         JSONObject requestData=new JSONObject();
         JSONObject data=new JSONObject();
         String json=getArguments().getString("json2");
@@ -242,4 +273,112 @@ public class ServiceProviderProfileFragment extends Fragment implements View.OnC
         return fragment;
     }
 
+    class  MyReciever extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equalsIgnoreCase(Utils.CONFIRM_SP_TIME)) {
+                String task_id=intent.getExtras().getString("task_id");
+                showInvoice(task_id);
+            }
+        }
+    }
+
+    private void showInvoice(String task_id) {
+
+        preferences.edit().putString("task_id", task_id).apply();
+
+        JSONObject data=new JSONObject();
+        JSONObject requestData=new JSONObject();
+        try {
+            data.put("v_code", getString(R.string.v_code));
+            data.put("apikey", getString(R.string.apikey));
+            data.put("userToken", preferences.getString("userToken", "0"));
+            data.put("user_id", preferences.getString("user_id", "0"));
+            data.put("task_id", task_id);
+            data.put("task_WDuration", preferences.getString("quanOfWork", "0"));
+            requestData.put("RequestData", data);
+
+            new Retrofit.Builder()
+                    .addConverterFactory(new StringConvertFactory())
+                    .baseUrl(Utils.SITE_URL)
+                    .build()
+                    .create(ProjectAPI.class)
+                    .generateInvoice(requestData.toString())
+                    .enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            String responseString=response.body();
+                            Log.i("responseData","Invoice : "+ responseString);
+                            try {
+                                JSONObject res=new JSONObject(responseString);
+                                boolean success=res.getBoolean("successBool");
+                                if(success){
+                                    JSONObject resObj=res.getJSONObject("response");
+                                    Bundle bundle=new Bundle();
+                                    for(Iterator<String> keys = resObj.keys(); keys.hasNext();){
+                                        String key=keys.next();
+                                        bundle.putString(key, resObj.getString(key));
+
+                                    }
+                                    bundle.putBoolean("auto", false);
+                                    bundle.putBoolean("paidStatus", isPaymentSucceed);
+                                    startInvoice(bundle);
+                                }
+                            } catch (JSONException e) {
+                                Log.i("responseDataError", e.toString());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.e("responseDataError", "Job Notification : "+t.toString());
+                        }
+                    });
+        } catch (JSONException e) {
+            Log.e("responseDataError", "Job Notification : "+e.toString());
+        }
+    }
+
+
+    private void startInvoice(Bundle bundle) {
+        Intent intent=new Intent(context, InvoiceActivity.class);
+        if(bundle!=null){
+            intent.putExtras(bundle);
+        }
+        startActivityForResult(intent, INVOICE_REQUEST_CODE);
+    }
+    private void registerReciever(){
+
+        IntentFilter filter=new IntentFilter(Utils.CONFIRM_SP_TIME);
+        myReciever=new MyReciever();
+        LocalBroadcastManager.getInstance(context).registerReceiver(myReciever, filter);
+    }
+    public void unregisterProvider(){
+        if (myReciever!=null)
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(myReciever);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterProvider();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==INVOICE_REQUEST_CODE){
+            if(resultCode== Activity.RESULT_OK){
+                isPaymentSucceed=true;
+                showAlert(getString(R.string.booking_confirmed_msg), getString(R.string.booking_confirm_title));
+            }
+        }
+    }
+
+    public void showAlert(String msg, String title){
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.ok, null).create().show();
+    }
 }

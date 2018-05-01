@@ -29,6 +29,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_task_details);
         ButterKnife.bind(this);
         toolbar.setTitle("JOB ID : OC01234");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_color));
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

@@ -376,6 +376,11 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp" />
+            <ImageView
+                android:id="@+id/paid_image_view"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="130dp"
+                android:layout_height="130dp" />
 
         </LinearLayout>
 

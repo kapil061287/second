@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dmax.dialog.SpotsDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,6 +53,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     boolean bookLatar=false;
     boolean bookNow=false;
 
+    SpotsDialog spotsDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         ButterKnife.bind(this);
         Bundle bundle=getIntent().getExtras();
+        spotsDialog=new SpotsDialog(this);
         if(bundle!=null){
             bookLatar=bundle.getBoolean("isBookLetar", false);
             bookNow=bundle.getBoolean("isBookNow", false);
@@ -72,8 +76,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(bookNow  || bookLatar ){
             skip_btn.setVisibility(View.GONE);
         }
-
-
     }
 
 
@@ -88,6 +90,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startSignupProcess();
                 break;
             case R.id.login_btn:
+                spotsDialog.show();
                 String username=text_username.getEditText().getText().toString();
                 String password=text_password.getEditText().getText().toString();
                 JSONObject requestData=new JSONObject();
@@ -124,7 +127,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     preferences.edit().putString("user_id",responseData.getString("user_id") )
                                     .putString("userToken", responseData.getString("userToken"))
                                             .putString("fullname", responseData.getString("fullname"))
-                                    .putBoolean("isLogin", true).apply();
+                                            .putString("cs_id", responseData.getString("stripe_cs_id"))
+                                            .putString("profile_pic", responseData.getString("profile_pic"))
+                                            .putBoolean("isLogin", true).apply();
+                                    spotsDialog.dismiss();
+
                                     if(bookLatar || bookNow){
                                         setResult(RESULT_OK);
                                         finish();
@@ -135,9 +142,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     }
 
                                 }else{
+                                    spotsDialog.dismiss();
                                     JSONObject errorObj=res.getJSONObject("ErrorObj");
                                     String errorCode=errorObj.getString("ErrorCode");
                                     if(errorCode.equals("108")){
+
 
                                         String errorMsg=errorObj.getString("ErrorMsg");
                                         Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
@@ -150,6 +159,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
+                            spotsDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Please Check your internet connection !", Toast.LENGTH_LONG).show();
                                 Log.e("responseError", t.toString());
                         }
@@ -158,6 +168,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
                 } catch (JSONException e) {
+                    spotsDialog.dismiss();
                     e.printStackTrace();
                 }
                 break;
@@ -167,9 +178,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void startSignupProcess() {
         Intent signupIntent=new Intent(this, SignupActivity.class);
-        if(!bookLatar || !bookNow) {
+        Bundle bundle=new Bundle();
+        bundle.putBoolean("bookLater", bookLatar);
+        bundle.putBoolean("bookNow", bookNow);
+        signupIntent.putExtras(bundle);
             startActivity(signupIntent);
-        }
     }
 
     @Override
@@ -179,6 +192,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             finish();
         }else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(preferences.getBoolean("isLogin", false)){
+            setResult(RESULT_OK);
+            finish();
         }
     }
 }

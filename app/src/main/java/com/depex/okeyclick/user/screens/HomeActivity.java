@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -25,14 +24,14 @@ import android.widget.Toast;
 
 import com.depex.okeyclick.user.GlideApp;
 import com.depex.okeyclick.user.R;
+import com.depex.okeyclick.user.fragment.AccountFragment;
 import com.depex.okeyclick.user.fragment.ContactUsFragment;
 import com.depex.okeyclick.user.fragment.HomeFragment;
 import com.depex.okeyclick.user.fragment.InviteAndEarnFragment;
+import com.depex.okeyclick.user.fragment.PaymentHistoryFragment;
+import com.depex.okeyclick.user.fragment.ProfileFragment;
 import com.depex.okeyclick.user.fragment.ReportAndIssue;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
-
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -42,10 +41,11 @@ public class HomeActivity extends AppCompatActivity
 
     @BindView(R.id.nav_container)
     FrameLayout container_layout;
+
     FragmentManager fragmentManager;
     SharedPreferences preferences;
-
     FragmentTransaction fragmentTransaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,15 +75,32 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView =  findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setItemIconTintList(null);
-
+//Header View here !
         int count=navigationView.getHeaderCount();
         for(int i=0;i<count;i++){
             View view=navigationView.getHeaderView(i);
             TextView textView=view.findViewById(R.id.view_profile);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ProfileFragment fragment=new ProfileFragment();
+                    fragment.setHasOptionsMenu(true);
+
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.nav_container, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                    DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+
+                }
+            });
             ImageView imageView=view.findViewById(R.id.nav_header_img);
-            String url="imageurl";
+
+            String url=preferences.getString("profile_pic", "0");
             GlideApp.with(this).load(url).circleCrop().placeholder(R.drawable.user_dp_place_holder).into(imageView);
-            TextView textView1=view.findViewById(R.id.username_text_nav_header);
+            final TextView textView1=view.findViewById(R.id.username_text_nav_header);
             if(textView!=null){
                 if(preferences.getBoolean("isLogin", false)){
                     textView.setText("View Profile");
@@ -91,9 +108,32 @@ public class HomeActivity extends AppCompatActivity
                 }
             }
             if(textView1!=null){
-                    textView1.setText(preferences.getString("fullname", "Guest !"));
+                    textView1.setText(preferences.getString("fullname", "Login"));
+                    textView1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String text=textView1.getText().toString();
+                            if(text.equalsIgnoreCase("Login")){
+                                startLoginActivity();
+                            }
+                        }
+                    });
             }
         }
+        Menu menu=navigationView.getMenu();
+        if(preferences.getBoolean("isLogin", false)){
+            menu.clear();
+            getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        }else {
+            menu.clear();
+            getMenuInflater().inflate(R.menu.no_login_menu, menu);
+        }
+    }
+
+    private void startLoginActivity() {
+        Intent intent=new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -140,8 +180,10 @@ public class HomeActivity extends AppCompatActivity
                     .commit();
             break;
         case R.id.home_menu:
+            HomeFragment fragment=new HomeFragment();
+            fragment.setHasOptionsMenu(true);
             fragmentTransaction=fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.nav_container, new HomeFragment(), "Home").addToBackStack("Home");
+            fragmentTransaction.replace(R.id.nav_container, fragment, "Home").addToBackStack("Home");
             fragmentTransaction.commit();
             break;
         case R.id.report_issues_menu:
@@ -158,9 +200,23 @@ public class HomeActivity extends AppCompatActivity
             startServiceHistoryActivity();
             break;
         case R.id.invite_earn_menu:
-            InviteAndEarnFragment fragment=new InviteAndEarnFragment();
+            InviteAndEarnFragment fragment1=new InviteAndEarnFragment();
             fragmentTransaction=fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.nav_container, fragment, "inviteEarn").addToBackStack(null);
+            fragmentTransaction.replace(R.id.nav_container, fragment1, "inviteEarn").addToBackStack(null);
+            fragmentTransaction.commit();
+            break;
+        case R.id.account_menu:
+            AccountFragment fragment2=new AccountFragment();
+            fragment2.setHasOptionsMenu(true);
+            fragmentTransaction=fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.nav_container, fragment2 , "accountFragment").addToBackStack(null);
+            fragmentTransaction.commit();
+            break;
+        case R.id.payment_history_menu:
+            PaymentHistoryFragment paymentFragment=new PaymentHistoryFragment();
+            paymentFragment.setHasOptionsMenu(true);
+            fragmentTransaction=fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.nav_container, paymentFragment, "paymentHistory").addToBackStack(null);
             fragmentTransaction.commit();
             break;
     }

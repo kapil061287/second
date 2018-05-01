@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
@@ -47,6 +48,8 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
     private SpotsDialog spotsDialog;
     private boolean isInGridView;
     private MenuItem menuItem;
+    ArrayList<Service> services;
+
 
 
     @Nullable
@@ -66,12 +69,17 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
         CallbackApi callbackApi=new CallbackApi(this);
         servicesCall.enqueue(callbackApi);
         Log.i("fragmentLify", "OnCreate()");
+        if(menuItem!=null)
+            menuItem.setVisible(true);
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if(menuItem!=null){
+            menuItem.setVisible(true);
+        }
     }
 
     @Override
@@ -88,6 +96,7 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
     public void success(Call<JsonObject> call, Response<JsonObject> response, Object... objects) {
         if(response!=null){
         JsonObject res=response.body();
+        Log.i("responseData", "Home Fragment : "+res.toString());
         boolean success=res.get("successBool").getAsBoolean();
         String responseType=res.get("responseType").getAsString();
         Gson gson=new Gson();
@@ -97,11 +106,13 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
                 case "get_category":
                     JsonArray service_list = responseData.get("List").getAsJsonArray();
                     Service[] arr = gson.fromJson(service_list, Service[].class);
-                    ArrayList<Service> services = new ArrayList<>(Arrays.asList(arr));
+                    services = new ArrayList<>(Arrays.asList(arr));
 //                    Log.i("responseData", "Services : "+services.get(0).getSubServices().get(0).getId());
-                    ServicesRecyclerAdapter adapter = new ServicesRecyclerAdapter(getActivity(), services, getFragmentManager());
                     LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                    ServicesRecyclerAdapter adapter = new ServicesRecyclerAdapter(getActivity(), services, getFragmentManager(), manager);
+
 //                    GridLayoutManager manager=new GridLayoutManager(getActivity(), 2);
+
                     services_recycler.setLayoutManager(manager);
                     services_recycler.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
                     services_recycler.setAdapter(adapter);
@@ -133,12 +144,22 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
                     if(isInGridView){
                         isInGridView=false;
                         item.setIcon(R.drawable.ic_apps_black_24dp);
-                        services_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        services_recycler.getAdapter().notifyDataSetChanged();
+                        LinearLayoutManager manager=new LinearLayoutManager(getActivity());
+                        ServicesRecyclerAdapter adapter = new ServicesRecyclerAdapter(getActivity(), services, getFragmentManager(), manager);
+                        services_recycler.setLayoutManager(manager);
+                        services_recycler.setAdapter(adapter);
+                        /*services_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        services_recycler.getAdapter().notifyDataSetChanged();*/
                     }else {
                         isInGridView=true;
-                        services_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                        services_recycler.getAdapter().notifyDataSetChanged();
+                        /*services_recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                        services_recycler.getAdapter().notifyDataSetChanged();*/
+
+                        LinearLayoutManager manager=new GridLayoutManager(getActivity(), 2);
+                        ServicesRecyclerAdapter adapter = new ServicesRecyclerAdapter(getActivity(), services, getFragmentManager(), manager);
+                        services_recycler.setLayoutManager(manager);
+                        services_recycler.setAdapter(adapter);
+
                         item.setIcon(R.drawable.ic_format_list_bulleted_black_24dp);
                     }
                 break;
@@ -146,6 +167,8 @@ public class HomeFragment extends Fragment implements ApiListener<JsonObject> {
 
         return true;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

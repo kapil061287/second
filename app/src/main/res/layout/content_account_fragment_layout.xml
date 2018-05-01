@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:id="@+id/parent_layout">
+
+        <com.stripe.android.view.CardMultilineWidget
+            android:layout_width="match_parent"
+            android:id="@+id/card"
+            android:layout_height="wrap_content">
+
+        </com.stripe.android.view.CardMultilineWidget>
+
+     <LinearLayout
+         android:orientation="horizontal"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+         <Button
+             android:text="@string/cancel"
+             android:textColor="#FFFFFFFF"
+
+             android:id="@+id/cancel_account"
+             android:background="@color/y_color"
+             android:layout_width="0dp"
+             android:layout_weight="1"
+             android:layout_marginLeft="10dp"
+             android:layout_marginRight="10dp"
+             android:layout_height="wrap_content" />
+         <Button
+             android:text="@string/add_account"
+             android:textColor="#FFFFFFFF"
+             android:id="@+id/add_account"
+             android:layout_marginRight="10dp"
+             android:background="@color/y_color"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content" />
+     </LinearLayout>
+    </LinearLayout>
+<com.baoyz.swipemenulistview.SwipeMenuListView
+    android:layout_width="match_parent"
+    android:id="@+id/card_list_view"
+    android:layout_marginTop="10dp"
+    android:layout_height="wrap_content">
+</com.baoyz.swipemenulistview.SwipeMenuListView>
+</LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/no_save_card"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/no_save_cards"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
